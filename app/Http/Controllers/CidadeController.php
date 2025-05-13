@@ -28,7 +28,13 @@ class CidadeController extends Controller
      */
     public function show(string $id)
     {
-        //
+         $cidade = Cidade::find($id);
+
+        if (!$cidade) {
+            return response()->json(['mensagem' => 'Usuário não encontrado'], 404);
+        }
+
+        return response()->json($cidade);
     }
 
     /**
@@ -49,7 +55,7 @@ class CidadeController extends Controller
 
     public function listarporEstado($estadoId)
     {
-        $cidades = Cidade::where('estado_id', $estadoId->get());
+        $cidades = Cidade::where('estado_id', $estadoId)->get();
 
         return response()->json($cidades);
 

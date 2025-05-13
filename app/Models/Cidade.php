@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Cidade extends Model
 {
     use HasFactory;
+    public $timestamps = false;
 
     protected $filltable = ['nome', 'id_estado'];
 

@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('contratante', function (Blueprint $table) {
             $table->id();
+            $table->string('nome');
+            $table->email('email');
+            $table->foto('foto');
             $table->timestamps();
         });
     }

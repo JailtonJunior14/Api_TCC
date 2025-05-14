@@ -46,4 +46,11 @@ class ContratanteController extends Controller
     {
         //
     }
+
+    public function listarportelefone($telefoneId)
+    {
+        $telefoneId = Contratante::where('telefone_id', $telefoneId)->get();
+
+        return response()->json($telefoneId);
+    }
 }

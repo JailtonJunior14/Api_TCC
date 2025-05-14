@@ -31,7 +31,7 @@ class CidadeController extends Controller
          $cidade = Cidade::find($id);
 
         if (!$cidade) {
-            return response()->json(['mensagem' => 'Usuário não encontrado'], 404);
+            return response()->json(['mensagem' => 'Cidade não encontrada'], 404);
         }
 
         return response()->json($cidade);

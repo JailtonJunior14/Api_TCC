@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('empresa', function (Blueprint $table) {
+        Schema::create('link', function(Blueprint $table)
+        {
             $table->id();
-            $table->timestamps();
-        });
+            $table->string('link');
+
+        }
+    );
     }
 
     /**
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('empresa');
+        Schema::dropIfExists('link');
     }
 };

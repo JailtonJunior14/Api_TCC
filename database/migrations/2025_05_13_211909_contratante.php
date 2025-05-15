@@ -11,7 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('contratante', function(Blueprint $table)
+        {
+            $table->id();
+            $table->string('nome');
+            $table->string('email');
+            $table->string('senha');
+            $table->foreignId('id_cidade')->constrained('cidade')->onDelete('cascade');
+        });
     }
 
     /**
@@ -19,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('contratante');
     }
 };

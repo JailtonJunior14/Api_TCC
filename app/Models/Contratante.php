@@ -11,10 +11,5 @@ class Contratante extends Model
 
     public $timestamps = false;
 
-    public $fillable = ['nome', 'email', 'senha', 'foto'];
-
-    function telefone()
-    {
-        return $this->belongsTo(Telefone::class);
-    }
+    public $fillable = ['nome', 'email', 'senha'];
 }

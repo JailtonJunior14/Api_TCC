@@ -10,6 +10,8 @@ class Cidade extends Model
     use HasFactory;
     public $timestamps = false;
 
+    protected $table = 'cidade';
+
     protected $filltable = ['nome', 'id_estado'];
 
     function estados()

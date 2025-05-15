@@ -12,7 +12,12 @@ class ContratanteController extends Controller
      */
     public function index()
     {
-        //
+        $contratantes = Contratante::all();
+        //seria isso:
+        // $contratante = new Contratante();
+        // $contratantes = $contratante->all();
+
+         return $contratantes;
     }
 
     /**
@@ -20,7 +25,17 @@ class ContratanteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $new_contratante = new Contratante();
+
+        $new_contratante->nome = 'tigas';
+        $new_contratante->email = 'tiga@teste.com';
+        $new_contratante->senha = 'tig@s';
+        $new_contratante->id_cidade = 2;
+
+        $new_contratante->save();
+
+        dd($new_contratante);
+
     }
 
     /**
@@ -28,7 +43,9 @@ class ContratanteController extends Controller
      */
     public function show(Contratante $contratante)
     {
-        //
+        $contratante = Contratante::find(2);
+
+        return $contratante;
     }
 
     /**
@@ -45,12 +62,5 @@ class ContratanteController extends Controller
     public function destroy(Contratante $contratante)
     {
         //
-    }
-
-    public function listarportelefone($telefoneId)
-    {
-        $telefoneId = Contratante::where('telefone_id', $telefoneId)->get();
-
-        return response()->json($telefoneId);
     }
 }

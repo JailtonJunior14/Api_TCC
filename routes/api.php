@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\ContratanteController;
+use App\Models\Contratante;
 
 Route::get('/teste', function () {
     return response()->json(['message' => 'Olá, Mundo']);
@@ -13,6 +14,6 @@ Route::get('/teste', function () {
 
 Route::resource('cidades', CidadeController::class);
 
-Route::get('/cidades/estado/{estadoId}', [CidadeController::class, 'listarporEstado']);
-
-Route::get('/contratante/telefone/{telefoneId}', [ContratanteController::class. 'listraportelefone']);
+Route::get('/contratante/cadastro', [ContratanteController::class, 'store']);
+Route::get('/contratante/listar', [ContratanteController::class, 'show']);
+Route::get('/contratante/listar_todos', [ContratanteController::class, 'index']);

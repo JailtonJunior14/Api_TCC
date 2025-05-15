@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Contratante extends Model
 {
     use HasFactory;
+    protected $table = 'contratante';
 
     public $timestamps = false;
 
-    public $fillable = ['nome', 'email', 'senha'];
+    public $fillable = ['nome', 'email', 'senha', 'id_cidade'];
 }

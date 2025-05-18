@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contratante;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class ContratanteController extends Controller
 {
@@ -25,27 +28,69 @@ class ContratanteController extends Controller
      */
     public function store(Request $request)
     {
-        $new_contratante = new Contratante();
+        try {
+            $validacao = $request->validate(
+                [
+                    'nome' => 'required|string|max:255',
+                    'email' => 'required|email|unique:contratante,email',
+                    'senha' => 'required|string|confirmed',
+                    'id_cidade' => 'required|integer|exists:cidade,id',
+                ]
+            );
 
-        $new_contratante->nome = 'tigas';
-        $new_contratante->email = 'tiga@teste.com';
-        $new_contratante->senha = 'tig@s';
-        $new_contratante->id_cidade = 2;
+            $contratante = new Contratante();
+            $contratante->nome = $validacao['nome'];
+            $contratante->email = $validacao['email'];
+            $contratante->senha = Hash::make($validacao['senha']);
+            $contratante->id_cidade = $validacao['id_cidade'];
 
-        $new_contratante->save();
+            $contratante->save();
 
-        dd($new_contratante);
+            return response()->json(
+            [
+                'message' => 'usuario cadastrado com sucesso',
+                'data' => $contratante
+            ], 201
+            );
+        } catch (QueryException $e) {
+            // Erros específicos de banco de dados
+            Log::error('Erro ao salvar usuário no banco de dados', ['error' => $e->getMessage()]);
+            return response()->json([
+                'error' => 'Erro ao salvar no banco de dados.'
+            ], 500);
+
+        } catch (\Exception $e) {
+            // Outros erros inesperados
+            Log::error('Erro inesperado ao criar usuário', ['error' => $e->getMessage()]);
+            return response()->json([
+                'error' => 'Erro inesperado. Tente novamente mais tarde.'
+            ], 500);
+        }
 
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Contratante $contratante)
+    public function show($id)
     {
-        $contratante = Contratante::find(2);
+        try{
+            $contratante= Contratante::find($id);
+            if (!$contratante) 
+            {
+                return response()->json(['error' => 'Usuário não encontrado'], 404);
+            }
 
-        return $contratante;
+            return response()->json($contratante);
+        } catch(\Exception $e) {
+            Log::error('erro ao buscar usuario' , ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'error' => 'Error ao buscar prestador'
+            ], 500);
+
+
+        }
     }
 
     /**
@@ -53,14 +98,29 @@ class ContratanteController extends Controller
      */
     public function update(Request $request, Contratante $contratante)
     {
-        //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Contratante $contratante)
+    public function destroy($id)
     {
-        //
+        try {
+            $contratante = Contratante::find($id);
+
+            if($contratante)
+            {
+                $contratante->delete();
+                return response()->json('excluido com sucesso');
+            } else {
+                return response()->json('contratante nao existe ou ja foi excluido');
+            }
+        } catch (\Exception $e) {
+            Log::error('erro ao excluir' , ['erro' => $e->getMessage()]);
+            
+            return response()->json([
+                'error' => 'Erro ao excluir'
+            ],500);
+        }
     }
 }

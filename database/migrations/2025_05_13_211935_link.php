@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('portfolio', function(Blueprint $table)
+        Schema::create('link', function(Blueprint $table)
         {
             $table->id();
-            $table->string('descricao');
-            $table->string('imagem');
+            $table->string('link');
+            $table->unsignedBigInteger('linkable_id');
+            $table->string('linkable_type');
 
-        }); 
+        }
+    );
     }
 
     /**
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('portfolio');
+        Schema::dropIfExists('link');
     }
 };

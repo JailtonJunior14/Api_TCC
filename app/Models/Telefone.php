@@ -13,7 +13,12 @@ class Telefone extends Model
     protected $fillable = ['numero', 'telefoneable_id', 'telefoneable_type'];
     protected $table = 'telefone';
 
-    function contratante()
+    function prestador()
+    {
+        return $this->morphTo();
+    }
+
+    function empresa()
     {
         return $this->morphTo();
     }

@@ -15,7 +15,7 @@ return new class extends Migration
         {
             $table->id();
             $table->string('numero');
-             $table->unsignedBigInteger('telefoneable_id');
+            $table->unsignedBigInteger('telefoneable_id');
             $table->string('telefoneable_type');
         });
     }

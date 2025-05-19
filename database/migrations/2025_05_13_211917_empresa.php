@@ -19,14 +19,8 @@ return new class extends Migration
             $table->string('senha');
             $table->string('foto');
             $table->string('cnpj', 18)->unique();
-            $table->string('logradouro');
-            $table->string('numero')->nullable();
-            $table->string('complemento')->nullable();
-            $table->string('bairro');
             $table->string('cep', 9);
             $table->foreignId('id_cidade')->constrained('cidade')->onDelete('cascade');
-            $table->foreignId('id_link')->constrained('link')->onDelete('cascade');
-            $table->foreignId('id_portfolio')->constrained('portfolio')->onDelete('cascade');
             $table->foreignId('id_ramo')->constrained('ramo')->onDelete('cascade');
         });
     }

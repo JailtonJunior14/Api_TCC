@@ -20,7 +20,19 @@ class PrestadorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validacao = $request->validate([
+            'nome' => 'required|string|max:255',
+            'email' => 'required|string|unique:prestador,email',
+            'senha' => 'required|string|confirmed',
+            'foto' => 'required|string',
+            'cep' => 'required|integer|max:9',
+            'id_cidade' => 'required|integer|exists:cidade,id',
+            'id_ramo' => 'required|integer|exists:ramo,id'
+
+        ]);
+
+        $prestador = new Prestador();
+        $prestador->nome = $validacao['nome'];
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contratante;
+use App\Models\Empresa;
 use App\Models\Prestador;
 use App\Models\Telefone;
 use Illuminate\Http\Request;

@@ -88,7 +88,7 @@ class ContratanteController extends Controller
             Log::error('erro ao buscar usuario' , ['error' => $e->getMessage()]);
 
             return response()->json([
-                'error' => 'Error ao buscar prestador'
+                'error' => 'Error ao buscar Contratante'
             ], 500);
         } 
     }

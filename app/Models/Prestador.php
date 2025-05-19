@@ -10,5 +10,6 @@ class Prestador extends Model
     use HasFactory;
 
     protected $table = 'prestador';
-    protected $fillable
+    public $timestamps = false;
+    protected $fillable = ['nome', 'email', 'senha', 'foto', 'cep', 'id_cidade', 'id_ramo'];
 }

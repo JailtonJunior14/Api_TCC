@@ -19,4 +19,3 @@ class Contratante extends Model
         return $this->morphMany(Telefone::class, 'telefoneable');
     }
 }
-

@@ -10,11 +10,10 @@ class Telefone extends Model
     use HasFactory;
 
     public $timestamps = false;
-    protected $fillable = ['numero', 'telefoneable_id', 'telefoneable_type'];
-    protected $table = 'telefone';
+    protected $filltable = ['telefone'];
 
     function contratante()
     {
-        return $this->morphTo();
+        return $this->belongsTo(Contratante::class);
     }
 }

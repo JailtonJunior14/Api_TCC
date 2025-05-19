@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('telefone', function(Blueprint $table)
         {
             $table->id();
-            $table->string('numero');
-             $table->unsignedBigInteger('telefoneable_id');
-            $table->string('telefoneable_type');
+            $table->string('telefone');
+            $table->foreignId('id_prestador')->constrained('prestador')->onDelete('cascade');
+            $table->foreignId('id_empresa')->constrained('empresa')->onDelete('cascade');
         });
     }
 

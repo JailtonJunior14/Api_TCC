@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contratante;
-use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 
 class ContratanteController extends Controller
 {
@@ -90,55 +88,16 @@ class ContratanteController extends Controller
             return response()->json([
                 'error' => 'Error ao buscar prestador'
             ], 500);
-        } 
+
+
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Contratante $contratante)
     {
-        try {
-
-            $request->validate(
-                [
-                    'nome' => 'sometimes|required|string|max:255',
-                    'email' => 'sometimes|required|email|unique:contratante,email,' . $id,
-                    'senha' => 'sometimes|required|string|confirmed',
-                    'id_cidade' => 'sometimes|required|integer|exists:cidade,id',
-                ]
-            );
-
-            $contratante = Contratante::findorfail($id);
-
-            if($request->has('nome'))
-            {
-                    $contratante->nome = $request['nome'];   
-            }
-            if($request->has('email'))
-            {
-                    $contratante->email = $request['email'];   
-            }
-            if($request->has('nome'))
-            {
-                    $contratante->senha = hash::make($request['senha']);   
-            }
-
-            $contratante->save();
-
-        } catch(ValidationException $e){
-            log::error('email ja cadastrado' , ['error' => $e->getMessage()]);
-
-            return response()->json([
-                'error' => 'email ja cadastrado'
-            ], 422);
-        } catch (\Exception $e) {
-            Log::error('erro ao atualizar', ['erro' => $e->getMessage()]);
-
-            return response()->json([
-                'error' => 'erro ao atualizar'
-            ], 500);
-        }
     }
 
     /**

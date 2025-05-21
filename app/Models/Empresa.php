@@ -13,11 +13,8 @@ class Empresa extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['nome',  'email', 'senha', 'foto', 'cnpj', 'cep', 'id_cidade',  'id_ramo'];
+    protected $fillable = ['nome',  'email', 'senha','whatsapp','fixo', 'foto', 'cnpj', 'cep', 'id_cidade',  'id_ramo'];
 
 
-    public function telefones(){
-
-        return $this->morphMany(Telefone::class, 'telefoneable');
-    }
+    
 }

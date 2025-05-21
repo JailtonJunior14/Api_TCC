@@ -33,8 +33,10 @@ class PrestadorController extends Controller
                 'nome' => 'required|string|max:255',
                 'email' => 'required|string|unique:prestador,email',
                 'senha' => 'required|string|confirmed',
+                'whatsapp' => 'string|max:18|unique:prestador,whatsapp',
+                'fixo' => 'string|max:18|unique:prestador,fixo',
                 'foto' => 'required|string',
-                'cep' => 'required|integer|max:9',
+                'cep' => 'required|integer',
                 'id_cidade' => 'required|integer|exists:cidade,id',
                 'id_ramo' => 'required|integer|exists:ramo,id'
 
@@ -44,6 +46,8 @@ class PrestadorController extends Controller
                 $prestador->nome = $validacao['nome'];
                 $prestador->email = $validacao['email'];
                 $prestador->senha = Hash::make($validacao['senha']);
+                $prestador->fixo = $validacao['fixo'];
+                $prestador->whatsapp = $validacao['whatsapp'];
                 $prestador->foto = $validacao['foto'];
                 $prestador->cep = $validacao['cep'];
                 $prestador->id_cidade = $validacao['id_cidade'];
@@ -105,6 +109,8 @@ class PrestadorController extends Controller
                 'nome' => 'required|string|max:255',
                 'email' => 'required|string|unique:prestador,email,' . $id,
                 'senha' => 'required|string|confirmed',
+                'whatsapp' => 'string|max:18|unique:prestador,whatsapp',
+                'fixo' => 'string|max:18|unique:prestador,fixo',
                 'foto' => 'required|string',
                 'cep' => 'required|integer|max:9',
                 'id_cidade' => 'required|integer|exists:cidade,id',
@@ -121,6 +127,12 @@ class PrestadorController extends Controller
             }
             if ($request->has('senha')){
                 $prestador->senha = Hash::make($request['senha']);
+            }
+            if($request->has('fixo')){
+                $prestador->fixo = $request['fixo'];
+            }
+            if($request->has('whatsapp')){
+                $prestador->whatsapp = $request['whatsapp'];
             }
             if ($request->has('foto')){
                 $prestador->foto = $request['foto'];

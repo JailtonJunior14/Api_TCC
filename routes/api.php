@@ -5,9 +5,10 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\ContratanteController;
+use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\PaisController;
-use App\Http\Controllers\TelefoneController;
+use App\Http\Controllers\PrestadorController;
 use App\Models\Contratante;
 
 Route::get('/teste', function () {
@@ -30,18 +31,21 @@ Route::delete('/contratante/deletar/{id}', [ContratanteController::class, 'destr
 
 
 //rotas prestador
-
+Route::get('/prestador', [PrestadorController::class, 'index']);
+Route::post('/prestador/cadastro', [PrestadorController::class, 'store']);
+Route::get('/prestador/listar/{id}', [PrestadorController::class, 'show']);
+Route::patch('/prestador/atualizar/{id}', [PrestadorController::class, 'update']);
+Route::delete('/prestador/deletar/{id}', [PrestadorController::class, 'destroy']);
 
 //rotas empresa
-
+Route::get('/empresa', [EmpresaController::class, 'index']);
+Route::post('/empresa/cadastro', [EmpresaController::class, 'store']);
+Route::get('/empresa/listar/{id}', [EmpresaController::class, 'show']);
+Route::patch('/empresa/atualizar/{id}', [EmpresaController::class, 'update']);
+Route::delete('/empresa/deletar/{id}', [EmpresaController::class, 'destroy']);
 //rotas links
 
 //rotas portfolio
-
-//rotas telefone
-
-Route::get('/telefone/listar_todos', [TelefoneController::class, 'index']);
-Route::post('/telefone/cadastro', [TelefoneController::class, 'store']);
 
 
 //rotas País, Estado, Cidade

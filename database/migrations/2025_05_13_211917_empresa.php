@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('nome');
             $table->string('email');
             $table->string('senha');
+            $table->string('whatsapp');
+            $table->string('fixo');
             $table->string('foto');
             $table->string('cnpj', 18)->unique();
             $table->string('cep', 9);

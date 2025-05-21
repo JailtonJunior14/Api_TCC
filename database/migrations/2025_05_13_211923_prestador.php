@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('nome');
             $table->string('email');
             $table->string('senha');
+            $table->string('whatsapp');
+            $table->string('fixo');
             $table->string('foto');
             $table->string('cep', 9);
             $table->foreignId('id_cidade')->constrained('cidade')->onDelete('cascade');

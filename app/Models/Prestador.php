@@ -11,5 +11,5 @@ class Prestador extends Model
 
     protected $table = 'prestador';
     public $timestamps = false;
-    protected $fillable = ['nome', 'email', 'senha', 'foto', 'cep', 'id_cidade', 'id_ramo'];
+    protected $fillable = ['nome', 'email', 'senha','whatsapp','fixo', 'foto', 'cep', 'id_cidade', 'id_ramo'];
 }

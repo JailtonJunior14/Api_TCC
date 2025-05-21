@@ -12,7 +12,9 @@ class CidadeController extends Controller
      */
     public function index()
     {
-        //
+        $cidade = Cidade::all();
+
+        return $cidade;
     }
 
     /**

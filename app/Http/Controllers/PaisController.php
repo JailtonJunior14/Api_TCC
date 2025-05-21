@@ -12,7 +12,9 @@ class PaisController extends Controller
      */
     public function index()
     {
-        //
+        $pais = Pais::all();
+
+        return $pais;
     }
 
     /**

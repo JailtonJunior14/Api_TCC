@@ -78,24 +78,102 @@ class EmpresaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Empresa $empresa)
+    public function show($id)
     {
-        //
+        try {
+            $empresa = Empresa::find($id);
+            if(!$empresa){
+                return response()->json([
+                    'error' => 'Usuario não encontrado'
+                ],404);
+            }
+            return response()->json($empresa);
+        } catch (Exception $e) {
+            Log::error('erro ao pesquisar', ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'error' => 'Erro ao buscar'
+            ],500);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Empresa $empresa)
+    public function update(Request $request, $id)
     {
-        //
+        try {
+            $request->validate([
+                'nome' => 'sometimes|string|max:255',
+                'email' => 'sometimes|string|unique:empresa,email,' .$id,
+                'senha' => 'sometimes|string|confirmed',
+                'whatsapp' => 'string|max:18|unique:empresa,whatsapp,' .$id,
+                'fixo' => 'string|max:18|unique:empresa,fixo,' .$id,
+                'foto' => 'sometimes|string',
+                'cnpj' => 'sometimes|string',
+                'cep' => 'sometimes|string',
+                'id_cidade' => 'sometimes|integer|exists:cidade,id',
+                'id_ramo' => 'sometimes|integer|exists:ramo,id'
+
+            ]);
+
+            $empresa = Empresa::findorfail($id);
+
+            if($request->has('nome')){
+                $empresa->nome = $request['nome'];
+            }
+            if($request->has('email')){
+                $empresa->email = $request['email'];
+            }
+            if($request->has('senha')){
+                $empresa->senha = Hash::make($request['senha']);
+            }
+            if($request->has('whatsapp')){
+                $empresa->whatsapp = $request['whatsapp'];
+            }
+            if($request->has('fixo')){
+                $empresa->fixo = $request['fixo'];
+            }
+            if($request->has('foto')){
+                $empresa->foto = $request['foto'];
+            }
+            if($request->has('cnpj')){
+                $empresa->cnpj= $request['cnpj'];
+            }
+            
+            if($request->has('cep')){
+                $empresa->cep = $request['cep'];
+            }
+
+
+            $empresa->save();
+        } catch (\Exception $e) {
+            Log::error('Erro ao atualizar',  ['error' => $e->getMessage()]);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Empresa $empresa)
+    public function destroy($id)
     {
-        //
+        try {
+            $empresa = Empresa::findorfail($id);
+
+            if($empresa){
+                $empresa->delete();
+                return response()->json([
+                    'Message' => 'conta deletada'
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('erro ao tentar excluir a conta', ['error'=> $e->getMessage()]);
+
+            return response()->json([
+                'message' => 'erro ao deletar'
+            ],500);
+        }
+            
+
     }
 }

@@ -85,7 +85,7 @@ class ContratanteController extends Controller
 
             return response()->json($contratante);
         } catch(\Exception $e) {
-            Log::error('erro ao buscar usuario' , ['error' => $e->getMessage()]);
+            Log::error('erro ao buscar Contratante' , ['error' => $e->getMessage()]);
 
             return response()->json([
                 'error' => 'Error ao buscar Contratante'
@@ -102,10 +102,10 @@ class ContratanteController extends Controller
 
             $request->validate(
                 [
-                    'nome' => 'sometimes|required|string|max:255',
-                    'email' => 'sometimes|required|email|unique:contratante,email,' . $id,
-                    'senha' => 'sometimes|required|string|confirmed',
-                    'id_cidade' => 'sometimes|required|integer|exists:cidade,id',
+                    'nome' => 'sometimes|string|max:255',
+                    'email' => 'sometimes|email|unique:contratante,email,' . $id,
+                    'senha' => 'sometimes|string|confirmed',
+                    'id_cidade' => 'sometimes|integer|exists:cidade,id',
                 ]
             );
 

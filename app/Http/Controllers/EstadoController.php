@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Estado;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class EstadoController extends Controller
 {
@@ -31,7 +34,13 @@ class EstadoController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $estado = Estado::where('id_pais', '=', $id)->get();
+
+            return $estado;
+        } catch (QueryException $e) {
+            Log::error('Erro ao buscar', ['error' => $e -> getMessage()]);
+        }
     }
 
     /**

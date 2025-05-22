@@ -50,6 +50,7 @@ Route::delete('/empresa/deletar/{id}', [EmpresaController::class, 'destroy']);
 
 //rotas País, Estado, Cidade
 
-Route::get('/pais/listar', [PaisController::class, 'index']);
-Route::get('/estado/listar', [EstadoController::class, 'index']);
-Route::get('/cidade/listar', [CidadeController::class, 'index']);
+Route::get('/pais', [PaisController::class, 'index']);
+Route::get('/estado/listar/{id}', [EstadoController::class, 'show']);
+Route::get('/estado', [EstadoController::class, 'index']);
+Route::get('/cidade', [CidadeController::class, 'index']);

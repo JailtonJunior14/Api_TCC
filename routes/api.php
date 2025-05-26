@@ -7,6 +7,7 @@ use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\ContratanteController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PaisController;
 use App\Http\Controllers\PrestadorController;
 use App\Models\Contratante;
@@ -54,3 +55,7 @@ Route::get('/pais', [PaisController::class, 'index']);
 Route::get('/estado/listar/{id}', [EstadoController::class, 'show']);
 Route::get('/estado', [EstadoController::class, 'index']);
 Route::get('/cidade', [CidadeController::class, 'index']);
+
+//rotas login
+
+Route::post('/login', [LoginController::class, 'logar']);

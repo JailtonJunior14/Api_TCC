@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contratante;
+use App\Models\Empresa;
+use App\Models\Prestador;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
@@ -26,29 +29,49 @@ class LoginController extends Controller
     {
         try {
             $request->validate([
-                'email'=> 'required|email',
+                'email'=> 'required',
                 'senha'=> 'required',
                 'tipo' => 'required'
             ]);
     
             if($request['tipo'] == 'contratante'){
                 $contratante = Contratante::where('email', $request->input('email'))->first(); //first() retorna apenas o primeiro resultado do banco
-                if(!$contratante){
+                if(!$contratante || !Hash::check($request->input('senha'), $contratante->senha)){
                     return response()->json([
-                        'message' => 'nao existe'
-                    ]);
-                }
-                if(!password_verify($request->input('senha'), $contratante->senha)){
-                    return response()->json([
-                        'message' => 'nao existe'
+                        'message' => 'Email ou senha invalidos'
                     ]);
                 }
 
                 return response()->json([
-                    'message' => 'deu certo'
+                    'message' => 'ta logado'
                 ]);
 
             }
+            if($request['tipo'] == 'prestador'){
+                $prestador = Prestador::where('email', $request->input('email'))->first();
+                if(!$prestador || Hash::check($request->input('senha'), $prestador->senha)){
+                    return response()->json([
+                        'message' => 'Email ou senha invalidos'
+                    ]);
+                }
+
+                return response()->json([
+                    'message' => 'ta logado'
+                ]);
+            }
+            if($request['tipo'] == 'empresa'){
+                $empresa = Empresa::where('email', $request->input('email'))->first();
+                if(!$empresa || Hash::check($request->input('senha'), $empresa->senha)){
+                    return response()->json([
+                        'message' => 'Email ou senha invalidos'
+                    ]);
+                }
+                return response()->json([
+                    'message' => 'ta logado'
+                ]);
+
+            }
+            
         }catch(ValidationException $e){
             Log::error('ta errado algo', ['error' => $e->getMessage()]);
         }

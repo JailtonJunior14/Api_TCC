@@ -2,23 +2,19 @@
 
 namespace Database\Seeders;
 
-
+use App\Models\Pais;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class PaisSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $this->call([
-            PaisSeeder::class,
-            EstadoSeeder::class,
-            CidadeSeeder::class,
-            ContratanteSeeder::class
+        Pais::create([
+            'nome' => 'Brasil'
         ]);
-
     }
 }

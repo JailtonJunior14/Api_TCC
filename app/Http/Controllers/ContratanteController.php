@@ -31,20 +31,24 @@ class ContratanteController extends Controller
     public function store(Request $request)
     {
         try {
-            $validacao = $request->validate(
+            $request->validate(
                 [
                     'nome' => 'required|string|max:255',
                     'email' => 'required|email|unique:contratante,email',
                     'senha' => 'required|string|confirmed',
                     'id_cidade' => 'required|integer|exists:cidade,id',
+                    'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
                 ]
             );
 
+            $photo_path = $request->file('foto')->store('fotos','public');
+
             $contratante = new Contratante();
-            $contratante->nome = $validacao['nome'];
-            $contratante->email = $validacao['email'];
-            $contratante->senha = Hash::make($validacao['senha']);
-            $contratante->id_cidade = $validacao['id_cidade'];
+            $contratante->nome = $request['nome'];
+            $contratante->email = $request['email'];
+            $contratante->senha = Hash::make($request['senha']);
+            $contratante->id_cidade = $request['id_cidade'];
+            $contratante->foto = $photo_path;
 
             $contratante->save();
 

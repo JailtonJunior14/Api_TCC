@@ -12,11 +12,7 @@ class Contratante extends Model
 
     public $timestamps = false;
 
-    public $fillable = ['nome', 'email', 'senha', 'id_cidade'];
+    public $fillable = ['nome', 'email', 'senha', 'id_cidade', 'foto'];
 
-    public function telefones(){
-
-        return $this->morphMany(Telefone::class, 'telefoneable');
-    }
 }
 

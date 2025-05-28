@@ -15,8 +15,8 @@ return new class extends Migration
         {
             $table->id();
             $table->string('link');
-            $table->unsignedBigInteger('linkable_id');
-            $table->string('linkable_type');
+            $table->string('prestador_id')->nullable();
+            $table->string('empresa_id')->nullable();
 
         }
     );

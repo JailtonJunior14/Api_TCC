@@ -15,8 +15,8 @@ class ContratanteSeeder extends Seeder
     public function run(): void
     {
         Contratante::create([
-            'nome' => '',
-            'email' => '',
+            'nome' => 'teste',
+            'email' => 'teste@gmail.com',
             'senha' => Hash::make(1234),
             'id_cidade' => 1,
         ]);

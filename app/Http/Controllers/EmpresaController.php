@@ -40,6 +40,7 @@ class EmpresaController extends Controller
                 'id_ramo' => 'required|integer|exists:ramo,id'
             ]);
 
+            $imagem_path = $request->file('image')->store('fotos', 'public');
             $empresa = new Empresa();
 
             $empresa->nome = $validacao['nome'];
@@ -52,6 +53,7 @@ class EmpresaController extends Controller
             $empresa->cep = $validacao['cep'];
             $empresa->id_cidade = $validacao['id_cidade'];
             $empresa->id_ramo = $validacao['id_ramo'];
+            $empresa->foto = $imagem_path;
 
             $empresa->save();
 

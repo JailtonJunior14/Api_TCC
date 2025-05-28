@@ -7,9 +7,11 @@ use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\ContratanteController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\LinksController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PaisController;
 use App\Http\Controllers\PrestadorController;
+use App\Http\Controllers\RamoController;
 use App\Models\Contratante;
 
 Route::get('/teste', function () {
@@ -29,7 +31,8 @@ Route::delete('/contratante/deletar/{id}', [ContratanteController::class, 'destr
 
 
 //rotas ramo
-
+Route::get('/ramo', [RamoController::class, 'index']);
+Route::get('/ramo/{modalidade}', [RamoController::class, 'show']);
 
 //rotas prestador
 Route::get('/prestador', [PrestadorController::class, 'index']);
@@ -46,6 +49,8 @@ Route::patch('/empresa/atualizar/{id}', [EmpresaController::class, 'update']);
 Route::delete('/empresa/deletar/{id}', [EmpresaController::class, 'destroy']);
 //rotas links
 
+Route::get('/link', [LinksController::class, 'index']);
+Route::post('/link/cadastro', [LinksController::class, 'store']);
 //rotas portfolio
 
 

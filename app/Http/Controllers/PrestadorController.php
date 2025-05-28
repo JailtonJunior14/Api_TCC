@@ -38,9 +38,10 @@ class PrestadorController extends Controller
                 'foto' => 'required|string',
                 'cep' => 'required|integer',
                 'id_cidade' => 'required|integer|exists:cidade,id',
-                'id_ramo' => 'required|integer|exists:ramo,id'
-
+                'id_ramo' => 'required|integer|exists:ramo,id',
+                'foto' => 'required|image|mimes:jpg,png,jpeg'
                 ]);
+                $imagem_path = $request->file('foto')->store('fotos', 'public');
 
                 $prestador = new Prestador();
                 $prestador->nome = $validacao['nome'];
@@ -48,7 +49,7 @@ class PrestadorController extends Controller
                 $prestador->senha = Hash::make($validacao['senha']);
                 $prestador->fixo = $validacao['fixo'];
                 $prestador->whatsapp = $validacao['whatsapp'];
-                $prestador->foto = $validacao['foto'];
+                $prestador->foto = $imagem_path;
                 $prestador->cep = $validacao['cep'];
                 $prestador->id_cidade = $validacao['id_cidade'];
                 $prestador->id_ramo = $validacao['id_ramo'];

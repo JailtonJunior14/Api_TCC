@@ -18,7 +18,9 @@ class DatabaseSeeder extends Seeder
             EstadoSeeder::class,
             CidadeSeeder::class,
             ContratanteSeeder::class,
-            RamoSeeder::class
+            RamoSeeder::class,
+            PrestadorSeeder::class,
+            EmpresaSeeder::class
         ]);
 
     }

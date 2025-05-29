@@ -49,7 +49,7 @@ class LoginController extends Controller
             }
             if($request['tipo'] == 'prestador'){
                 $prestador = Prestador::where('email', $request->input('email'))->first();
-                if(!$prestador || Hash::check($request->input('senha'), $prestador->senha)){
+                if(!$prestador || !Hash::check($request->input('senha'), $prestador->senha)){
                     return response()->json([
                         'message' => 'Email ou senha invalidos'
                     ]);
@@ -61,7 +61,7 @@ class LoginController extends Controller
             }
             if($request['tipo'] == 'empresa'){
                 $empresa = Empresa::where('email', $request->input('email'))->first();
-                if(!$empresa || Hash::check($request->input('senha'), $empresa->senha)){
+                if(!$empresa || !Hash::check($request->input('senha'), $empresa->senha)){
                     return response()->json([
                         'message' => 'Email ou senha invalidos'
                     ]);

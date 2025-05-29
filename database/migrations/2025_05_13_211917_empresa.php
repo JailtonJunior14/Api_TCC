@@ -15,13 +15,13 @@ return new class extends Migration
         {
             $table->id();
             $table->string('nome');
-            $table->string('email');
+            $table->string('email')->unique();
             $table->string('senha');
-            $table->string('whatsapp');
-            $table->string('fixo');
-            $table->string('foto');
-            $table->string('cnpj', 18)->unique();
-            $table->string('cep', 9);
+            $table->string('whatsapp')->nullable();
+            $table->string('fixo')->nullable();
+            $table->string('foto')->nullable();
+            $table->string('cnpj', 18)->unique()->nullable();
+            $table->string('cep', 9)->nullable();
             $table->foreignId('id_cidade')->constrained('cidade')->onDelete('cascade');
             $table->foreignId('id_ramo')->constrained('ramo')->onDelete('cascade');
         });

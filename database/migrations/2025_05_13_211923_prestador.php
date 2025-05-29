@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('nome');
             $table->string('email');
             $table->string('senha');
-            $table->string('whatsapp');
-            $table->string('fixo');
-            $table->string('foto');
-            $table->string('cep', 9);
+            $table->string('whatsapp')->nullable();
+            $table->string('fixo')->nullable();
+            $table->string('foto')->nullable();
+            $table->string('cep', 9)->nullable();
             $table->foreignId('id_cidade')->constrained('cidade')->onDelete('cascade');
             $table->foreignId('id_ramo')->constrained('ramo')->onDelete('cascade');
         });

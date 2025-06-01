@@ -33,14 +33,14 @@ class EmpresaController extends Controller
                 'senha' => 'required|string|confirmed',
                 'whatsapp' => 'string|max:18|unique:empresa,whatsapp',
                 'fixo' => 'string|max:18|unique:empresa,fixo',
-                'foto' => 'required|string',
+                'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
                 'cnpj' => 'required|string',
                 'cep' => 'required|string',
                 'id_cidade' => 'required|integer|exists:cidade,id',
                 'id_ramo' => 'required|integer|exists:ramo,id'
             ]);
 
-            $imagem_path = $request->file('image')->store('fotos', 'public');
+            $imagem_path = $request->file('foto')->store('fotos', 'public');
             $empresa = new Empresa();
 
             $empresa->nome = $validacao['nome'];

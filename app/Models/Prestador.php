@@ -12,4 +12,13 @@ class Prestador extends Model
     protected $table = 'prestador';
     public $timestamps = false;
     protected $fillable = ['nome', 'email', 'senha','whatsapp','fixo', 'foto', 'cep', 'id_cidade', 'id_ramo'];
+
+
+    function comentarioRecebido(){
+        return $this->hasMany(Comentario::class, 'id_prestator_destino');
+    }
+
+    function portfolio(){
+        return $this->hasMany(Portfolio::class, 'id_prestador');
+    }
 }

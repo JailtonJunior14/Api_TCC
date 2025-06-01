@@ -35,7 +35,7 @@ class PrestadorController extends Controller
                 'senha' => 'required|string|confirmed',
                 'whatsapp' => 'string|max:18|unique:prestador,whatsapp',
                 'fixo' => 'string|max:18|unique:prestador,fixo',
-                'foto' => 'required|string',
+                'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
                 'cep' => 'required|integer',
                 'id_cidade' => 'required|integer|exists:cidade,id',
                 'id_ramo' => 'required|integer|exists:ramo,id',

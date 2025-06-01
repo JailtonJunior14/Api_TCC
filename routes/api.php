@@ -4,6 +4,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CidadeController;
+use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\ContratanteController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\EstadoController;
@@ -52,6 +53,12 @@ Route::delete('/empresa/deletar/{id}', [EmpresaController::class, 'destroy']);
 Route::get('/link', [LinksController::class, 'index']);
 Route::post('/link/cadastro', [LinksController::class, 'store']);
 //rotas portfolio
+
+//rotas comentario
+Route::get('/comentarios', [ComentarioController::class, 'index']);
+Route::post('/comentar', [ComentarioController::class, 'store']);
+Route::delete('/comentario/deletar/{id}', [ComentarioController::class, 'destroy']);
+
 
 
 //rotas País, Estado, Cidade

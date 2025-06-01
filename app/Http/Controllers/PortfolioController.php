@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Portfolio;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class PortfolioController extends Controller
 {
@@ -20,7 +24,33 @@ class PortfolioController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $request->validate([
+                'imagem' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+                'descricao' => 'required|string',
+                'id_prestador' => 'sometimes|integer|exists:prestador,id',
+                'id_empresa' => 'sometimes|integer|exists:empresa,id'
+            ]);
+
+
+            $imagem_path = $request->file('imagem')->store('fotos/portfolio', 'public');
+            $portfolio = new Portfolio();
+
+            $portfolio->descricao = $request['descricao'];
+            $portfolio->imagem = $imagem_path;
+            $portfolio->id_prestador = $request['id_prestador'];
+            $portfolio->id_empresa = $request['id_empresa'];
+            $portfolio->save();
+
+
+
+        } catch (ValidationException $e) {
+            Log::error('erro de validação', ['error' => $e->getMessage()]);
+        } catch (QueryException $e){
+            Log::error('erro de banco', ['error' => $e->getMessage()]);
+        } catch(Exception $e){
+            Log::error('erro', ['error' => $e->getMessage()]);
+        }
     }
 
     /**

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->id();
             $table->string('descricao');
             $table->string('imagem');
-            $table->unsignedBigInteger('portfolioable_id');
-            $table->string('portfolioable_type');
+            $table->foreignId('id_prestador');
+            $table->foreign('id_empresa');
 
         }); 
     }

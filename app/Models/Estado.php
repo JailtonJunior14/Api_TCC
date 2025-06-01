@@ -11,7 +11,7 @@ class Estado extends Model
     public $timestamps = false;
 
     protected $table = 'estado';
-    protected $filltable = ['nome', 'sigla'];
+    protected $filltable = ['nome', 'sigla', 'id_pais'];
 
     public function cidades()
     {

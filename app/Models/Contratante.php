@@ -14,5 +14,9 @@ class Contratante extends Model
 
     public $fillable = ['nome', 'email', 'senha', 'id_cidade', 'foto'];
 
+    function comentarioFeito(){
+        return $this->hasMany(Comentario::class, 'id_contratante_autor');
+    }
+
 }
 

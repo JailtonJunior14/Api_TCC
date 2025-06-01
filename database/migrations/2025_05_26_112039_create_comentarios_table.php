@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('comentarios', function (Blueprint $table) {
             $table->id();
             $table->string('descricao');
-            $table->foreignId('id_');
+            $table->foreignId('id_prestador_destino')->nullable();
+            $table->foreignId('id_empresa_autor')->nullable();
+            $table->foreignId('id_contratante_autor')->nullable();
+            $table->foreignId('id_empresa_destino')->nullable();
         });
     }
 

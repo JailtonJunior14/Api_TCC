@@ -41,14 +41,14 @@ class ContratanteController extends Controller
                 ]
             );
 
-            $photo_path = $request->file('foto')->store('fotos','public');
+            $foto_path = $request->file('foto')->store('fotos','public');
 
             $contratante = new Contratante();
             $contratante->nome = $request['nome'];
             $contratante->email = $request['email'];
             $contratante->senha = Hash::make($request['senha']);
             $contratante->id_cidade = $request['id_cidade'];
-            $contratante->foto = $photo_path;
+            $contratante->foto = $foto_path;
 
             $contratante->save();
 
@@ -110,6 +110,7 @@ class ContratanteController extends Controller
                     'email' => 'sometimes|email|unique:contratante,email,' . $id,
                     'senha' => 'sometimes|string|confirmed',
                     'id_cidade' => 'sometimes|integer|exists:cidade,id',
+                    'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048'
                 ]
             );
 
@@ -126,6 +127,10 @@ class ContratanteController extends Controller
             if($request->has('nome'))
             {
                     $contratante->senha = hash::make($request['senha']);   
+            }
+            if($request->hasFile('foto')){
+                $foto_path = $request->file('foto')->store('fotos', 'public');
+                $contratante->foto = $foto_path;
             }
 
             $contratante->save();

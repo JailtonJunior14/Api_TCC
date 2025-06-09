@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Prestador extends Model
+class Prestador extends Model implements JWTSubject
 {
     use HasFactory;
 
@@ -20,5 +21,16 @@ class Prestador extends Model
 
     function portfolio(){
         return $this->hasMany(Portfolio::class, 'id_prestador');
+    }
+
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }

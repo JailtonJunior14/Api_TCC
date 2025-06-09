@@ -14,8 +14,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
+        'guard' => 'api',
+        'passwords' => '',
     ],
 
     /*
@@ -40,6 +40,18 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'prestador' => [
+            'driver' => 'jwt',
+            'provider' => 'prestador'
+        ],
+        'contratante' => [
+            'driver' => 'jwt',
+            'provider' => 'contratante'
+        ],
+        'empresa' => [
+            'driver' => 'jwt',
+            'provider' => 'empresa'
+        ],
     ],
 
     /*
@@ -60,15 +72,20 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'prestador' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => App\Models\Prestador::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'contratante' => [
+             'driver' => 'eloquent',
+             'model' => App\Models\Contratante::class,
+        ],
+
+        'empresa' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Empresa::class
+        ]
     ],
 
     /*

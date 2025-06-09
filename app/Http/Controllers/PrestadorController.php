@@ -35,11 +35,10 @@ class PrestadorController extends Controller
                 'senha' => 'required|string|confirmed',
                 'whatsapp' => 'string|max:18|unique:prestador,whatsapp',
                 'fixo' => 'string|max:18|unique:prestador,fixo',
-                'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+                'foto' => 'required|image|mimes:png,jpg,jpeg|max:2048',
                 'cep' => 'required|integer',
                 'id_cidade' => 'required|integer|exists:cidade,id',
                 'id_ramo' => 'required|integer|exists:ramo,id',
-                'foto' => 'required|image|mimes:jpg,png,jpeg'
                 ]);
                 $imagem_path = $request->file('foto')->store('fotos', 'public');
 
@@ -56,10 +55,22 @@ class PrestadorController extends Controller
 
                 $prestador->save();
 
+                $token = auth('prestador')->attempt([
+                    'email' => $validacao['email'],
+                    'senha' => $validacao['senha'],
+                ]);
+
+                $logado = auth('prestador')->user();
+
+                return response()->json([
+                    'token' => $token,
+                    'prestador' => $logado
+                ]);
+
                 return response()->json(
                     [
                         'message' => 'usuario cadastrado com sucesso',
-                        'data' => $prestador
+                       // 'data' => $prestador
                     ], 201
                 );
         }catch(QueryException $e){

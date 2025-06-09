@@ -5,14 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Prestador extends Model implements JWTSubject
+class Prestador extends Authenticatable implements JWTSubject
 {
     use HasFactory;
 
     protected $table = 'prestador';
     public $timestamps = false;
-    protected $fillable = ['nome', 'email', 'senha','whatsapp','fixo', 'foto', 'cep', 'id_cidade', 'id_ramo'];
+    protected $fillable = ['nome', 'email', 'password','whatsapp','fixo', 'foto', 'cep', 'id_cidade', 'id_ramo'];
 
 
     function comentarioRecebido(){

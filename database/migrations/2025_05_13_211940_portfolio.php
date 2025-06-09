@@ -16,8 +16,8 @@ return new class extends Migration
             $table->id();
             $table->string('descricao');
             $table->string('imagem');
-            $table->foreignId('id_prestador');
-            $table->foreign('id_empresa');
+            $table->foreignId('id_prestador')->constrained('prestador')->onDelete('cascade');
+            $table->foreignId('id_empresa')->constrained('empresa')->onDelete('cascade');
 
         }); 
     }

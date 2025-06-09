@@ -25,53 +25,9 @@ class LoginController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function logar(Request $request)
+    public function login(Request $request)
     {
         try {
-            $request->validate([
-                'email'=> 'required',
-                'senha'=> 'required',
-                'tipo' => 'required'
-            ]);
-    
-            if($request['tipo'] == 'contratante'){
-                $contratante = Contratante::where('email', $request->input('email'))->first(); //first() retorna apenas o primeiro resultado do banco
-                if(!$contratante || !Hash::check($request->input('senha'), $contratante->senha)){
-                    return response()->json([
-                        'message' => 'Email ou senha invalidos'
-                    ]);
-                }
-
-                return response()->json([
-                    'message' => 'ta logado'
-                ]);
-
-            }
-            if($request['tipo'] == 'prestador'){
-                $prestador = Prestador::where('email', $request->input('email'))->first();
-                if(!$prestador || !Hash::check($request->input('senha'), $prestador->senha)){
-                    return response()->json([
-                        'message' => 'Email ou senha invalidos'
-                    ]);
-                }
-
-                return response()->json([
-                    'message' => 'ta logado'
-                ]);
-            }
-            if($request['tipo'] == 'empresa'){
-                $empresa = Empresa::where('email', $request->input('email'))->first();
-                if(!$empresa || !Hash::check($request->input('senha'), $empresa->senha)){
-                    return response()->json([
-                        'message' => 'Email ou senha invalidos'
-                    ]);
-                }
-                return response()->json([
-                    'message' => 'ta logado'
-                ]);
-
-            }
-            
         }catch(ValidationException $e){
             Log::error('ta errado algo', ['error' => $e->getMessage()]);
         }

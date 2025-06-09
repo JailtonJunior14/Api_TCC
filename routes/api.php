@@ -70,4 +70,10 @@ Route::get('/cidade', [CidadeController::class, 'index']);
 
 //rotas login
 
-Route::post('/login', [LoginController::class, 'logar']);
+Route::post('/login', [LoginController::class, 'login']);
+
+Route::middleware(['auth:prestador'])->get('/perfil', function(){
+    return response()->json([
+        'message' => 'to logado'
+    ]);
+});

@@ -17,7 +17,7 @@ class PrestadorSeeder extends Seeder
         Prestador::create([
             'nome' => 'Prestador001',
             'email' => 'prestador001@gmail.com',
-            'senha' => Hash::make(3698),
+            'password' => Hash::make(3698),
             'id_cidade' => 1,
             'id_ramo' => 1
         ]);

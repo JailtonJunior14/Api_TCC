@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class PrestadorController extends Controller
 {
@@ -32,7 +33,7 @@ class PrestadorController extends Controller
                 $validacao = $request->validate([
                 'nome' => 'required|string|max:255',
                 'email' => 'required|string|unique:prestador,email',
-                'senha' => 'required|string|confirmed',
+                'password' => 'required|string|confirmed',
                 'whatsapp' => 'string|max:18|unique:prestador,whatsapp',
                 'fixo' => 'string|max:18|unique:prestador,fixo',
                 'foto' => 'required|image|mimes:png,jpg,jpeg|max:2048',
@@ -45,7 +46,7 @@ class PrestadorController extends Controller
                 $prestador = new Prestador();
                 $prestador->nome = $validacao['nome'];
                 $prestador->email = $validacao['email'];
-                $prestador->senha = Hash::make($validacao['senha']);
+                $prestador->password = Hash::make($validacao['password']);
                 $prestador->fixo = $validacao['fixo'];
                 $prestador->whatsapp = $validacao['whatsapp'];
                 $prestador->foto = $imagem_path;
@@ -55,10 +56,24 @@ class PrestadorController extends Controller
 
                 $prestador->save();
 
+                // dd(
+                //     $validacao['senha'], 
+                //     $prestador->senha, 
+                //     Hash::check($validacao['senha'], $prestador->senha)
+                //   );
+                  
                 $token = auth('prestador')->attempt([
                     'email' => $validacao['email'],
-                    'senha' => $validacao['senha'],
+                    'password' => $validacao['password'],
                 ]);
+
+
+                //dd($token);
+                if(!$token){
+                    return response()->json([
+                        'message' => 'token nao ta sendo gerado'
+                    ]);
+                }
 
                 $logado = auth('prestador')->user();
 
@@ -67,12 +82,12 @@ class PrestadorController extends Controller
                     'prestador' => $logado
                 ]);
 
-                return response()->json(
-                    [
-                        'message' => 'usuario cadastrado com sucesso',
-                       // 'data' => $prestador
-                    ], 201
-                );
+                // return response()->json(
+                //     [
+                //         'message' => 'usuario cadastrado com sucesso',
+                //        // 'data' => $prestador
+                //     ], 201
+                // );
         }catch(QueryException $e){
             Log::error('Erro ao salvar no banco', ['error' => $e->getMessage()]);
             

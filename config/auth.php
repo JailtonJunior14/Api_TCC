@@ -74,7 +74,7 @@ return [
     'providers' => [
         'prestador' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Prestador::class,
+            'model' => env('AUTH_MODEL', App\Models\Prestador::class)
         ],
 
         'contratante' => [

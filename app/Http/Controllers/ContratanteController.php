@@ -31,11 +31,11 @@ class ContratanteController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate(
+            $validacao = $request->validate(
                 [
                     'nome' => 'required|string|max:255',
                     'email' => 'required|email|unique:contratante,email',
-                    'senha' => 'required|string|confirmed',
+                    'password' => 'required|string|confirmed',
                     'id_cidade' => 'required|integer|exists:cidade,id',
                     'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
                 ]
@@ -44,18 +44,31 @@ class ContratanteController extends Controller
             $foto_path = $request->file('foto')->store('fotos','public');
 
             $contratante = new Contratante();
-            $contratante->nome = $request['nome'];
-            $contratante->email = $request['email'];
-            $contratante->senha = Hash::make($request['senha']);
-            $contratante->id_cidade = $request['id_cidade'];
+            $contratante->nome = $validacao['nome'];
+            $contratante->email = $validacao['email'];
+            $contratante->password = Hash::make($validacao['password']);
+            $contratante->id_cidade = $validacao['id_cidade'];
             $contratante->foto = $foto_path;
 
             $contratante->save();
 
+            $token = auth('contratante')->attempt([
+                'email' => $validacao['email'],
+                'password' => $validacao['password']
+            ]);
+
+            if(!$token){
+                return response()->json([
+                    'error' => 'token não ta sendo gerado'
+                ]);
+            }
+
+            $logado = auth('contratante')->user();
+
             return response()->json(
             [
-                'message' => 'usuario cadastrado com sucesso',
-                'data' => $contratante
+                'token' => $token,
+                'contratante' => $logado
             ], 201
             );
         } catch (QueryException $e) {

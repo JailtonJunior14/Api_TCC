@@ -30,7 +30,7 @@ class EmpresaController extends Controller
             $validacao = $request->validate([
                 'nome' => 'required|string|max:255',
                 'email' => 'required|string|unique:empresa,email',
-                'senha' => 'required|string|confirmed',
+                'password' => 'required|string|confirmed',
                 'whatsapp' => 'string|max:18|unique:empresa,whatsapp',
                 'fixo' => 'string|max:18|unique:empresa,fixo',
                 'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
@@ -45,7 +45,7 @@ class EmpresaController extends Controller
 
             $empresa->nome = $validacao['nome'];
             $empresa->email = $validacao['email'];
-            $empresa->senha = Hash::make($validacao['senha']);
+            $empresa->password = Hash::make($validacao['password']);
             $empresa->whatsapp = $validacao['whatsapp'];
             $empresa->fixo = $validacao['fixo'];
             $empresa->foto = $validacao['foto'];
@@ -57,10 +57,24 @@ class EmpresaController extends Controller
 
             $empresa->save();
 
+
+            $token = auth('empresa')->attempt([
+                'email' => $validacao['email'],
+                'password' => $validacao['password']
+            ]);
+
+            $logado = auth('empresa')->user();
+
+
+
             return response()->json([
-                'message' => 'empresa cadastrada com sucesso',
-                'data' => $empresa
+                'token' => $token,
+                'empresa' => $logado
             ],201);
+
+
+
+
         } catch (QueryException $e) {
             Log::error('Erro ao cadastrar no banco', ['error', $e->getMessage()]);
 

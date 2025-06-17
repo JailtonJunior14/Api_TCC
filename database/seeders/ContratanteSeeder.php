@@ -17,7 +17,7 @@ class ContratanteSeeder extends Seeder
         Contratante::create([
             'nome' => 'teste',
             'email' => 'teste@gmail.com',
-            'senha' => Hash::make(1234),
+            'password' => Hash::make(1234),
             'id_cidade' => 1,
         ]);
     }

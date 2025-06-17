@@ -17,7 +17,7 @@ class EmpresaSeeder extends Seeder
         Empresa::create([
             'nome' => 'ADOBE001',
             'email' => 'ADOBE001@gmail.com',
-            'senha' => Hash::make(102030),
+            'password' => Hash::make(102030),
             'id_cidade' => 1,
             'id_ramo' => 2
         ]);

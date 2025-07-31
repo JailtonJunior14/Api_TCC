@@ -31,7 +31,7 @@ class ContratanteController extends Controller
     public function store(Request $request)
     {
         try {
-            $validacao = $request->validate(
+            $request->validate(
                 [
                     'nome' => 'required|string|max:255',
                     'email' => 'required|email|unique:contratante,email',
@@ -41,20 +41,23 @@ class ContratanteController extends Controller
                 ]
             );
 
-            $foto_path = $request->file('foto')->store('fotos','public');
+            
+            if ($request->hasF) {
+                $foto_path = $request->file('foto')->store('fotos','public');
+            }
 
             $contratante = new Contratante();
-            $contratante->nome = $validacao['nome'];
-            $contratante->email = $validacao['email'];
-            $contratante->password = Hash::make($validacao['password']);
-            $contratante->id_cidade = $validacao['id_cidade'];
+            $contratante->nome = $request['nome'];
+            $contratante->email = $request['email'];
+            $contratante->password = Hash::make($request['password']);
+            $contratante->id_cidade = $request['id_cidade'];
             $contratante->foto = $foto_path;
 
             $contratante->save();
 
             $token = auth('contratante')->attempt([
-                'email' => $validacao['email'],
-                'password' => $validacao['password']
+                'email' => $request['email'],
+                'password' => $request['password']
             ]);
 
             if(!$token){

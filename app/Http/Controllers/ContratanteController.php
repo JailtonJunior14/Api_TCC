@@ -40,18 +40,14 @@ class ContratanteController extends Controller
                     'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
                 ]
             );
-
-            
-            if ($request->hasF) {
-                $foto_path = $request->file('foto')->store('fotos','public');
-            }
+            $imagem_path = $request->file('foto')->store('fotos', 'public');
 
             $contratante = new Contratante();
             $contratante->nome = $request['nome'];
             $contratante->email = $request['email'];
             $contratante->password = Hash::make($request['password']);
             $contratante->id_cidade = $request['id_cidade'];
-            $contratante->foto = $foto_path;
+            $contratante->foto = $imagem_path;
 
             $contratante->save();
 

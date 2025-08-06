@@ -15,18 +15,7 @@ use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function login(Request $request)
+    public function loginPrestador(Request $request)
     {
         try {
             $validacao = Validator::make($request->all(),[
@@ -65,10 +54,89 @@ class LoginController extends Controller
             Log::error('deu errado', ['error' => $e->getMessage()]);
         }
     }
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function loginContratante(Request $request)
+    {
+        try {
+            $validacao = Validator::make($request->all(),[
+                'email' => 'required',
+                'password' => 'required'
+            ]);
+    
+            if(!$validacao->fails()){
+                
+                $token = auth('contratante')->attempt([
+                'email' => $request->email,
+                'password' => $request->password,
+                ]);
+                if(!$token){
+                    return response()->json([
+                        'message' => 'tu não existe'
+                    ],401);
+                }
+    
+                $user = auth('contratante')->user();
+                return response()->json([
+                    'token' => $token,
+                    'usuario' => $user
+                ]);
+            } else {
+                return Log::error('deu errado', ['error' => $validacao->errors()->first()]);
+            }
+    
+        }catch(ValidationException $e){
+            Log::error('ta errado algo', ['error' => $e->getMessage()]);
+        }
+        catch(QueryException $e){
+            Log::error('deu errado bd', ['error' => $e->getMessage()]);
+        } 
+        catch (Exception $e) {
+            Log::error('deu errado', ['error' => $e->getMessage()]);
+        }
+    }
+
+    public function loginEmpresa(Request $request)
+    {
+        try {
+            $validacao = Validator::make($request->all(),[
+                'email' => 'required',
+                'password' => 'required'
+            ]);
+    
+            if(!$validacao->fails()){
+                
+                $token = auth('empresa')->attempt([
+                'email' => $request->email,
+                'password' => $request->password,
+                ]);
+                if(!$token){
+                    return response()->json([
+                        'message' => 'tu não existe'
+                    ],401);
+                }
+    
+                $user = auth('empresa')->user();
+                return response()->json([
+                    'token' => $token,
+                    'usuario' => $user
+                ]);
+            } else {
+                return Log::error('deu errado', ['error' => $validacao->errors()->first()]);
+            }
+    
+        }catch(ValidationException $e){
+            Log::error('ta errado algo', ['error' => $e->getMessage()]);
+        }
+        catch(QueryException $e){
+            Log::error('deu errado bd', ['error' => $e->getMessage()]);
+        } 
+        catch (Exception $e) {
+            Log::error('deu errado', ['error' => $e->getMessage()]);
+        }
+    }
+
+
+
+    public function Logout(string $id)
     {
         //
     }

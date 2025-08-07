@@ -15,7 +15,7 @@ return new class extends Migration
         {
             $table->id();
             $table->string('nome');
-            $table->string('sigla', 2);
+            $table->string('sigla', 10);
             $table->foreignId('id_pais')->constrained('pais')->onDelete('cascade');
         });
     }

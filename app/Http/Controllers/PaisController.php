@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pais;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class PaisController extends Controller
 {
@@ -12,9 +13,12 @@ class PaisController extends Controller
      */
     public function index()
     {
-        $pais = Pais::all();
+        // $pais = Pais::all();
 
-        return $pais;
+        // return $pais;
+
+        $senha = Hash::make('cabopartrançadoblindado');
+        dd($senha);
     }
 
     /**

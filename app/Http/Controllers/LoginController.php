@@ -12,126 +12,77 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function loginPrestador(Request $request)
+    public function login(Request $request)
     {
-        try {
-            $validacao = Validator::make($request->all(),[
-                'email' => 'required',
-                'password' => 'required'
-            ]);
+        // try {
+        //     $validacao = Validator::make($request->all(),[
+        //         'email' => 'required',
+        //         'password' => 'required'
+        //     ]);
     
-            if(!$validacao->fails()){
+        //     if(!$validacao->fails()){
                 
-                $token = auth('prestador')->attempt([
-                'email' => $request->email,
-                'password' => $request->password,
-                ]);
-                if(!$token){
-                    return response()->json([
-                        'message' => 'tu não existe'
-                    ],401);
-                }
+        //         $token = auth('prestador')->attempt([
+        //         'email' => $request->email,
+        //         'password' => $request->password,
+        //         ]);
+        //         if(!$token){
+        //             return response()->json([
+        //                 'message' => 'tu não existe'
+        //             ],401);
+        //         }
     
-                $user = auth('prestador')->user();
-                return response()->json([
-                    'token' => $token,
-                    'usuario' => $user
-                ]);
-            } else {
-                return Log::error('deu errado', ['error' => $validacao->errors()->first()]);
-            }
+        //         $user = auth('prestador')->user();
+        //         return response()->json([
+        //             'token' => $token,
+        //             'usuario' => $user
+        //         ]);
+        //     } else {
+        //         return Log::error('deu errado', ['error' => $validacao->errors()->first()]);
+        //     }
     
-        }catch(ValidationException $e){
-            Log::error('ta errado algo', ['error' => $e->getMessage()]);
-        }
-        catch(QueryException $e){
-            Log::error('deu errado bd', ['error' => $e->getMessage()]);
-        } 
-        catch (Exception $e) {
-            Log::error('deu errado', ['error' => $e->getMessage()]);
-        }
-    }
-    public function loginContratante(Request $request)
-    {
+        // }catch(ValidationException $e){
+        //     Log::error('ta errado algo', ['error' => $e->getMessage()]);
+        // }
+        // catch(QueryException $e){
+        //     Log::error('deu errado bd', ['error' => $e->getMessage()]);
+        // } 
+        // catch (Exception $e) {
+        //     Log::error('deu errado', ['error' => $e->getMessage()]);
+        // }
         try {
-            $validacao = Validator::make($request->all(),[
-                'email' => 'required',
-                'password' => 'required'
-            ]);
-    
-            if(!$validacao->fails()){
-                
-                $token = auth('contratante')->attempt([
-                'email' => $request->email,
-                'password' => $request->password,
-                ]);
-                if(!$token){
-                    return response()->json([
-                        'message' => 'tu não existe'
-                    ],401);
-                }
-    
-                $user = auth('contratante')->user();
-                return response()->json([
-                    'token' => $token,
-                    'usuario' => $user
-                ]);
-            } else {
-                return Log::error('deu errado', ['error' => $validacao->errors()->first()]);
-            }
-    
-        }catch(ValidationException $e){
-            Log::error('ta errado algo', ['error' => $e->getMessage()]);
-        }
-        catch(QueryException $e){
-            Log::error('deu errado bd', ['error' => $e->getMessage()]);
-        } 
-        catch (Exception $e) {
-            Log::error('deu errado', ['error' => $e->getMessage()]);
-        }
-    }
+            $credentials = $request->only('email', 'password');
 
-    public function loginEmpresa(Request $request)
-    {
-        try {
-            $validacao = Validator::make($request->all(),[
-                'email' => 'required',
-                'password' => 'required'
-            ]);
-    
-            if(!$validacao->fails()){
-                
-                $token = auth('empresa')->attempt([
-                'email' => $request->email,
-                'password' => $request->password,
-                ]);
-                if(!$token){
+        // Tenta autenticar com cada guard
+            $guards = ['contratante', 'empresa', 'prestador'];
+
+            foreach ($guards as $guard) {
+                if ($token = Auth::guard($guard)->attempt($credentials)) {
                     return response()->json([
-                        'message' => 'tu não existe'
-                    ],401);
+                        'access_token' => $token,
+                        'token_type' => 'bearer',
+                        'guard' => $guard, // informa o tipo
+                        'user' => Auth::guard($guard)->user(),
+                    ]);
                 }
-    
-                $user = auth('empresa')->user();
-                return response()->json([
-                    'token' => $token,
-                    'usuario' => $user
-                ]);
-            } else {
-                return Log::error('deu errado', ['error' => $validacao->errors()->first()]);
             }
-    
+
+            return response()->json(['error' => 'Credenciais inválidas'], 401);
         }catch(ValidationException $e){
-            Log::error('ta errado algo', ['error' => $e->getMessage()]);
+                Log::error('ta errado algo', ['error' => $e->getMessage()]);
+            }
+            catch(QueryException $e){
+                Log::error('deu errado bd', ['error' => $e->getMessage()]);
+            } 
+            catch (Exception $e) {
+                Log::error('deu errado', ['error' => $e->getMessage()]);
         }
-        catch(QueryException $e){
-            Log::error('deu errado bd', ['error' => $e->getMessage()]);
-        } 
-        catch (Exception $e) {
-            Log::error('deu errado', ['error' => $e->getMessage()]);
-        }
+        
     }
 
 

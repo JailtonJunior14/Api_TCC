@@ -70,9 +70,9 @@ Route::get('/cidade', [CidadeController::class, 'index']);
 
 //rotas login
 
-Route::post('/login/prestador', [LoginController::class, 'loginPrestador']);
-Route::post('/login/contratante', [LoginController::class, 'loginContratante']);
-Route::post('/login/empresa', [LoginController::class, 'loginEmpresa']);
+Route::post('/login', [LoginController::class, 'login']);
+
+
 
 Route::middleware(['auth:prestador'])->get('/perfil', function(){
     return response()->json([

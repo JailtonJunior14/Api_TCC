@@ -15,10 +15,15 @@ class PaisController extends Controller
     {
         // $pais = Pais::all();
 
+<<<<<<< HEAD
         // return $pais;
 
         $senha = Hash::make('cabopartrançadoblindado');
         dd($senha);
+=======
+        //return $pais;
+        dd($pais);
+>>>>>>> 216dfc3c969193680c599a728d6ae5b5c97f5477
     }
 
     /**

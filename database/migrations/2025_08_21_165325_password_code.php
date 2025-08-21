@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-
-        Schema::create('estado', function(Blueprint $table)
-        {
+        Schema::create('password_code', function (Blueprint $table) {
             $table->id();
-            $table->string('nome');
-            $table->string('sigla', 10);
-            $table->foreignId('id_pais')->constrained('pais')->onDelete('cascade');
-
+            $table->string('email');
+            $table->string('code', 6); // 6 dígitos
+            $table->timestamp('expires_at');
+            $table->timestamps();
         });
     }
 
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('estado');
+        Schema::dropIfExists('password_code');
     }
 };

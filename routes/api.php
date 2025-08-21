@@ -11,6 +11,7 @@ use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\LinksController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PaisController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PrestadorController;
 use App\Http\Controllers\RamoController;
 use App\Models\Contratante;
@@ -18,6 +19,8 @@ use App\Models\Contratante;
 Route::get('/teste', function () {
     return response()->json(['message' => 'Olá, Mundo']);
 });
+Route::get('/forgot-password', [PasswordController::class, 'forgot_password']);
+Route::get('/verificar-codigo', [PasswordController::class, 'verificar_code']);
 
 
 Route::resource('cidades', CidadeController::class);
@@ -79,3 +82,4 @@ Route::middleware(['auth:prestador'])->get('/perfil', function(){
         'message' => 'to logado'
     ]);
 });
+

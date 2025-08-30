@@ -45,7 +45,7 @@ Route::delete('/contratante/deletar/{id}', [ContratanteController::class, 'destr
 //rotas ramo
 Route::get('/ramo', [RamoController::class, 'index']);
 Route::get('/ramo/{modalidade}', [RamoController::class, 'show']);
-Route::get('/ramo/nome/{nome}', [RamoController::class, 'nome']);
+Route::get('/ramo/{nome}', [RamoController::class, 'show']);
 
 //rotas prestador
 Route::get('/prestador', [PrestadorController::class, 'index']);

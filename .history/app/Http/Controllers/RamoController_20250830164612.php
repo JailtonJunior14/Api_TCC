@@ -36,18 +36,8 @@ class RamoController extends Controller
         try {
             $modalidade = Ramo::where('modalidade','=', $modalidade)->get();
             return $modalidade;
-        } catch (QueryException $e) {
-            Log::error('erro ao buscar', ['error' =>$e->getMessage()]);
-        }catch (Exception $e) {
-            Log::error('erro', ['error' =>$e->getMessage()]);
-        }
-    }
 
-    public function nome(string $nome)
-    {
-        try {
-            $nome = Ramo::where('nome','=', $nome)->get();
-            return $nome;
+            $ramo
         } catch (QueryException $e) {
             Log::error('erro ao buscar', ['error' =>$e->getMessage()]);
         }catch (Exception $e) {

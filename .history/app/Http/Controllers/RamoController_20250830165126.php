@@ -31,7 +31,7 @@ class RamoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $modalidade)
+    public function show(string $modalidade, string $nome = null)
     {
         try {
             $modalidade = Ramo::where('modalidade','=', $modalidade)->get();

@@ -15,10 +15,8 @@ return new class extends Migration
         Schema::create('estado', function(Blueprint $table)
         {
             $table->id();
-            $table->string('nome');
+            // $table->string('nome');
             $table->string('sigla', 10);
-            $table->foreignId('id_pais')->constrained('pais')->onDelete('cascade');
-
         });
     }
 

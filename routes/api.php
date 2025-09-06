@@ -75,7 +75,6 @@ Route::delete('/comentario/deletar/{id}', [ComentarioController::class, 'destroy
 
 //rotas País, Estado, Cidade
 
-Route::get('/pais', [PaisController::class, 'index']);
 Route::get('/estado/listar/{id}', [EstadoController::class, 'show']);
 Route::get('/estado', [EstadoController::class, 'index']);
 Route::get('/cidade', [CidadeController::class, 'index']);

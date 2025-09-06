@@ -11,15 +11,10 @@ class Estado extends Model
     public $timestamps = false;
 
     protected $table = 'estado';
-    protected $filltable = ['nome', 'sigla', 'id_pais'];
+    protected $filltable = ['sigla'];
 
     public function cidades()
     {
         return $this->hasMany(Cidade::class);
-    }
-
-    function pais()
-    {
-        return $this->belongsTo(Pais::class);
     }
 }

@@ -31,7 +31,6 @@ Route::get('/verificar-codigo', [PasswordController::class, 'verificar_code']);
 Route::get('/atualizar-senha', [PasswordController::class, 'atualizar_senha']);
 
 
-Route::resource('cidades', CidadeController::class);
 //rotas contratante
 Route::get('/contratante', [ContratanteController::class, 'index']);
 Route::post('/contratante/cadastro', [ContratanteController::class, 'store']);
@@ -75,9 +74,6 @@ Route::delete('/comentario/deletar/{id}', [ComentarioController::class, 'destroy
 
 //rotas País, Estado, Cidade
 
-Route::get('/estado/listar/{id}', [EstadoController::class, 'show']);
-Route::get('/estado', [EstadoController::class, 'index']);
-Route::get('/cidade', [CidadeController::class, 'index']);
 
 //rotas login
 

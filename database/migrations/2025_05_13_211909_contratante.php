@@ -18,7 +18,11 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('foto')->nullable();
-            $table->foreignId('id_cidade')->constrained('cidade')->onDelete('cascade');
+            $table->string('localidade');
+            $table->string('uf');
+            $table->string('estado');
+            $table->string('cep');
+            $table->string('rua');
         });
     }
 

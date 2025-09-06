@@ -37,8 +37,11 @@ class PrestadorController extends Controller
                 'whatsapp' => 'string|max:18|unique:prestador,whatsapp',
                 'fixo' => 'string|max:18|unique:prestador,fixo',
                 'foto' => 'required|image|mimes:png,jpg,jpeg|max:2048',
-                'cep' => 'required|integer',
-                'id_cidade' => 'required|integer|exists:cidade,id',
+                'localidade' => 'required|string|max:255',
+                'estado' => 'required|string|max:255',
+                'uf' => 'required|string|max:2',
+                'cep' => 'required|string|max:10',
+                'rua' => 'required|string|max:255',
                 'id_ramo' => 'required|integer|exists:ramo,id',
                 ]);
                 $imagem_path = $request->file('foto')->store('fotos', 'public');
@@ -50,9 +53,12 @@ class PrestadorController extends Controller
                 $prestador->fixo = $validacao['fixo'];
                 $prestador->whatsapp = $validacao['whatsapp'];
                 $prestador->foto = $imagem_path;
-                $prestador->cep = $validacao['cep'];
-                $prestador->id_cidade = $validacao['id_cidade'];
                 $prestador->id_ramo = $validacao['id_ramo'];
+                $prestador->localidade = $request['localidade'];
+                $prestador->uf = $request['uf'];
+                $prestador->estado = $request['estado'];
+                $prestador->cep = $request['cep'];
+                $prestador->rua = $request['rua'];
 
                 $prestador->save();
 
@@ -139,9 +145,12 @@ class PrestadorController extends Controller
                 'whatsapp' => 'string|max:18|unique:prestador,whatsapp',
                 'fixo' => 'string|max:18|unique:prestador,fixo',
                 'foto' => 'required|string',
-                'cep' => 'required|integer|max:9',
-                'id_cidade' => 'required|integer|exists:cidade,id',
-                'id_ramo' => 'required|integer|exists:ramo,id'
+                'id_ramo' => 'required|integer|exists:ramo,id',
+                'cep' => 'required|string|max:10',
+                'localidade' => 'required|string|max:255',
+                'uf' => 'required|string|max:2',
+                'estado' => 'required|string|max:255',
+                'rua' => 'required|string|max:255'
             ]);
 
             $prestador = Prestador::findoffail($id);
@@ -164,14 +173,23 @@ class PrestadorController extends Controller
             if ($request->has('foto')){
                 $prestador->foto = $request['foto'];
             }
+            if ($request->has('id_ramo')){
+                $prestador->id_ramo = $request['id_ramo'];
+            }
             if ($request->has('cep')){
                 $prestador->cep = $request['cep'];
             }
-            if ($request->has('id_cidade')){
-                $prestador->id_cidade = $request['id_cidade'];
+            if ($request->has('localidade')){
+                $prestador->localidade = $request['localidade'];
             }
-            if ($request->has('id_ramo')){
-                $prestador->id_ramo = $request['id_ramo'];
+            if ($request->has('uf')){
+                $prestador->uf = $request['uf'];
+            }
+            if ($request->has('estado')){
+                $prestador->estado = $request['estado'];
+            }
+            if ($request->has('rua')){
+                $prestador->rua = $request['rua'];
             }
 
             $prestador->save();

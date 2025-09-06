@@ -35,8 +35,11 @@ class EmpresaController extends Controller
                 'fixo' => 'string|max:18|unique:empresa,fixo',
                 'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
                 'cnpj' => 'required|string',
-                'cep' => 'required|string',
-                'id_cidade' => 'required|integer|exists:cidade,id',
+                'localidade' => 'required|string|max:255',
+                'uf' => 'required|string|max:2',
+                'estado' => 'required|string|max:255',
+                'cep' => 'required|string|max:10',
+                'rua' => 'required|string|max:255',
                 'id_ramo' => 'required|integer|exists:ramo,id'
             ]);
 
@@ -50,11 +53,13 @@ class EmpresaController extends Controller
             $empresa->fixo = $validacao['fixo'];
             $empresa->foto = $validacao['foto'];
             $empresa->cnpj = $validacao['cnpj'];
-            $empresa->cep = $validacao['cep'];
-            $empresa->id_cidade = $validacao['id_cidade'];
             $empresa->id_ramo = $validacao['id_ramo'];
             $empresa->foto = $imagem_path;
-
+            $empresa->localidade = $request['localidade'];
+            $empresa->uf = $request['uf'];
+            $empresa->estado = $request['estado'];
+            $empresa->cep = $request['cep'];
+            $empresa->rua = $request['rua'];
             $empresa->save();
 
 
@@ -127,9 +132,12 @@ class EmpresaController extends Controller
                 'fixo' => 'string|max:18|unique:empresa,fixo,' .$id,
                 'foto' => 'sometimes|string',
                 'cnpj' => 'sometimes|string',
-                'cep' => 'sometimes|string',
-                'id_cidade' => 'sometimes|integer|exists:cidade,id',
-                'id_ramo' => 'sometimes|integer|exists:ramo,id'
+                'id_ramo' => 'sometimes|integer|exists:ramo,id',
+                'cep' => 'sometimes|string|max:10',
+                'localidade' => 'sometimes|string|max:255',
+                'uf' => 'sometimes|string|max:2',
+                'estado' => 'sometimes|string|max:255',
+                'rua' => 'sometimes|string|max:255'
 
             ]);
 
@@ -156,9 +164,23 @@ class EmpresaController extends Controller
             if($request->has('cnpj')){
                 $empresa->cnpj= $request['cnpj'];
             }
-            
+            if($request->has('id_ramo')){
+                $empresa->id_ramo = $request['id_ramo'];
+            }
+            if($request->has('localidade')){
+                $empresa->localidade = $request['localidade'];
+            }
+            if($request->has('uf')){
+                $empresa->uf = $request['uf'];
+            }
+            if($request->has('estado')){
+                $empresa->estado = $request['estado'];
+            }
             if($request->has('cep')){
                 $empresa->cep = $request['cep'];
+            }
+            if($request->has('rua')){
+                $empresa->rua = $request['rua'];
             }
 
 

@@ -20,8 +20,11 @@ return new class extends Migration
             $table->string('whatsapp')->nullable();
             $table->string('fixo')->nullable();
             $table->string('foto')->nullable();
-            $table->string('cep', 9)->nullable();
-            $table->foreignId('id_cidade')->constrained('cidade')->onDelete('cascade');
+            $table->string('localidade');
+            $table->string('uf');
+            $table->string('estado');
+            $table->string('cep');
+            $table->string('rua');
             $table->foreignId('id_ramo')->constrained('ramo')->onDelete('cascade');
 
         });

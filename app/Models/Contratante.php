@@ -15,7 +15,7 @@ class Contratante extends Authenticatable implements JWTSubject
 
     public $timestamps = false;
 
-    public $fillable = ['nome', 'email', 'password', 'id_cidade', 'foto'];
+    public $fillable = ['nome', 'email', 'password', 'foto','localidade', 'uf', 'estado', 'cep', 'rua'];
 
     function comentarioFeito(){
         return $this->hasMany(Comentario::class, 'id_contratante_autor');

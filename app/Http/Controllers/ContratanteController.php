@@ -36,8 +36,12 @@ class ContratanteController extends Controller
                     'nome' => 'required|string|max:255',
                     'email' => 'required|email|unique:contratante,email',
                     'password' => 'required|string|confirmed',
-                    'id_cidade' => 'required|integer|exists:cidade,id',
                     'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+                    'localidade' => 'required|string|max:255',
+                    'uf' => 'required|string|max:2',
+                    'estado' => 'required|string|max:255',
+                    'cep' => 'required|string|max:10',
+                    'rua' => 'required|string|max:255'
                 ]
             );
             $imagem_path = $request->file('foto')->store('fotos', 'public');
@@ -46,8 +50,12 @@ class ContratanteController extends Controller
             $contratante->nome = $request['nome'];
             $contratante->email = $request['email'];
             $contratante->password = Hash::make($request['password']);
-            $contratante->id_cidade = $request['id_cidade'];
             $contratante->foto = $imagem_path;
+            $contratante->localidade = $request['localidade'];
+            $contratante->uf = $request['uf'];
+            $contratante->estado = $request['estado'];
+            $contratante->cep = $request['cep'];
+            $contratante->rua = $request['rua'];
 
             $contratante->save();
 
@@ -121,8 +129,12 @@ class ContratanteController extends Controller
                     'nome' => 'sometimes|string|max:255',
                     'email' => 'sometimes|email|unique:contratante,email,' . $id,
                     'senha' => 'sometimes|string|confirmed',
-                    'id_cidade' => 'sometimes|integer|exists:cidade,id',
-                    'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048'
+                    'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+                    'localidade' => 'sometimes|string|max:255',
+                    'uf' => 'sometimes|string|max:2',
+                    'estado' => 'sometimes|string|max:255',
+                    'cep' => 'sometimes|string|max:10',
+                    'rua' => 'sometimes|string|max:255'
                 ]
             );
 
@@ -143,6 +155,26 @@ class ContratanteController extends Controller
             if($request->hasFile('foto')){
                 $foto_path = $request->file('foto')->store('fotos', 'public');
                 $contratante->foto = $foto_path;
+            }
+            if($request->has('localidade'))
+            {
+                    $contratante->localidade = $request['localidade'];   
+            }
+            if($request->has('uf'))
+            {
+                    $contratante->uf = $request['uf'];   
+            }
+            if($request->has('estado'))
+            {               
+                    $contratante->estado = $request['estado'];   
+            }
+            if($request->has('cep'))
+            {
+                    $contratante->cep = $request['cep'];   
+            }
+            if($request->has('rua'))
+            {
+                    $contratante->rua = $request['rua'];   
             }
 
             $contratante->save();

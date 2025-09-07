@@ -34,13 +34,15 @@ class PrestadorController extends Controller
                 'nome' => 'required|string|max:255',
                 'email' => 'required|string|unique:prestador,email',
                 'password' => 'required|string|confirmed',
-                'whatsapp' => 'string|max:18|unique:prestador,whatsapp',
-                'fixo' => 'string|max:18|unique:prestador,fixo',
+                'cpf' => 'required|string',
+                'whatsapp' => 'nullable|max:18',
+                'fixo' => 'nullable|max:18',
                 'foto' => 'required|image|mimes:png,jpg,jpeg|max:2048',
                 'localidade' => 'required|string|max:255',
                 'estado' => 'required|string|max:255',
                 'uf' => 'required|string|max:2',
                 'cep' => 'required|string|max:10',
+                'numero' => 'required|string|max:10',
                 'rua' => 'required|string|max:255',
                 'id_ramo' => 'required|integer|exists:ramo,id',
                 ]);
@@ -50,6 +52,7 @@ class PrestadorController extends Controller
                 $prestador->nome = $validacao['nome'];
                 $prestador->email = $validacao['email'];
                 $prestador->password = Hash::make($validacao['password']);
+                $prestador->cpf = $validacao['cpf'];
                 $prestador->fixo = $validacao['fixo'];
                 $prestador->whatsapp = $validacao['whatsapp'];
                 $prestador->foto = $imagem_path;
@@ -59,6 +62,7 @@ class PrestadorController extends Controller
                 $prestador->estado = $request['estado'];
                 $prestador->cep = $request['cep'];
                 $prestador->rua = $request['rua'];
+                $prestador->numero = $request['numero'];
 
                 $prestador->save();
 

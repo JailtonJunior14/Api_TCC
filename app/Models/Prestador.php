@@ -14,7 +14,7 @@ class Prestador extends Authenticatable implements JWTSubject
 
     protected $table = 'prestador';
     public $timestamps = false;
-    protected $fillable = ['nome', 'email', 'password','whatsapp','fixo', 'foto', 'cep', 'id_ramo', 'localidade', 'uf', 'estado', 'cep', 'rua'];
+    protected $fillable = ['nome', 'email', 'password','cpf','whatsapp','fixo', 'foto', 'cep', 'id_ramo', 'localidade', 'uf', 'estado', 'cep','numero', 'rua'];
 
 
     function comentarioRecebido(){

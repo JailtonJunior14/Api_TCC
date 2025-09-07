@@ -37,11 +37,15 @@ class ContratanteController extends Controller
                     'email' => 'required|email|unique:contratante,email',
                     'password' => 'required|string|confirmed',
                     'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+                    'telefone' => 'required|string',
+                    'cpf' => 'required|string',
                     'localidade' => 'required|string|max:255',
-                    'uf' => 'required|string|max:2',
+                    'uf' => 'string|max:2',
                     'estado' => 'required|string|max:255',
                     'cep' => 'required|string|max:10',
-                    'rua' => 'required|string|max:255'
+                    'rua' => 'required|string|max:255',
+                    'numero' => 'required|string|max:255',
+                    'infoadd' => 'required|string|max:255'
                 ]
             );
             $imagem_path = $request->file('foto')->store('fotos', 'public');
@@ -51,11 +55,15 @@ class ContratanteController extends Controller
             $contratante->email = $request['email'];
             $contratante->password = Hash::make($request['password']);
             $contratante->foto = $imagem_path;
+            $contratante->telefone = $request['telefone'];
+            $contratante->cpf = $request['cpf'];
             $contratante->localidade = $request['localidade'];
             $contratante->uf = $request['uf'];
             $contratante->estado = $request['estado'];
             $contratante->cep = $request['cep'];
             $contratante->rua = $request['rua'];
+            $contratante->numero = $request['numero'];
+            $contratante->infoadd = $request['infoadd'];
 
             $contratante->save();
 

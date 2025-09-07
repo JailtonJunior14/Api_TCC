@@ -18,11 +18,15 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('foto')->nullable();
+            $table->string('telefone')->nullable();
+            $table->string('cpf')->nullable();
             $table->string('localidade');
             $table->string('uf');
             $table->string('estado');
             $table->string('cep');
             $table->string('rua');
+            $table->string('numero');
+            $table->string('infoadd');
         });
     }
 

@@ -17,14 +17,15 @@ return new class extends Migration
             $table->string('nome');
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('whatsapp')->nullable();
-            $table->string('fixo')->nullable();
+            $table->string('whatsapp')->nullable()->unique();
+            $table->string('fixo')->nullable()->unique();
             $table->string('foto')->nullable();
             $table->string('cnpj', 18)->unique()->nullable();
             $table->string('localidade');
             $table->string('uf');
             $table->string('estado');
             $table->string('cep');
+            $table->integer('numero');
             $table->string('rua');
             $table->foreignId('id_ramo')->constrained('ramo')->onDelete('cascade');
         });

@@ -15,11 +15,11 @@ return new class extends Migration
         {
             $table->id();
             $table->string('nome');
-            $table->string('email');
+            $table->string('email')->unique();
             $table->string('password');
             $table->string('cpf');
-            $table->string('whatsapp')->nullable();
-            $table->string('fixo')->nullable();
+            $table->string('whatsapp')->nullable()->unique();
+            $table->string('fixo')->nullable()->unique();
             $table->string('foto')->nullable();
             $table->string('localidade');
             $table->string('uf');

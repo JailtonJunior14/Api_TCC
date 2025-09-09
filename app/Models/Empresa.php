@@ -16,7 +16,7 @@ class Empresa extends Authenticatable implements JWTSubject
 
     public $timestamps = false;
 
-    protected $fillable = ['nome',  'email', 'password','whatsapp','fixo', 'foto', 'cnpj','id_ramo','localidade', 'uf', 'estado', 'cep', 'rua'];
+    protected $fillable = ['nome',  'email', 'password','whatsapp','fixo', 'foto', 'cnpj','id_ramo','localidade', 'uf', 'estado', 'cep', 'rua', 'numero'];
     
     function comentarioRecebido(){
         return $this->hasMany(Comentario::class, 'id_empresa_destino');

@@ -40,6 +40,7 @@ class EmpresaController extends Controller
                 'estado' => 'required|string|max:255',
                 'cep' => 'required|string|max:10',
                 'rua' => 'required|string|max:255',
+                'numero' => 'required|string|max:10',
                 'id_ramo' => 'required|integer|exists:ramo,id'
             ]);
 
@@ -60,6 +61,7 @@ class EmpresaController extends Controller
             $empresa->estado = $request['estado'];
             $empresa->cep = $request['cep'];
             $empresa->rua = $request['rua'];
+            $empresa->numero = $request['numero'];
             $empresa->save();
 
 

@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('uf');
             $table->string('estado');
             $table->string('cep');
-            $table->integer('numero');
+            $table->string('numero');
             $table->string('rua');
             $table->foreignId('id_ramo')->constrained('ramo')->onDelete('cascade');
         });

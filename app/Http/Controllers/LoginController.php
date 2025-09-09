@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class LoginController extends Controller
 {
@@ -58,19 +59,15 @@ class LoginController extends Controller
         try {
             $credentials = $request->only('email', 'password');
 
-        // Tenta autenticar com cada guard
-            $guards = ['contratante', 'empresa', 'prestador'];
 
-            foreach ($guards as $guard) {
-                if ($token = Auth::guard($guard)->attempt($credentials)) {
+
+                if ($token = Auth::guard('user')->attempt($credentials)) {
                     return response()->json([
                         'access_token' => $token,
                         'token_type' => 'bearer',
-                        'guard' => $guard, // informa o tipo
-                        'user' => Auth::guard($guard)->user(),
+                        'user' => Auth::guard('user')->user(),
                     ]);
                 }
-            }
 
             return response()->json(['error' => 'Credenciais inválidas'], 401);
         }catch(ValidationException $e){
@@ -89,6 +86,16 @@ class LoginController extends Controller
 
     public function Logout(string $id)
     {
-        //
+        try {
+        $token = JWTAuth::getToken(); // pega o token enviado no header
+        if (!$token) {
+            return response()->json(['error' => 'Token não fornecido'], 400);
+        }
+
+        JWTAuth::invalidate($token); // invalida o token
+        return response()->json(['message' => 'Logout realizado com sucesso!']);
+    } catch (JWTException $e) {
+        return response()->json(['error' => 'Falha ao invalidar token'], 500);
+    }
     }
 }

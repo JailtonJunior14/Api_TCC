@@ -14,7 +14,9 @@ use App\Http\Controllers\PaisController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PrestadorController;
 use App\Http\Controllers\RamoController;
+use App\Http\Controllers\UsersController;
 use App\Models\Contratante;
+use App\Models\Users;
 use Illuminate\Support\Facades\Hash;
 
 Route::get('/teste', function () {
@@ -30,13 +32,15 @@ Route::get('/forgot-password', [PasswordController::class, 'forgot_password']);
 Route::get('/verificar-codigo', [PasswordController::class, 'verificar_code']);
 Route::get('/atualizar-senha', [PasswordController::class, 'atualizar_senha']);
 
+Route::post('/usuario/cadastro', [UsersController::class, 'store']);
 
-//rotas contratante
-Route::get('/contratante', [ContratanteController::class, 'index']);
-Route::post('/contratante/cadastro', [ContratanteController::class, 'store']);
-Route::get('/contratante/listar/{id}', [ContratanteController::class, 'show']);
-Route::patch('/contratante/atualizar/{id}', [ContratanteController::class, 'update']);
-Route::delete('/contratante/deletar/{id}', [ContratanteController::class, 'destroy']);
+
+// //rotas contratante
+// Route::get('/contratante', [ContratanteController::class, 'index']);
+// Route::post('/contratante/cadastro', [ContratanteController::class, 'store']);
+// Route::get('/contratante/listar/{id}', [ContratanteController::class, 'show']);
+// Route::patch('/contratante/atualizar/{id}', [ContratanteController::class, 'update']);
+// Route::delete('/contratante/deletar/{id}', [ContratanteController::class, 'destroy']);
 
 // Route::apiResource('contratante', ContratanteController::class);
 
@@ -46,19 +50,19 @@ Route::get('/ramo', [RamoController::class, 'index']);
 Route::get('/ramo/{modalidade}', [RamoController::class, 'show']);
 Route::get('/ramo/nome/{nome}', [RamoController::class, 'nome']);
 
-//rotas prestador
-Route::get('/prestador', [PrestadorController::class, 'index']);
-Route::post('/prestador/cadastro', [PrestadorController::class, 'store']);
-Route::get('/prestador/listar/{id}', [PrestadorController::class, 'show']);
-Route::patch('/prestador/atualizar/{id}', [PrestadorController::class, 'update']);
-Route::delete('/prestador/deletar/{id}', [PrestadorController::class, 'destroy']);
+// //rotas prestador
+// Route::get('/prestador', [PrestadorController::class, 'index']);
+// Route::post('/prestador/cadastro', [PrestadorController::class, 'store']);
+// Route::get('/prestador/listar/{id}', [PrestadorController::class, 'show']);
+// Route::patch('/prestador/atualizar/{id}', [PrestadorController::class, 'update']);
+// Route::delete('/prestador/deletar/{id}', [PrestadorController::class, 'destroy']);
 
-//rotas empresa
-Route::get('/empresa', [EmpresaController::class, 'index']);
-Route::post('/empresa/cadastro', [EmpresaController::class, 'store']);
-Route::get('/empresa/listar/{id}', [EmpresaController::class, 'show']);
-Route::patch('/empresa/atualizar/{id}', [EmpresaController::class, 'update']);
-Route::delete('/empresa/deletar/{id}', [EmpresaController::class, 'destroy']);
+// //rotas empresa
+// Route::get('/empresa', [EmpresaController::class, 'index']);
+// Route::post('/empresa/cadastro', [EmpresaController::class, 'store']);
+// Route::get('/empresa/listar/{id}', [EmpresaController::class, 'show']);
+// Route::patch('/empresa/atualizar/{id}', [EmpresaController::class, 'update']);
+// Route::delete('/empresa/deletar/{id}', [EmpresaController::class, 'destroy']);
 //rotas links
 
 Route::get('/link', [LinksController::class, 'index']);

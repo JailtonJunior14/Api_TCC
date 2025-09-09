@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('portfolio', function(Blueprint $table)
-        {
+        Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('descricao');
-            $table->string('imagem');
-            $table->foreignId('id_user')->constrained('prestador')->onDelete('cascade');
-
-        }); 
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->enum('type', ['empresa', 'prestador', 'contratante']);
+        });
     }
 
     /**
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('portfolio');
+        Schema::dropIfExists('users');
     }
 };

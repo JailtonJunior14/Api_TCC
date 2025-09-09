@@ -8,15 +8,15 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class Empresa extends Authenticatable implements JWTSubject
+class Empresa extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
 
     protected $table = 'empresa';
 
     public $timestamps = false;
 
-    protected $fillable = ['nome',  'email', 'password','whatsapp','fixo', 'foto', 'cnpj','id_ramo','localidade', 'uf', 'estado', 'cep', 'rua', 'numero'];
+    protected $fillable = ['user_id','razao_social','whatsapp','fixo', 'foto', 'cnpj','id_ramo','localidade', 'uf', 'estado', 'cep', 'rua', 'numero'];
     
     function comentarioRecebido(){
         return $this->hasMany(Comentario::class, 'id_empresa_destino');
@@ -30,13 +30,8 @@ class Empresa extends Authenticatable implements JWTSubject
         return $this->hasMany(Prestador::class, 'id_empresa');
     }
 
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
 
-    public function getJWTCustomClaims()
-    {
-        return [];
+    public function user() {
+        return $this->belongsTo(Users::class);
     }
 }

@@ -40,18 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'prestador' => [
+        'user' => [
             'driver' => 'jwt',
-            'provider' => 'prestador'
-        ],
-        'contratante' => [
-            'driver' => 'jwt',
-            'provider' => 'contratante'
-        ],
-        'empresa' => [
-            'driver' => 'jwt',
-            'provider' => 'empresa'
-        ],
+            'provider' => 'user'
+        ]
     ],
 
     /*
@@ -72,19 +64,9 @@ return [
     */
 
     'providers' => [
-        'prestador' => [
+        'user' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\Prestador::class)
-        ],
-
-        'contratante' => [
-             'driver' => 'eloquent',
-             'model' => App\Models\Contratante::class,
-        ],
-
-        'empresa' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Empresa::class
+            'model' => env('AUTH_MODEL', App\Models\Users::class)
         ]
     ],
 

@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('contratante', function(Blueprint $table)
         {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('nome');
-            $table->string('email')->unique();
-            $table->string('password');
             $table->string('foto')->nullable();
             $table->string('telefone')->nullable();
             $table->string('cpf')->nullable();

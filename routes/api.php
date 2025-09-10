@@ -15,6 +15,7 @@ use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PrestadorController;
 use App\Http\Controllers\RamoController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\ValidationController;
 use App\Models\Contratante;
 use App\Models\Users;
 use Illuminate\Support\Facades\Hash;
@@ -22,9 +23,10 @@ use Illuminate\Support\Facades\Hash;
 Route::get('/teste', function () {
     return response()->json(['message' => 'Olá, Mundo']);
 });
-Route::get('/senha', function (){
-    return Hash::make('1234');
-});
+
+//requisições 
+Route::get('/check-email', [ValidationController::class, 'check_email']);
+
 
 
 

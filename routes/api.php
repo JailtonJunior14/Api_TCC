@@ -14,6 +14,7 @@ use App\Http\Controllers\PaisController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PrestadorController;
 use App\Http\Controllers\RamoController;
+use App\Http\Controllers\TelefoneController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\ValidationController;
 use App\Models\Contratante;
@@ -26,6 +27,13 @@ Route::get('/teste', function () {
 
 //requisições 
 Route::get('/check-email', [ValidationController::class, 'check_email']);
+Route::get('/check_cpf_contratante', [ValidationController::class, 'check_cpf_contratante']);
+Route::get('/check_cpf_prestador', [ValidationController::class, 'check_cpf_prestador']);
+Route::get('/check_cnpj', [ValidationController::class, 'check_cnpj']);
+Route::get('/check_numero', [ValidationController::class, 'check_numero']);
+Route::get('/check_razaosocial', [ValidationController::class, 'check_razaoSocial']);
+
+Route::post('/telefone', [TelefoneController::class, 'store']);
 
 
 

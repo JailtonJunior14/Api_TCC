@@ -17,8 +17,6 @@ return new class extends Migration
             $table->string('nome');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('cpf');
-            $table->string('whatsapp')->nullable()->unique();
-            $table->string('fixo')->nullable()->unique();
             $table->string('foto')->nullable();
             $table->string('localidade');
             $table->string('uf');

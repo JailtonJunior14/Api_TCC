@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Contratante;
 use App\Models\Empresa;
 use App\Models\Prestador;
+use App\Models\Telefone;
 use App\Models\Users;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -62,8 +63,6 @@ class UsersController extends Controller
             // 'profissao' => 'required_if:type,prestador,empresa',
             //'endereco' => 'required_if:type,contratante,prestador',
             'nome' => 'required_if:type,contratante,prestador',
-            'whatsapp' => 'required_if:type,empresa',
-            'fixo' => 'required_if:type,empresa',
         ]);
 
 
@@ -76,6 +75,11 @@ $user->email = $request['email'];
 $user->password = Hash::make($request['password']);
 $user->type = $request['type'];
 $user->save();
+
+$telefone = new Telefone();
+$telefone->user_id = $user->id;
+$telefone->telefone = $request->telefone;
+$telefone->save();
 
 switch ($request->type) {
     case 'empresa':
@@ -91,8 +95,6 @@ switch ($request->type) {
         $empresa->cep = $request->cep;
         $empresa->rua = $request->rua;
         $empresa->numero = $request->numero;
-        $empresa->whatsapp = $request->whatsapp;
-        $empresa->fixo = $request->fixo;
         // $empresa->infoadd = $request->infoadd;
 
         $empresa->save();

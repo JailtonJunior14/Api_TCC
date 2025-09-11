@@ -42,4 +42,8 @@ class Users extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(Contratante::class, 'user_id');
     }
+
+     public function telefone() {
+        return $this->hasOne(Telefone::class);
+    }
 }

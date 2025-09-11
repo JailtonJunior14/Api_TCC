@@ -17,9 +17,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('cnpj')->unique();
             $table->string('razao_social');
-            $table->string('whatsapp');
-            $table->string('fixo');
-            $table->string('endereco')->nullable();
             $table->string('foto')->nullable();
             $table->string('localidade');
             $table->string('uf');

@@ -10,6 +10,7 @@ use App\Models\Users;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -67,140 +68,141 @@ class UsersController extends Controller
 
 
         $imagem_path = $request->hasFile('foto')
-    ? $request->file('foto')->store('fotos', 'public')
-    : null;
+            ? $request->file('foto')->store('fotos', 'public')
+            : null;
 
-$user = new Users();
-$user->email = $request['email'];
-$user->password = Hash::make($request['password']);
-$user->type = $request['type'];
-$user->save();
+            $user = new Users();
+            $user->email = $request['email'];
+            $user->password = Hash::make($request['password']);
+            $user->type = $request['type'];
+            $user->save();
 
-$telefone = new Telefone();
-$telefone->user_id = $user->id;
-$telefone->telefone = $request->telefone;
-$telefone->save();
+            $telefone = new Telefone();
+            $telefone->user_id = $user->id;
+            $telefone->telefone = $request->telefone;
+            $telefone->save();
 
-switch ($request->type) {
-    case 'empresa':
-        $empresa = new Empresa();
-        $empresa->user_id = $user->id;
-        $empresa->cnpj = $request->cnpj;
-        $empresa->razao_social = $request->razao_social;
-        $empresa->id_ramo = $request->id_ramo;
-        $empresa->foto = $imagem_path;
-        $empresa->localidade = $request->localidade;
-        $empresa->uf = $request->uf;
-        $empresa->estado = $request->estado;
-        $empresa->cep = $request->cep;
-        $empresa->rua = $request->rua;
-        $empresa->numero = $request->numero;
-        // $empresa->infoadd = $request->infoadd;
+            switch ($request->type) {
+                case 'empresa':
+                    $empresa = new Empresa();
+                    $empresa->user_id = $user->id;
+                    $empresa->cnpj = $request->cnpj;
+                    $empresa->razao_social = $request->razao_social;
+                    $empresa->id_ramo = $request->id_ramo;
+                    $empresa->foto = $imagem_path;
+                    $empresa->localidade = $request->localidade;
+                    $empresa->uf = $request->uf;
+                    $empresa->estado = $request->estado;
+                    $empresa->cep = $request->cep;
+                    $empresa->rua = $request->rua;
+                    $empresa->numero = $request->numero;
+                    // $empresa->infoadd = $request->infoadd;
 
-        $empresa->save();
-        break;
+                    $empresa->save();
+                    break;
 
-    case 'prestador':
-        $prestador = new Prestador();
-        $prestador->user_id = $user->id;
-        $prestador->nome = $request->nome;
-        $prestador->cpf = $request->cpf;
-        $prestador->id_ramo = $request->id_ramo;
-        $prestador->foto = $imagem_path;
-        $prestador->localidade = $request->localidade;
-        $prestador->uf = $request->uf;
-        $prestador->estado = $request->estado;
-        $prestador->cep = $request->cep;
-        $prestador->rua = $request->rua;
-        $prestador->numero = $request->numero;
-        // $prestador->infoadd = $request->infoadd;
+                case 'prestador':
+                    $prestador = new Prestador();
+                    $prestador->user_id = $user->id;
+                    $prestador->nome = $request->nome;
+                    $prestador->cpf = $request->cpf;
+                    $prestador->id_ramo = $request->id_ramo;
+                    $prestador->foto = $imagem_path;
+                    $prestador->localidade = $request->localidade;
+                    $prestador->uf = $request->uf;
+                    $prestador->estado = $request->estado;
+                    $prestador->cep = $request->cep;
+                    $prestador->rua = $request->rua;
+                    $prestador->numero = $request->numero;
+                    // $prestador->infoadd = $request->infoadd;
 
-        $prestador->save();
-        break;
+                    $prestador->save();
+                    break;
 
-    case 'contratante':
-        $contratante = new Contratante();
-        $contratante->user_id = $user->id;
-        $contratante->nome = $request->nome;
-        $contratante->cpf = $request->cpf;
-        $contratante->foto = $imagem_path;
-        $contratante->localidade = $request->localidade;
-        $contratante->uf = $request->uf;
-        $contratante->estado = $request->estado;
-        $contratante->cep = $request->cep;
-        $contratante->rua = $request->rua;
-        $contratante->numero = $request->numero;
-        $contratante->infoadd = $request->infoadd;
-        $contratante->save();
-        break;
-}
-
-$token = auth('user')->attempt([
-                'email' => $request['email'],
-                'password' => $request['password']
-            ]);
-
-            if(!$token){
-                return response()->json([
-                    'error' => 'token não ta sendo gerado'
-                ]);
+                case 'contratante':
+                    $contratante = new Contratante();
+                    $contratante->user_id = $user->id;
+                    $contratante->nome = $request->nome;
+                    $contratante->cpf = $request->cpf;
+                    $contratante->foto = $imagem_path;
+                    $contratante->localidade = $request->localidade;
+                    $contratante->uf = $request->uf;
+                    $contratante->estado = $request->estado;
+                    $contratante->cep = $request->cep;
+                    $contratante->rua = $request->rua;
+                    $contratante->numero = $request->numero;
+                    $contratante->infoadd = $request->infoadd;
+                    $contratante->save();
+                    break;
             }
 
-            $logado = auth('user')->user();
+                    $token = auth('user')->attempt([
+                                    'email' => $request['email'],
+                                    'password' => $request['password']
+                                ]);
 
-return response()->json([
-    'message' => 'Usuário cadastrado com sucesso!',
-    'user' => $user->load($user->type),
-    'token' => $token,
-    'logado' => $logado
-], 201);
+                                if(!$token){
+                                    return response()->json([
+                                        'error' => 'token não ta sendo gerado'
+                                    ]);
+                                }
+
+                                $logado = auth('user')->user();
+
+                    return response()->json([
+                        'message' => 'Usuário cadastrado com sucesso!',
+                        'user' => $user->load($user->type),
+                        'token' => $token,
+                        'logado' => $logado
+                    ], 201);
+
+                        }
+                        catch (ValidationException $e) {
+                        Log::error('Validation error', ['message' => $e->getMessage()]);
+                        return response()->json([
+                            'error' => 'Erro de validação',
+                            'details' => $e->errors(),
+                        ], 422);
+                    } catch (QueryException $e) {
+                        Log::error('Database error', ['message' => $e->getMessage()]);
+                        return response()->json([
+                            'error' => 'Erro no banco de dados',
+                            'details' => $e->getMessage(),
+                        ], 500);
+                    } catch (Exception $e) {
+                        Log::error('General error', ['message' => $e->getMessage()]);
+                        return response()->json([
+                            'error' => 'Erro inesperado',
+                            'details' => $e->getMessage(),
+                        ], 500);
+                    }
 
     }
-    catch (ValidationException $e) {
-    Log::error('Validation error', ['message' => $e->getMessage()]);
-    return response()->json([
-        'error' => 'Erro de validação',
-        'details' => $e->errors(),
-    ], 422);
-} catch (QueryException $e) {
-    Log::error('Database error', ['message' => $e->getMessage()]);
-    return response()->json([
-        'error' => 'Erro no banco de dados',
-        'details' => $e->getMessage(),
-    ], 500);
-} catch (Exception $e) {
-    Log::error('General error', ['message' => $e->getMessage()]);
-    return response()->json([
-        'error' => 'Erro inesperado',
-        'details' => $e->getMessage(),
-    ], 500);
-}
 
+    public function select(){
+        $logado = Auth::guard('user')->user();
+
+        // return response()->json([
+        //     'message' => $logado
+        // ]);
+        // $empresa = Empresa::findOr($logado->id);
+        // dd($empresa);
+
+        switch($logado->type){
+            case "empresa":
+                $empresa = Empresa::findOr($logado->id);
+                return response()->json([
+                    'message' => 'empresa',
+                    'user' => $empresa
+                ]);
+                case "contratante":
+                    $empresa = Contratante::findOr($logado->id);
+                    return response()->json([
+                        'message' => 'empresa',
+                        'user' => $empresa
+                    ]);
+        }
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Users $users)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Users $users)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Users $users)
     {
         //

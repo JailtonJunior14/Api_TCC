@@ -60,7 +60,6 @@ class LoginController extends Controller
             $credentials = $request->only('email', 'password');
 
 
-
                 if ($token = Auth::guard('user')->attempt($credentials)) {
                     return response()->json([
                         'access_token' => $token,
@@ -81,6 +80,7 @@ class LoginController extends Controller
         }
         
     }
+    
 
 
 

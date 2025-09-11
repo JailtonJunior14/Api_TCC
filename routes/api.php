@@ -43,6 +43,7 @@ Route::get('/verificar-codigo', [PasswordController::class, 'verificar_code']);
 Route::get('/atualizar-senha', [PasswordController::class, 'atualizar_senha']);
 
 Route::post('/usuario/cadastro', [UsersController::class, 'store']);
+Route::post('/usuario', [UsersController::class, 'select']);
 
 
 // //rotas contratante

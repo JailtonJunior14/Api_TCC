@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Contratante;
 use App\Models\Empresa;
 use App\Models\Prestador;
+use App\Models\Ramo;
 use App\Models\Telefone;
 use App\Models\Users;
 use Exception;
@@ -70,7 +71,7 @@ class UsersController extends Controller
         $imagem_path = $request->hasFile('foto')
             ? $request->file('foto')->store('fotos', 'public')
             : null;
-
+            // dd($imagem_path);
             $user = new Users();
             $user->email = $request['email'];
             $user->password = Hash::make($request['password']);
@@ -190,22 +191,67 @@ class UsersController extends Controller
 
         switch($logado->type){
             case "empresa":
-                $empresa = Empresa::findOr($logado->id);
+                $empresa = Empresa::where('user_id', $logado->id)->first();
+                $ramo = Ramo::where('id', $empresa->id_ramo)->first();
+                // dd($ramo->nome);
+                // dd($empresa);
                 return response()->json([
                     'message' => 'empresa',
-                    'user' => $empresa
+                    'user' => $empresa,
+                    'ramo' => $ramo->nome
                 ]);
-                case "contratante":
-                    $empresa = Contratante::findOr($logado->id);
-                    return response()->json([
-                        'message' => 'empresa',
-                        'user' => $empresa
-                    ]);
+                break;
+            case "contratante":
+                $contratante = Contratante::where('user_id', $logado->id)->first();
+                return response()->json([
+                    'message' => 'contratante',
+                    'user' => $contratante
+                ]);
+                break;
+            case "prestador":
+                $prestador = Prestador::where('user_id', $logado->id)->first();
+                return response()->json([
+                    'message' => 'prestador',
+                    'user' => $prestador
+                ]);
         }
     }
     public function update(Request $request, Users $users)
     {
-        //
+        try {
+            $request->validate([
+            'email' => 'sometimes|email|unique:users,email',
+            'password' => 'sometimes|string|min:6',
+            'type' => 'required|in:empresa,prestador,contratante',
+            'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            'telefone' => 'sometimes|string',
+            'localidade' => 'sometimes|string|max:255',
+            'uf' => 'sometimes|string|max:2',
+            'estado' => 'sometimes|string|max:255',
+            'cep' => 'sometimes|string|max:10',
+            'rua' => 'sometimes|string|max:255',
+            'numero' => 'sometimes|string|max:255',
+            'infoadd' => 'sometimes|string|max:255',
+            'cnpj' => 'sometimes|string',
+            'razao_social' => 'sometimes|string',
+            'id_ramo' => 'sometimes|integer|exists:ramo,id',
+
+            'cpf' => 'sometimes|string',
+            'nome' => 'sometimes|string',
+            ]);
+
+            if($request->has('email')){
+                switch ($request->type) {
+                    case 'value':
+                        # code...
+                        break;
+                    
+                    
+                }
+            }
+        } catch (ValidationException $e) {
+        }
+        
     }
 
     /**

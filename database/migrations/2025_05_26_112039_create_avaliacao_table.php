@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('link', function(Blueprint $table)
-        {
+        Schema::create('avaliacao', function (Blueprint $table) {
             $table->id();
-            $table->string('link');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('comentario');
+            $table->unsignedTinyInteger('estrelas');
+            $table->unsignedBigInteger('id_alvo');
+            $table->unique(['user_id', 'id_alvo']);
+            $table->timestamps();
 
-
-        }
-    );
+        });
     }
 
     /**
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('link');
+        Schema::dropIfExists('avaliacao');
     }
 };

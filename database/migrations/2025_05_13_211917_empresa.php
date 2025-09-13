@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('cep');
             $table->string('numero');
             $table->string('rua');
+            $table->string('infoadd');
             $table->foreignId('id_ramo')->constrained('ramo')->onDelete('cascade');
         });
     }

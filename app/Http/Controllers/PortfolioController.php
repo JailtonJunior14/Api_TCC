@@ -28,8 +28,7 @@ class PortfolioController extends Controller
             $request->validate([
                 'imagem' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
                 'descricao' => 'required|string',
-                'id_prestador' => 'sometimes|integer|exists:prestador,id',
-                'id_empresa' => 'sometimes|integer|exists:empresa,id'
+                'user_id' => 'sometimes|integer|exists:users,id',
             ]);
 
 
@@ -38,8 +37,7 @@ class PortfolioController extends Controller
 
             $portfolio->descricao = $request['descricao'];
             $portfolio->imagem = $imagem_path;
-            $portfolio->id_prestador = $request['id_prestador'];
-            $portfolio->id_empresa = $request['id_empresa'];
+            $portfolio->user_id = $request['user_id'];
             $portfolio->save();
 
 

@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comentario;
+use App\Models\Avaliacao;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
-class ComentarioController extends Controller
+class AvaliacaoController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Comentario::all();
+        return Avaliacao::all();
     }
 
     /**
@@ -33,14 +33,14 @@ class ComentarioController extends Controller
             'id_contratante_autor' => 'integer|exists:contratante,id'
             ]);
 
-            $comentario = new Comentario();
-            $comentario->descricao = $request['descricao'];
-            $comentario->id_prestador_destino = $request['id_prestador_destino'];
-            $comentario->id_empresa_destino = $request['id_empresa_destino'];
-            $comentario->id_empresa_autor = $request['id_empresa_autor'];
-            $comentario->id_contratante_autor = $request['id_contratante_autor'];
+            $Avaliacao = new Avaliacao();
+            $Avaliacao->descricao = $request['descricao'];
+            $Avaliacao->id_prestador_destino = $request['id_prestador_destino'];
+            $Avaliacao->id_empresa_destino = $request['id_empresa_destino'];
+            $Avaliacao->id_empresa_autor = $request['id_empresa_autor'];
+            $Avaliacao->id_contratante_autor = $request['id_contratante_autor'];
 
-            $comentario->save();
+            $Avaliacao->save();
         } catch (ValidationException $e) {
             Log::error('erro de validação', ['error' => $e->getMessage()]);
         } catch (QueryException $e){
@@ -53,14 +53,14 @@ class ComentarioController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Comentario $comentario)
+    public function show(Avaliacao $Avaliacao)
     {
         //
     }
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Comentario $comentario)
+    public function update(Request $request, Avaliacao $Avaliacao)
     {
         try {
             
@@ -74,10 +74,10 @@ class ComentarioController extends Controller
      */
     public function destroy($id)
     {
-        $comentario = Comentario::find($id);
+        $Avaliacao = Avaliacao::find($id);
 
-        if($comentario){
-            $comentario->delete();
+        if($Avaliacao){
+            $Avaliacao->delete();
         } 
     }
 }

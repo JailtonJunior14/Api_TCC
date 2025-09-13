@@ -7,6 +7,7 @@ use App\Models\Empresa;
 use App\Models\Prestador;
 use App\Models\Ramo;
 use App\Models\Telefone;
+use App\Models\User;
 use App\Models\Users;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -26,9 +27,6 @@ class UsersController extends Controller
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function store(Request $request)
     {
        try{ $request->validate([
@@ -72,7 +70,7 @@ class UsersController extends Controller
             ? $request->file('foto')->store('fotos', 'public')
             : null;
             // dd($imagem_path);
-            $user = new Users();
+            $user = new User();
             $user->email = $request['email'];
             $user->password = Hash::make($request['password']);
             $user->type = $request['type'];
@@ -216,13 +214,20 @@ class UsersController extends Controller
                 ]);
         }
     }
-    public function update(Request $request, Users $users)
+    public function update(Request $request)
     {
         try {
+            $logado = Auth::guard('user')->user();
+            // dd($logado->id);
+             if(!$logado){
+                response()->json([
+                    'message' => 'usuario não autenticado'
+                ]);
+            }
+
             $request->validate([
-            'email' => 'sometimes|email|unique:users,email',
+            'email' => 'sometimes|email|unique:users,email,' . $logado->id,
             'password' => 'sometimes|string|min:6',
-            'type' => 'required|in:empresa,prestador,contratante',
             'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
             'telefone' => 'sometimes|string',
             'localidade' => 'sometimes|string|max:255',
@@ -235,21 +240,81 @@ class UsersController extends Controller
             'cnpj' => 'sometimes|string',
             'razao_social' => 'sometimes|string',
             'id_ramo' => 'sometimes|integer|exists:ramo,id',
-
             'cpf' => 'sometimes|string',
             'nome' => 'sometimes|string',
             ]);
+             $userID = $logado->id;
+
+            $usuario = User::findOrFail($userID);
+            // var_dump($usuario);
+
 
             if($request->has('email')){
-                switch ($request->type) {
-                    case 'value':
-                        # code...
-                        break;
-                    
-                    
-                }
+                $usuario->email = $request['email'];
+                // return response()->json([
+                //     'message' => 'toaqui'
+                // ]);
+            }
+
+            if($request->has('password')){
+                $usuario->password = Hash::make($request->password);
+            }
+
+            if($request->has('telefone')){
+                $telefone = $usuario->telefone;
+                $telefone->telefone = $request->telefone;
+                $telefone->save();
+            }
+
+            $usuario->save();
+            switch ($logado->type) {
+                case 'contratante':
+                    $contratante = $logado->contratante;
+                    $contratante->fill($request->only([
+                        'nome', 'cpf', 'localidade', 'uf', 'estado', 'cep', 'rua','numero', 'infoadd'
+                    ]));
+                    if($request->has('foto')){
+                        $path = $request->file('foto')->store('fotos', 'public');
+                        $contratante->foto = $path;
+                    }
+                    $contratante->save();
+                    break;
+                case 'prestador':
+                    $prestador = $logado->prestador;
+                    $prestador->fill($request->only([
+                        'nome','cpf', 'foto', 'cep', 'id_ramo', 'localidade', 'uf', 'estado', 'cep','numero', 'rua', 'infoadd'
+                    ]));
+                    if($request->has('foto')){
+                        $path = $request->file('foto')->store('fotos', 'public');
+                        $prestador->foto = $path;
+                    }
+                    $prestador->save();
+                    break;
+                case 'prestador':
+                    $empresa = $logado->empresa;
+                    $empresa->fill($request->only([
+                        'razao_social','whatsapp','fixo', 'foto', 'cnpj','id_ramo','localidade', 'uf', 'estado', 'cep', 'rua', 'numero', 'infoadd'
+                    ]));
+                    if($request->has('foto')){
+                        $path = $request->file('foto')->store('fotos', 'public');
+                        $empresa->foto = $path;
+                    }
+                    $empresa->save();
+                    break;
+
+                
+                default:
+                return response()->json([
+                    'message' => 'deu merda'
+                ]);
+                    break;
             }
         } catch (ValidationException $e) {
+            Log::error('erro validaçao', [$e->getMessage()]);
+        }catch (QueryException $e) {
+            Log::error('erro validaçao', [$e->getMessage()]);
+        }catch (Exception $e) {
+            Log::error('erro validaçao', [$e->getMessage()]);
         }
         
     }
@@ -257,7 +322,7 @@ class UsersController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Users $users)
+    public function destroy()
     {
         //
     }

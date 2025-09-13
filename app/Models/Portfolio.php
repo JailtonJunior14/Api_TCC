@@ -9,7 +9,7 @@ class Portfolio extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['descricao', 'imagem', 'id_empresa', 'id_prestador'];
+    protected $fillable = ['user_id', 'descricao', 'imagem'];
     protected $table = 'portfolio';
 
     function autorEmpresa() {

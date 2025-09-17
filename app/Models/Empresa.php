@@ -16,15 +16,8 @@ class Empresa extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['user_id','razao_social','whatsapp','fixo', 'foto', 'cnpj','id_ramo','localidade', 'uf', 'estado', 'cep', 'rua', 'numero'];
-    
-    function comentarioRecebido(){
-        return $this->hasMany(Comentario::class, 'id_empresa_destino');
-    }
-
-    function comentarioFeito(){
-        return $this->hasMany(Comentario::class, 'id_empresa_autor');
-    }
+    protected $fillable = ['user_id','razao_social','telefone', 'foto', 'cnpj','id_ramo','localidade', 'uf', 'estado', 'cep', 'rua', 'numero', 'infoadd'];
+  
 
     function portfolio(){
         return $this->hasMany(Prestador::class, 'id_empresa');
@@ -32,6 +25,6 @@ class Empresa extends Model
 
 
     public function user() {
-        return $this->belongsTo(Users::class);
+        return $this->belongsTo(User::class);
     }
 }

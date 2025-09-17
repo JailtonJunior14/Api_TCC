@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class UsersController extends Controller
@@ -95,7 +96,7 @@ class UsersController extends Controller
                     $empresa->cep = $request->cep;
                     $empresa->rua = $request->rua;
                     $empresa->numero = $request->numero;
-                    // $empresa->infoadd = $request->infoadd;
+                    $empresa->infoadd = $request->infoadd;
 
                     $empresa->save();
                     break;
@@ -196,7 +197,8 @@ class UsersController extends Controller
                 return response()->json([
                     'message' => 'empresa',
                     'user' => $empresa,
-                    'ramo' => $ramo->nome
+                    'foto' => $empresa->foto ? Storage::url($empresa->foto) : null,
+                    'ramo' => $ramo
                 ]);
                 break;
             case "contratante":

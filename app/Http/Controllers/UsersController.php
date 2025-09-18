@@ -31,15 +31,7 @@ class UsersController extends Controller
     public function store(Request $request)
     {
        try{ $request->validate([
-            /*
-                    'localidade' => 'required|string|max:255',
-                    'uf' => 'string|max:2',
-                    'estado' => 'required|string|max:255',
-                    'cep' => 'required|string|max:10',
-                    'rua' => 'required|string|max:255',
-                    'numero' => 'required|string|max:255',
-                    'infoadd' => 'required|string|max:255'
-            */
+           
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
             'type' => 'required|in:empresa,prestador,contratante',
@@ -59,10 +51,7 @@ class UsersController extends Controller
             'cnpj' => 'required_if:type,empresa',
             'razao_social' => 'required_if:type,empresa',
             'id_ramo' => 'required_if:type,empresa,prestador|integer|exists:ramo,id',
-
             'cpf' => 'required_if:type,prestador,contratante',
-            // 'profissao' => 'required_if:type,prestador,empresa',
-            //'endereco' => 'required_if:type,contratante,prestador',
             'nome' => 'required_if:type,contratante,prestador',
         ]);
 

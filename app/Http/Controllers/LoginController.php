@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Empresa;
 use App\Models\Contratante;
 use App\Models\Prestador;
+use App\Models\Ramo;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class LoginController extends Controller
@@ -59,15 +61,45 @@ class LoginController extends Controller
         // }
         try {
             $credentials = $request->only('email', 'password');
-
-
-                if ($token = Auth::guard('user')->attempt($credentials)) {
+            $token = Auth::guard('user')->attempt($credentials);
+            $logado = Auth::guard('user')->user();
+            switch($logado->type){
+                case "empresa":
+                    $empresa = Empresa::where('user_id', $logado->id)->first();
+                    $ramo = Ramo::where('id', $empresa->id_ramo)->first();
+                    // dd($ramo->nome);
+                    // dd($empresa);
                     return response()->json([
                         'access_token' => $token,
                         'token_type' => 'bearer',
-                        'user' => Auth::guard('user')->user(),
+                        'user' => $logado,
+                        'empresa' => $empresa,
+                        'foto' => $empresa->foto ? asset(Storage::url($empresa->foto)) : null,
+                        'ramo' => $ramo
                     ]);
-                }
+                    break;
+                case "contratante":
+                    $contratante = Contratante::where('user_id', $logado->id)->first();
+                    return response()->json([
+                        'message' => 'contratante',
+                        'user' => $contratante
+                    ]);
+                    break;
+                case "prestador":
+                    $prestador = Prestador::where('user_id', $logado->id)->first();
+                    return response()->json([
+                        'message' => 'prestador',
+                        'user' => $prestador
+                    ]);
+            }
+
+                // if ($token) {
+                //     return response()->json([
+                //         'access_token' => $token,
+                //         'token_type' => 'bearer',
+                //         'user' => $logado,
+                //     ]);
+                // }
 
             return response()->json(['error' => 'Credenciais inválidas'], 401);
         }catch(ValidationException $e){

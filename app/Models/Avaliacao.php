@@ -11,7 +11,7 @@ class Avaliacao extends Model
 
     protected $fillable = 
         [
-            'user_id', 'comentario', 'estrelas', 'id_alvo'
+            'user_id', 'comentario', 'estrelas', 'alvo_id'
         ];
     protected $table = 'avaliacao';
 

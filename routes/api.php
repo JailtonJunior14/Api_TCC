@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\AvaliacaoController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CidadeController;
@@ -47,42 +47,20 @@ Route::post('/usuario/update', [UsersController::class, 'update']);
 Route::post('/usuario-teste', [UsersController::class, 'select']);
 
 
-// //rotas contratante
-// Route::get('/contratante', [ContratanteController::class, 'index']);
-// Route::post('/contratante/cadastro', [ContratanteController::class, 'store']);
-// Route::get('/contratante/listar/{id}', [ContratanteController::class, 'show']);
-// Route::patch('/contratante/atualizar/{id}', [ContratanteController::class, 'update']);
-// Route::delete('/contratante/deletar/{id}', [ContratanteController::class, 'destroy']);
-
-// Route::apiResource('contratante', ContratanteController::class);
-
 
 //rotas ramo
 Route::get('/ramo', [RamoController::class, 'index']);
 Route::get('/ramo/{modalidade}', [RamoController::class, 'show']);
 Route::get('/ramo/nome/{nome}', [RamoController::class, 'nome']);
-
-// //rotas prestador
-// Route::get('/prestador', [PrestadorController::class, 'index']);
-// Route::post('/prestador/cadastro', [PrestadorController::class, 'store']);
-// Route::get('/prestador/listar/{id}', [PrestadorController::class, 'show']);
-// Route::patch('/prestador/atualizar/{id}', [PrestadorController::class, 'update']);
-// Route::delete('/prestador/deletar/{id}', [PrestadorController::class, 'destroy']);
-
-// //rotas empresa
-// Route::get('/empresa', [EmpresaController::class, 'index']);
-// Route::post('/empresa/cadastro', [EmpresaController::class, 'store']);
-// Route::get('/empresa/listar/{id}', [EmpresaController::class, 'show']);
-// Route::patch('/empresa/atualizar/{id}', [EmpresaController::class, 'update']);
-// Route::delete('/empresa/deletar/{id}', [EmpresaController::class, 'destroy']);
 //rotas links
 
 Route::get('/link', [LinksController::class, 'index']);
 Route::post('/link/cadastro', [LinksController::class, 'store']);
 //rotas portfolio
 
-//rotas comentario
-
+//rotas avaliação
+Route::post('/avaliar', [AvaliacaoController::class, 'store']);
+Route::get('/avaliacao', [AvaliacaoController::class, 'show']);
 
 
 
@@ -95,7 +73,7 @@ Route::post('/login', [LoginController::class, 'login']);
 
 
 
-Route::middleware(['auth:prestador'])->get('/perfil', function(){
+Route::middleware(['auth:user'])->get('/perfil', function(){
     return response()->json([
         'message' => 'to logado'
     ]);

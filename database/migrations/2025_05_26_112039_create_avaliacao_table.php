@@ -16,10 +16,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('comentario');
             $table->unsignedTinyInteger('estrelas');
-            $table->unsignedBigInteger('id_alvo');
-            $table->unique(['user_id', 'id_alvo']);
+            $table->unsignedBigInteger('alvo_id');
+            $table->unique(['user_id', 'alvo_id']);
             $table->timestamps();
-
         });
     }
 

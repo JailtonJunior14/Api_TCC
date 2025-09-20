@@ -6,6 +6,7 @@ use App\Models\Avaliacao;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
@@ -25,29 +26,45 @@ class AvaliacaoController extends Controller
     public function store(Request $request)
     {
         try {
+            $logado = Auth::guard('user')->user();
             $request->validate([
-            'descricao' => 'required|string',
-            'id_prestador_destino' => 'integer|exists:prestador,id',
-            'id_empresa_destino' => 'integer|exists:empresa,id',
-            'id_empresa_autor' => 'integer|exists:empresa,id',
-            'id_contratante_autor' => 'integer|exists:contratante,id'
+            'comentario' => 'string|max:255',
+            'estrelas' => 'required|integer|max:5',
+            'alvo_id' => 'required|integer|exists:users,id'
             ]);
+            $avaliacao = new Avaliacao();
+            $avaliacao->user_id = $logado->id;
+            $avaliacao->comentario = $request->comentario;
+            $avaliacao->estrelas = $request->estrelas;
+            $avaliacao->alvo_id = $request->alvo_id;
+            $avaliacao->save();
 
-            $Avaliacao = new Avaliacao();
-            $Avaliacao->descricao = $request['descricao'];
-            $Avaliacao->id_prestador_destino = $request['id_prestador_destino'];
-            $Avaliacao->id_empresa_destino = $request['id_empresa_destino'];
-            $Avaliacao->id_empresa_autor = $request['id_empresa_autor'];
-            $Avaliacao->id_contratante_autor = $request['id_contratante_autor'];
-
-            $Avaliacao->save();
+            return response()->json([
+                        'message' => 'Avaliação cadastrada com sucesso!',
+                        'comentario' => $avaliacao->comentario,
+                        'estrelas' => $avaliacao->estrelas,
+                        'alvo' => $avaliacao->alvo_id
+                    ], 201);
         } catch (ValidationException $e) {
-            Log::error('erro de validação', ['error' => $e->getMessage()]);
-        } catch (QueryException $e){
-            Log::error('erro ao salvar no banco', ['error' => $e->getMessage()]);
-        } catch (Exception $e){
-            Log::error('erro', ['error' => $e->getMessage()]);
+           Log::error('Erro validação', [$e->getMessage()]);
+           return response()->json([
+            'message' => 'erro validação',
+            'erro' => $e->errors(),
+           ], 422); 
+        }catch (QueryException $e){
+            Log::error('Erro banco', [$e->getMessage()]);
+           return response()->json([
+            'message' => 'erro validação',
+            'erro' => $e->getMessage(),
+           ], 500); 
+        }catch (Exception $e){
+            Log::error('Erro inesperado', [$e->getMessage()]);
+           return response()->json([
+            'message' => 'erro validação',
+            'erro' => $e->getMessage(),
+           ], 500);
         }
+        
     }
 
     /**
@@ -55,7 +72,19 @@ class AvaliacaoController extends Controller
      */
     public function show(Avaliacao $Avaliacao)
     {
-        //
+        try {
+            $logado = Auth::guard('user')->user();
+            $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
+
+            // dd($avaliacao);
+            return response()->json([
+                'nota' => $avaliacao->media,
+                'avaliaçoes' => $avaliacao->total
+            ]);
+
+        } catch (\Throwable $th) {
+
+        }
     }
     /**
      * Update the specified resource in storage.

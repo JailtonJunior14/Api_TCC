@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Avaliacao;
 use App\Models\Empresa;
 use App\Models\Contratante;
 use App\Models\Prestador;
@@ -67,6 +68,8 @@ class LoginController extends Controller
                 case "empresa":
                     $empresa = Empresa::where('user_id', $logado->id)->first();
                     $ramo = Ramo::where('id', $empresa->id_ramo)->first();
+                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
+
                     // dd($ramo->nome);
                     // dd($empresa);
                     return response()->json([
@@ -75,7 +78,8 @@ class LoginController extends Controller
                         'logado' => $logado,
                         'user' => $empresa,
                         'foto' => $empresa->foto ? asset(Storage::url($empresa->foto)) : null,
-                        'ramo' => $ramo
+                        'ramo' => $ramo,
+                        'avaliacao' => $avaliacao
                     ]);
                     break;
                 case "contratante":

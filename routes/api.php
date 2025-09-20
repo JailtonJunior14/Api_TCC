@@ -82,9 +82,7 @@ Route::post('/link/cadastro', [LinksController::class, 'store']);
 //rotas portfolio
 
 //rotas comentario
-Route::get('/comentarios', [ComentarioController::class, 'index']);
-Route::post('/comentar', [ComentarioController::class, 'store']);
-Route::delete('/comentario/deletar/{id}', [ComentarioController::class, 'destroy']);
+
 
 
 

@@ -72,8 +72,8 @@ class LoginController extends Controller
                     return response()->json([
                         'access_token' => $token,
                         'token_type' => 'bearer',
-                        'user' => $logado,
-                        'empresa' => $empresa,
+                        'logado' => $logado,
+                        'user' => $empresa,
                         'foto' => $empresa->foto ? asset(Storage::url($empresa->foto)) : null,
                         'ramo' => $ramo
                     ]);
@@ -81,15 +81,23 @@ class LoginController extends Controller
                 case "contratante":
                     $contratante = Contratante::where('user_id', $logado->id)->first();
                     return response()->json([
-                        'message' => 'contratante',
-                        'user' => $contratante
+                        'access_token' => $token,
+                        'token_type' => 'bearer',
+                        'logado' => $logado,
+                        'user' => $contratante,
+                        'foto' => $contratante->foto ? asset(Storage::url($contratante->foto)) : null,
                     ]);
                     break;
                 case "prestador":
                     $prestador = Prestador::where('user_id', $logado->id)->first();
+                    $ramo = Ramo::where('id', $prestador->id_ramo)->first();
                     return response()->json([
-                        'message' => 'prestador',
-                        'user' => $prestador
+                        'access_token' => $token,
+                        'token_type' => 'bearer',
+                        'logado' => $logado,
+                        'user' => $prestador,
+                        'foto' => $prestador->foto ? asset(Storage::url($prestador->foto)) : null,
+                        'ramo' => $ramo
                     ]);
             }
 

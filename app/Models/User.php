@@ -43,7 +43,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Contratante::class, 'user_id');
     }
 
-     public function telefone() {
+    public function telefone() {
         return $this->hasOne(Telefone::class);
+    }
+
+    function portfolio(){
+        return $this->hasOne(Portfolio::class, 'user_id');
     }
 }

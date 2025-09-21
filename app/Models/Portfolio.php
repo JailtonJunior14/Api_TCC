@@ -9,14 +9,17 @@ class Portfolio extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'descricao', 'imagem'];
-    protected $table = 'portfolio';
+    protected $fillable = ['user_id', 'descricao'];
+    protected $table = 'portfolios';
 
-    function autorEmpresa() {
-        return $this->belongsTo(Empresa::class, 'id_empresa');
+    function User() {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    function autorPrestador(){
-        return $this->belongsTo(Prestador::class, 'id_prestador');
+    function imagens() {
+        return $this->hasMany(Foto::class);
+    }
+    function videos() {
+        return $this->hasMany(Video::class);
     }
 }

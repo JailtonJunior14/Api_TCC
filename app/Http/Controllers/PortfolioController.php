@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Foto;
 use App\Models\Portfolio;
+use App\Models\Video;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class PortfolioController extends Controller
@@ -25,20 +29,41 @@ class PortfolioController extends Controller
     public function store(Request $request)
     {
         try {
+            $logado = Auth::guard('user')->user();
+            // dd($logado->id);
             $request->validate([
-                'imagem' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+                'imagens' => 'nullable|array',
+                'imagens.*' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+                'videos' => 'nullable|array',
+                'videos.*' => 'nullable|file|mimetypes:video/mp4',
                 'descricao' => 'required|string',
-                'user_id' => 'sometimes|integer|exists:users,id',
             ]);
 
 
-            $imagem_path = $request->file('imagem')->store('fotos/portfolio', 'public');
             $portfolio = new Portfolio();
 
+            $portfolio->user_id = $logado->id;
             $portfolio->descricao = $request['descricao'];
-            $portfolio->imagem = $imagem_path;
-            $portfolio->user_id = $request['user_id'];
             $portfolio->save();
+
+            // dd($request->videos);
+
+            if($request->hasFile('imagens')){
+                foreach ($request->file('imagens') as $imagem) {
+                    $imagem_path = $imagem->store('fotos/portfolio', 'public');
+                    $portfolio->imagens()->create([
+                        'foto' => $imagem_path
+                    ]);
+                }
+            }
+            if($request->hasFile('videos')){
+                foreach ($request->file('videos') as $videos) {
+                    $video_path = $videos->store('fotos/portfolio', 'public');
+                    $portfolio->videos()->create([
+                        'video' => $video_path
+                    ]);
+                }
+            }
 
 
 
@@ -56,7 +81,15 @@ class PortfolioController extends Controller
      */
     public function show(Portfolio $portfolio)
     {
-        //
+        $logado = Auth::guard('user')->user();
+        $portfolio = Portfolio::where('user_id', $logado->id)->first();
+        // dd($portfolio);
+
+        return response()->json([
+            'descricao' => $portfolio->descricao,
+            'imagem' => asset(Storage::url($portfolio->imagem)),
+            'video' => asset(Storage::url($portfolio->video)),
+        ]);
     }
 
     /**

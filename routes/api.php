@@ -12,6 +12,7 @@ use App\Http\Controllers\LinksController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PaisController;
 use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\PrestadorController;
 use App\Http\Controllers\RamoController;
 use App\Http\Controllers\TelefoneController;
@@ -57,6 +58,8 @@ Route::get('/ramo/nome/{nome}', [RamoController::class, 'nome']);
 Route::get('/link', [LinksController::class, 'index']);
 Route::post('/link/cadastro', [LinksController::class, 'store']);
 //rotas portfolio
+Route::post('/portfolio/cadastro', [PortfolioController::class, 'store']);
+Route::post('/portfolio/user', [PortfolioController::class, 'show']);
 
 //rotas avaliação
 Route::post('/avaliar', [AvaliacaoController::class, 'store']);

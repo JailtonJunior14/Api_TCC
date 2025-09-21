@@ -17,12 +17,6 @@ class Empresa extends Model
     public $timestamps = false;
 
     protected $fillable = ['user_id','razao_social','telefone', 'foto', 'cnpj','id_ramo','localidade', 'uf', 'estado', 'cep', 'rua', 'numero', 'infoadd'];
-  
-
-    function portfolio(){
-        return $this->hasMany(Prestador::class, 'id_empresa');
-    }
-
 
     public function user() {
         return $this->belongsTo(User::class);

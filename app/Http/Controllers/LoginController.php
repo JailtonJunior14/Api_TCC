@@ -64,6 +64,7 @@ class LoginController extends Controller
             $credentials = $request->only('email', 'password');
             $token = Auth::guard('user')->attempt($credentials);
             $logado = Auth::guard('user')->user();
+            // dd($logado);
             switch($logado->type){
                 case "empresa":
                     $empresa = Empresa::where('user_id', $logado->id)->first();

@@ -29,7 +29,7 @@ class AvaliacaoController extends Controller
             $logado = Auth::guard('user')->user();
             $request->validate([
             'comentario' => 'string|max:255',
-            'estrelas' => 'required|integer|max:5',
+            'estrelas' => 'required|numeric|max:5',
             'alvo_id' => 'required|integer|exists:users,id'
             ]);
             $avaliacao = new Avaliacao();

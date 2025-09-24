@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array<int, class-string>
      */
     protected $commands = [
-        //
+        \App\Console\Commands\BackupDB::class,
+        \App\Console\Commands\BackupServe::class
     ];
 
     /**
@@ -21,8 +22,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        
-       
+        $schedule->command('backup:serve')->dailyAt('15:30');
+        $schedule->command('backup:database')->dailyAt('15:30');
     }
 
     /**

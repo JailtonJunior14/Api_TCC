@@ -252,6 +252,137 @@
     ),
     'password_timeout' => 10800,
   ),
+  'backup' => 
+  array (
+    'backup' => 
+    array (
+      'name' => 'Laravel',
+      'source' => 
+      array (
+        'files' => 
+        array (
+          'include' => 
+          array (
+            0 => 'D:\\estudos\\Tcc\\Api_TCC\\storage\\app/public/fotos',
+            1 => 'D:\\estudos\\Tcc\\Api_TCC\\storage\\app/public/video',
+          ),
+          'exclude' => 
+          array (
+          ),
+          'follow_links' => true,
+          'ignore_unreadable_directories' => false,
+          'relative_path' => NULL,
+        ),
+        'databases' => 
+        array (
+          0 => 'mysql',
+        ),
+      ),
+      'database_dump_compressor' => NULL,
+      'database_dump_file_timestamp_format' => NULL,
+      'database_dump_filename_base' => 'database',
+      'database_dump_file_extension' => '',
+      'destination' => 
+      array (
+        'compression_method' => -1,
+        'compression_level' => 9,
+        'filename_prefix' => '',
+        'disks' => 
+        array (
+          0 => 'local',
+        ),
+      ),
+      'temporary_directory' => 'D:\\estudos\\Tcc\\Api_TCC\\storage\\app/backup-temp',
+      'password' => NULL,
+      'encryption' => 'default',
+      'tries' => 1,
+      'retry_delay' => 0,
+    ),
+    'notifications' => 
+    array (
+      'notifications' => 
+      array (
+        'Spatie\\Backup\\Notifications\\Notifications\\BackupHasFailedNotification' => 
+        array (
+          0 => 'mail',
+        ),
+        'Spatie\\Backup\\Notifications\\Notifications\\UnhealthyBackupWasFoundNotification' => 
+        array (
+          0 => 'mail',
+        ),
+        'Spatie\\Backup\\Notifications\\Notifications\\CleanupHasFailedNotification' => 
+        array (
+          0 => 'mail',
+        ),
+        'Spatie\\Backup\\Notifications\\Notifications\\BackupWasSuccessfulNotification' => 
+        array (
+          0 => 'mail',
+        ),
+        'Spatie\\Backup\\Notifications\\Notifications\\HealthyBackupWasFoundNotification' => 
+        array (
+          0 => 'mail',
+        ),
+        'Spatie\\Backup\\Notifications\\Notifications\\CleanupWasSuccessfulNotification' => 
+        array (
+          0 => 'mail',
+        ),
+      ),
+      'notifiable' => 'Spatie\\Backup\\Notifications\\Notifiable',
+      'mail' => 
+      array (
+        'to' => 'your@example.com',
+        'from' => 
+        array (
+          'address' => 'hello@example.com',
+          'name' => 'Laravel',
+        ),
+      ),
+      'slack' => 
+      array (
+        'webhook_url' => '',
+        'channel' => NULL,
+        'username' => NULL,
+        'icon' => NULL,
+      ),
+      'discord' => 
+      array (
+        'webhook_url' => '',
+        'username' => '',
+        'avatar_url' => '',
+      ),
+    ),
+    'monitor_backups' => 
+    array (
+      0 => 
+      array (
+        'name' => 'Laravel',
+        'disks' => 
+        array (
+          0 => 'local',
+        ),
+        'health_checks' => 
+        array (
+          'Spatie\\Backup\\Tasks\\Monitor\\HealthChecks\\MaximumAgeInDays' => 1,
+          'Spatie\\Backup\\Tasks\\Monitor\\HealthChecks\\MaximumStorageInMegabytes' => 5000,
+        ),
+      ),
+    ),
+    'cleanup' => 
+    array (
+      'strategy' => 'Spatie\\Backup\\Tasks\\Cleanup\\Strategies\\DefaultStrategy',
+      'default_strategy' => 
+      array (
+        'keep_all_backups_for_days' => 7,
+        'keep_daily_backups_for_days' => 16,
+        'keep_weekly_backups_for_weeks' => 8,
+        'keep_monthly_backups_for_months' => 4,
+        'keep_yearly_backups_for_years' => 2,
+        'delete_oldest_backups_when_using_more_megabytes_than' => 5000,
+      ),
+      'tries' => 1,
+      'retry_delay' => 0,
+    ),
+  ),
   'cache' => 
   array (
     'default' => 'file',

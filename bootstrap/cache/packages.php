@@ -41,6 +41,24 @@
       0 => 'Termwind\\Laravel\\TermwindServiceProvider',
     ),
   ),
+  'spatie/laravel-backup' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\Backup\\BackupServiceProvider',
+    ),
+  ),
+  'spatie/laravel-signal-aware-command' => 
+  array (
+    'aliases' => 
+    array (
+      'Signal' => 'Spatie\\SignalAwareCommand\\Facades\\Signal',
+    ),
+    'providers' => 
+    array (
+      0 => 'Spatie\\SignalAwareCommand\\SignalAwareCommandServiceProvider',
+    ),
+  ),
   'tymon/jwt-auth' => 
   array (
     'aliases' => 

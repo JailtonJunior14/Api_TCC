@@ -41,22 +41,11 @@
       0 => 'Termwind\\Laravel\\TermwindServiceProvider',
     ),
   ),
-  'spatie/laravel-backup' => 
+  'phiki/phiki' => 
   array (
     'providers' => 
     array (
-      0 => 'Spatie\\Backup\\BackupServiceProvider',
-    ),
-  ),
-  'spatie/laravel-signal-aware-command' => 
-  array (
-    'aliases' => 
-    array (
-      'Signal' => 'Spatie\\SignalAwareCommand\\Facades\\Signal',
-    ),
-    'providers' => 
-    array (
-      0 => 'Spatie\\SignalAwareCommand\\SignalAwareCommandServiceProvider',
+      0 => 'Phiki\\Adapters\\Laravel\\PhikiServiceProvider',
     ),
   ),
   'tymon/jwt-auth' => 

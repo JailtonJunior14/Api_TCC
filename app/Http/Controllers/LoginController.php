@@ -96,13 +96,20 @@ class LoginController extends Controller
                 case "prestador":
                     $prestador = Prestador::where('user_id', $logado->id)->first();
                     $ramo = Ramo::where('id', $prestador->id_ramo)->first();
+                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
                     return response()->json([
                         'access_token' => $token,
                         'token_type' => 'bearer',
                         'logado' => $logado,
                         'user' => $prestador,
                         'foto' => $prestador->foto ? asset(Storage::url($prestador->foto)) : null,
-                        'ramo' => $ramo
+                        'ramo' => $ramo,
+                        'avaliacao' => $avaliacao
+                    ]);
+                    break;
+                default:
+                    return response()->json([
+                        'message' => 'erro'
                     ]);
             }
 

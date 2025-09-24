@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Avaliacao;
 use App\Models\Contratante;
 use App\Models\Empresa;
 use App\Models\Prestador;
@@ -44,19 +45,16 @@ class UsersController extends Controller
             'rua' => 'required|string|max:255',
             'numero' => 'required|string|max:255',
             'infoadd' => 'required|string|max:255',
-
-
-
             // dados específicos (validação condicional)
             'cnpj' => 'required_if:type,empresa',
             'razao_social' => 'required_if:type,empresa',
             'id_ramo' => 'required_if:type,empresa,prestador|integer|exists:ramo,id',
             'cpf' => 'required_if:type,prestador,contratante',
             'nome' => 'required_if:type,contratante,prestador',
-        ]);
+            ]);
 
 
-        $imagem_path = $request->hasFile('foto')
+            $imagem_path = $request->hasFile('foto')
             ? $request->file('foto')->store('fotos', 'public')
             : null;
             // dd($imagem_path);
@@ -138,14 +136,61 @@ class UsersController extends Controller
 
                                 $logado = auth('user')->user();
 
-                    return response()->json([
-                        'message' => 'Usuário cadastrado com sucesso!',
-                        'user' => $user->load($user->type),
-                        'token' => $token,
-                        'logado' => $logado
-                    ], 201);
+                    // return response()->json([
+                    //     'message' => 'Usuário cadastrado com sucesso!',
+                    //     'user' => $user->load($user->type),
+                    //     'token' => $token,
+                    //     'logado' => $logado
+                    // ], 201);
+                    switch($logado->type){
+                        case "empresa":
+                            $empresa = Empresa::where('user_id', $logado->id)->first();
+                            $ramo = Ramo::where('id', $empresa->id_ramo)->first();
+                            $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
+        
+                            // dd($ramo->nome);
+                            // dd($empresa);
+                            return response()->json([
+                                'access_token' => $token,
+                                'token_type' => 'bearer',
+                                'logado' => $logado,
+                                'user' => $empresa,
+                                'foto' => $empresa->foto ? asset(Storage::url($empresa->foto)) : null,
+                                'ramo' => $ramo,
+                                'avaliacao' => $avaliacao
+                            ]);
+                            break;
+                        case "contratante":
+                            $contratante = Contratante::where('user_id', $logado->id)->first();
+                            return response()->json([
+                                'access_token' => $token,
+                                'token_type' => 'bearer',
+                                'logado' => $logado,
+                                'user' => $contratante,
+                                'foto' => $contratante->foto ? asset(Storage::url($contratante->foto)) : null,
+                            ]);
+                            break;
+                        case "prestador":
+                            $prestador = Prestador::where('user_id', $logado->id)->first();
+                            $ramo = Ramo::where('id', $prestador->id_ramo)->first();
+                            $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
+                            return response()->json([
+                                'access_token' => $token,
+                                'token_type' => 'bearer',
+                                'logado' => $logado,
+                                'user' => $prestador,
+                                'foto' => $prestador->foto ? asset(Storage::url($prestador->foto)) : null,
+                                'ramo' => $ramo,
+                                'avaliacao' => $avaliacao
+                            ]);
+                            break;
+                        default:
+                            return response()->json([
+                                'message' => 'erro'
+                            ]);
 
-                        }
+                    }
+        }
                         catch (ValidationException $e) {
                         Log::error('Validation error', ['message' => $e->getMessage()]);
                         return response()->json([

@@ -28,11 +28,11 @@ Route::get('/teste', function () {
 
 //requisições 
 Route::get('/check-email', [ValidationController::class, 'check_email']);
-Route::get('/check_cpf_contratante', [ValidationController::class, 'check_cpf_contratante']);
-Route::get('/check_cpf_prestador', [ValidationController::class, 'check_cpf_prestador']);
-Route::get('/check_cnpj', [ValidationController::class, 'check_cnpj']);
-Route::get('/check_numero', [ValidationController::class, 'check_numero']);
-Route::get('/check_razaosocial', [ValidationController::class, 'check_razaoSocial']);
+Route::get('/check-cpf_contratante', [ValidationController::class, 'check_cpf_contratante']);
+Route::get('/check-cpf', [ValidationController::class, 'check_cpf']);
+Route::get('/check-cnpj', [ValidationController::class, 'check_cnpj']);
+Route::get('/check-numero', [ValidationController::class, 'check_numero']);
+Route::get('/check-razaosocial', [ValidationController::class, 'check_razaoSocial']);
 
 Route::post('/telefone', [TelefoneController::class, 'store']);
 

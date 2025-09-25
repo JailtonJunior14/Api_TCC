@@ -37,7 +37,7 @@ class UsersController extends Controller
             'password' => 'required|string|min:6',
             'type' => 'required|in:empresa,prestador,contratante',
             'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
-            'telefone' => 'required|string',
+            'telefone' => 'required|string|unique:telefone,telefone',
             'localidade' => 'required|string|max:255',
             'uf' => 'string|max:2',
             'estado' => 'required|string|max:255',
@@ -101,7 +101,7 @@ class UsersController extends Controller
                     $prestador->cep = $request->cep;
                     $prestador->rua = $request->rua;
                     $prestador->numero = $request->numero;
-                    // $prestador->infoadd = $request->infoadd;
+                    $prestador->infoadd = $request->infoadd;
 
                     $prestador->save();
                     break;

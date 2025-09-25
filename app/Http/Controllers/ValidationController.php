@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contratante;
+use App\Models\Prestador;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -32,50 +34,34 @@ class ValidationController extends Controller
             Log::error('email', [$e->getMessage()]);
         }
     }
-    public function check_cpf_contratante(Request $request){
-        try
-       {
-        $validado = Validator::make($request->all(),
-        [
+    public function check_cpf(Request $request){
+        $validator = Validator::make($request->all(), [
+            'cpf' => [
+                'required',
+                function ($atributo, $value, $fails){
+                    $contratante = Contratante::where('cpf', $value)->exists();
+                    $prestador = Prestador::where('cpf', $value)->exists();
 
-            'cpf' => 'required|unique:contratante,cpf',
+                    // dd($value);
+                    // dd($value);
+                    
+                    if($prestador || $contratante){
+                        $fails($atributo . ' usado');
+                        // dd($prestador);
+                    }
+                }
             ],
-            [
-                'cpf.unique' => 'cpg já está sendo usado'
-            ]);
-        if($validado->fails()){
-            return response()->json([
-                'message' => 'cpf usado',
-                'success' => false,
-                'errors' => $validado->errors()
-            ], 422);
-        }
-       }
-        catch(ValidationException $e){
-            Log::error('cpf', [$e->getMessage()]);
-        }
-    }
-    public function check_cpf_prestador(Request $request){
-        try
-       {
-        $validado = Validator::make($request->all(),
-        [
+        ]);
+        
 
-            'cpf' => 'required|unique:prestador,cpf',
-            ],
-            [
-                'cpf.unique' => 'cpf já está sendo usado'
+        if ($validator->fails()) {
+            $erro = $validator->errors()->toArray();
+
+            Log::error('erro validator', [
+                'error' => $erro,
+                'dados' => $request->all(),
             ]);
-        if($validado->fails()){
-            return response()->json([
-                'message' => 'cpf usado',
-                'success' => false,
-                'errors' => $validado->errors()
-            ], 422);
-        }
-       }
-        catch(ValidationException $e){
-            Log::error('cpf', [$e->getMessage()]);
+            throw new ValidationException($validator);
         }
     }
 
@@ -94,7 +80,7 @@ class ValidationController extends Controller
             ]);
         if($validado->fails()){
             return response()->json([
-                'message' => 'cpf usado',
+                'message' => 'cnpj usado',
                 'success' => false,
                 'errors' => $validado->errors()
             ], 422);
@@ -110,7 +96,7 @@ class ValidationController extends Controller
         $validado = Validator::make($request->all(),
         [
 
-            'numero' => 'required|unique:telefone,numero',
+            'numero' => 'required|unique:telefone,telefone',
             ],
             [
                 'numero.unique' => 'numero já está sendo usado'

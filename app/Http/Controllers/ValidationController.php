@@ -17,14 +17,14 @@ class ValidationController extends Controller
         $validado = Validator::make($request->all(),
         [
 
-            'email' => 'email|unique:users,email',
+            'valor' => 'email|unique:users,email',
             ],
             [
-                'email.unique' => 'email já está sendo usado'
+                'valor.unique' => 'email já está sendo usado!'
             ]);
         if($validado->fails()){
             return response()->json([
-                'message' => 'email usado',
+                'message' => $validado->errors(),
                 'success' => false,
                 'errors' => $validado->errors()
             ], 422);
@@ -36,7 +36,7 @@ class ValidationController extends Controller
     }
     public function check_cpf(Request $request){
         $validator = Validator::make($request->all(), [
-            'cpf' => [
+            'valor' => [
                 'required',
                 function ($atributo, $value, $fails){
                     $contratante = Contratante::where('cpf', $value)->exists();
@@ -73,10 +73,10 @@ class ValidationController extends Controller
         $validado = Validator::make($request->all(),
         [
 
-            'cnpj' => 'required|unique:empresa,cnpj',
+            'valor' => 'required|unique:empresa,cnpj',
             ],
             [
-                'cnpj.unique' => 'cnpj já está sendo usado'
+                'valor.unique' => 'cnpj já está sendo usado'
             ]);
         if($validado->fails()){
             return response()->json([
@@ -96,10 +96,10 @@ class ValidationController extends Controller
         $validado = Validator::make($request->all(),
         [
 
-            'numero' => 'required|unique:telefone,telefone',
+            'valor' => 'required|unique:telefone,telefone',
             ],
             [
-                'numero.unique' => 'numero já está sendo usado'
+                'valor.unique' => 'numero já está sendo usado'
             ]);
         if($validado->fails()){
             return response()->json([
@@ -120,10 +120,10 @@ class ValidationController extends Controller
         $validado = Validator::make($request->all(),
         [
 
-            'razao_social' => 'required|unique:empresa,razao_social',
+            'valor' => 'required|unique:empresa,razao_social',
             ],
             [
-                'razao_social.unique' => 'razao_social já está sendo usado'
+                'valor.unique' => 'razao_social já está sendo usado'
             ]);
         if($validado->fails()){
             return response()->json([

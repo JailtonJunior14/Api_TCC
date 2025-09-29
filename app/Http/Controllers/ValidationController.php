@@ -29,16 +29,27 @@ class ValidationController extends Controller
                 'errors' => $validado->errors()
             ], 422);
         }
+        return response()->json([
+                'message' => [
+                    'valor' => []
+                ],
+                'success' => true,
+                'errors' => [
+                    'valor' => []
+                ]
+            ], 200);
+
        }
         catch(ValidationException $e){
             Log::error('email', [$e->getMessage()]);
         }
     }
     public function check_cpf(Request $request){
-        $validator = Validator::make($request->all(), [
+        try{
+            $validator = Validator::make($request->all(), [
             'valor' => [
                 'required',
-                function ($atributo, $value, $fails){
+                function ($atributo, $value, $fail){
                     $contratante = Contratante::where('cpf', $value)->exists();
                     $prestador = Prestador::where('cpf', $value)->exists();
 
@@ -46,24 +57,35 @@ class ValidationController extends Controller
                     // dd($value);
                     
                     if($prestador || $contratante){
-                        $fails($atributo . ' usado');
+                        $fail('CPF já está sendo usado!');
                         // dd($prestador);
                     }
                 }
             ],
-        ]);
+            ]);
         
 
-        if ($validator->fails()) {
-            $erro = $validator->errors()->toArray();
-
-            Log::error('erro validator', [
-                'error' => $erro,
-                'dados' => $request->all(),
-            ]);
-            throw new ValidationException($validator);
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+             return response()->json([
+                'message' => [
+                    'valor' => []
+                ],
+                'success' => true,
+                'errors' => [
+                    'valor' => []
+                ]
+            ], 200);
+    }catch(ValidationException $e){
+            Log::error('cpf', [$e->getMessage()]);
         }
     }
+    
 
     public function check_cnpj(Request $request){
         // $request->validate(['cnpj' => 'required|empresa,cnpj',]);
@@ -80,11 +102,20 @@ class ValidationController extends Controller
             ]);
         if($validado->fails()){
             return response()->json([
-                'message' => 'cnpj usado',
+                'message' => $validado->errors(),
                 'success' => false,
                 'errors' => $validado->errors()
             ], 422);
         }
+        return response()->json([
+                'message' => [
+                    'valor' => []
+                ],
+                'success' => true,
+                'errors' => [
+                    'valor' => []
+                ]
+            ], 200);
        }
         catch(ValidationException $e){
             Log::error('cnpj', [$e->getMessage()]);
@@ -96,18 +127,32 @@ class ValidationController extends Controller
         $validado = Validator::make($request->all(),
         [
 
-            'valor' => 'required|unique:telefone,telefone',
+            'valor' => [
+                'required',
+                'unique:telefone,telefone'
+                
+            ]
             ],
             [
-                'valor.unique' => 'numero já está sendo usado'
+                'valor.unique' => 'numero já está sendo usado',
+                'valor.regex' => 'digite um telefone valido'
             ]);
         if($validado->fails()){
             return response()->json([
-                'message' => 'numero usado',
+                'message' => $validado->errors(),
                 'success' => false,
                 'errors' => $validado->errors()
             ], 422);
         }
+        return response()->json([
+                'message' => [
+                    'valor' => []
+                ],
+                'success' => true,
+                'errors' => [
+                    'valor' => []
+                ]
+            ], 200);
        }
         catch(ValidationException $e){
             Log::error('email', [$e->getMessage()]);
@@ -123,15 +168,24 @@ class ValidationController extends Controller
             'valor' => 'required|unique:empresa,razao_social',
             ],
             [
-                'valor.unique' => 'razao_social já está sendo usado'
+                'valor.unique' => 'razao social já está sendo usado'
             ]);
         if($validado->fails()){
             return response()->json([
-                'message' => 'razao_social usado',
+                'message' => $validado->errors(),
                 'success' => false,
                 'errors' => $validado->errors()
             ], 422);
         }
+        return response()->json([
+                'message' => [
+                    'valor' => []
+                ],
+                'success' => true,
+                'errors' => [
+                    'valor' => []
+                ]
+            ], 200);
        }
         catch(ValidationException $e){
             Log::error('razao_social', [$e->getMessage()]);

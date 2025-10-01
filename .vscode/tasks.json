@@ -1,0 +1,98 @@
+{
+  "version": "2.0.0", 
+  "tasks": [
+    // ===== Laravel =====
+	{
+      "label": "Setup: Copiar .env",
+      "type": "shell",
+      "command": "copy .env.example .env",
+      "problemMatcher": []
+    },
+    {
+      "label": "Setup: Key Generate",
+      "type": "shell",
+      "command": "php artisan key:generate",
+      "problemMatcher": []
+    },
+    {
+      "label": "Setup: JWT Secret",
+      "type": "shell",
+      "command": "php artisan jwt:secret",
+      "problemMatcher": []
+    },
+    {
+      "label": "Setup Laravel Project",
+      "dependsOn": [
+        "Setup: Copiar .env",
+        "Setup: Key Generate",
+        "Setup: JWT Secret"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "Laravel: Serve",
+      "type": "shell",
+      "command": "php artisan serve",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Laravel: Migrate",
+      "type": "shell",
+      "command": "php artisan migrate",
+      "problemMatcher": []
+    },
+    {
+      "label": "Laravel: Migrate Fresh + Seed",
+      "type": "shell",
+      "command": "php artisan migrate:fresh --seed",
+      "problemMatcher": []
+    },
+    {
+      "label": "Laravel: Route List",
+      "type": "shell",
+      "command": "php artisan route:list",
+      "problemMatcher": []
+    },
+    {
+      "label": "Laravel: Clear Cache",
+      "type": "shell",
+      "command": "php artisan optimize:clear",
+      "problemMatcher": []
+    },
+    {
+      "label": "Laravel: Tinker",
+      "type": "shell",
+      "command": "php artisan tinker",
+      "problemMatcher": []
+    },
+
+    // ===== Composer =====
+    {
+      "label": "Composer: Install",
+      "type": "shell",
+      "command": "composer install",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Composer: Update",
+      "type": "shell",
+      "command": "composer update",
+      "problemMatcher": []
+    },
+    {
+      "label": "Composer: Dump Autoload",
+      "type": "shell",
+      "command": "composer dump-autoload",
+      "problemMatcher": []
+    },
+    {
+      "label": "Composer: Require Package",
+      "type": "shell",
+      "command": "composer require vendor/package",
+      "problemMatcher": []
+    }
+  ]
+}

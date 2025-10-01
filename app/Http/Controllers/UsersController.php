@@ -31,28 +31,27 @@ class UsersController extends Controller
 
     public function store(Request $request)
     {
-       try{ $request->validate([
-           
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
-            'type' => 'required|in:empresa,prestador,contratante',
-            'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
-            'telefone' => 'required|string|unique:telefone,telefone',
-            'localidade' => 'required|string|max:255',
-            'uf' => 'string|max:2',
-            'estado' => 'required|string|max:255',
-            'cep' => 'required|string|max:10',
-            'rua' => 'required|string|max:255',
-            'numero' => 'required|string|max:255',
-            'infoadd' => 'required|string|max:255',
-            // dados específicos (validação condicional)
-            'cnpj' => 'required_if:type,empresa',
-            'razao_social' => 'required_if:type,empresa',
-            'id_ramo' => 'required_if:type,empresa,prestador|integer|exists:ramo,id',
-            'cpf' => 'required_if:type,prestador,contratante',
-            'nome' => 'required_if:type,contratante,prestador',
+       try{ 
+            $request->validate([
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:6',
+                'type' => 'required|in:empresa,prestador,contratante',
+                'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+                'telefone' => 'required|string|unique:telefone,telefone',
+                'localidade' => 'required|string|max:255',
+                'uf' => 'string|max:2',
+                'estado' => 'required|string|max:255',
+                'cep' => 'required|string|max:10',
+                'rua' => 'required|string|max:255',
+                'numero' => 'required|string|max:255',
+                'infoadd' => 'required|string|max:255',
+                // dados específicos (validação condicional)
+                'cnpj' => 'required_if:type,empresa',
+                'razao_social' => 'required_if:type,empresa',
+                'id_ramo' => 'required_if:type,empresa,prestador|integer|exists:ramo,id',
+                'cpf' => 'required_if:type,prestador,contratante',
+                'nome' => 'required_if:type,contratante,prestador',
             ]);
-
 
             $imagem_path = $request->hasFile('foto')
             ? $request->file('foto')->store('fotos', 'public')
@@ -162,12 +161,15 @@ class UsersController extends Controller
                             break;
                         case "contratante":
                             $contratante = Contratante::where('user_id', $logado->id)->first();
+                            $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
                             return response()->json([
                                 'access_token' => $token,
                                 'token_type' => 'bearer',
                                 'logado' => $logado,
                                 'user' => $contratante,
                                 'foto' => $contratante->foto ? asset(Storage::url($contratante->foto)) : null,
+                                // 'ramo' => $ramo,
+                                // 'avaliacao' => $avaliacao
                             ]);
                             break;
                         case "prestador":

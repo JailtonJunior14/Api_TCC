@@ -59,7 +59,8 @@ Route::get('/link', [LinksController::class, 'index']);
 Route::post('/link/cadastro', [LinksController::class, 'store']);
 //rotas portfolio
 Route::post('/portfolio/cadastro', [PortfolioController::class, 'store']);
-Route::post('/portfolio/user', [PortfolioController::class, 'show']);
+Route::post('/portfolio/user', [PortfolioController::class, 'select']);
+Route::get('/portfolio/{id}', [PortfolioController::class, 'selectId']);
 
 //rotas avaliação
 Route::post('/avaliar', [AvaliacaoController::class, 'store']);

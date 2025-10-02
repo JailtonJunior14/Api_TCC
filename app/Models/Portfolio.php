@@ -16,7 +16,7 @@ class Portfolio extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    function imagens() {
+    function fotos() {
         return $this->hasMany(Foto::class);
     }
     function videos() {

@@ -38,6 +38,7 @@ class PortfolioController extends Controller
                 'videos.*' => 'nullable|file|mimetypes:video/mp4',
                 'descricao' => 'required|string',
             ]);
+            // dd($request->file('videos'));
 
 
             $portfolio = new Portfolio();
@@ -52,7 +53,8 @@ class PortfolioController extends Controller
                 foreach ($request->file('imagens') as $imagem) {
                     $imagem_path = $imagem->store('fotos/portfolio', 'public');
                     $portfolio->imagens()->create([
-                        'foto' => $imagem_path
+                        'foto' => $imagem_path,
+                        'portfolio_id' => $portfolio->id
                     ]);
                 }
             }
@@ -60,7 +62,8 @@ class PortfolioController extends Controller
                 foreach ($request->file('videos') as $videos) {
                     $video_path = $videos->store('fotos/portfolio', 'public');
                     $portfolio->videos()->create([
-                        'video' => $video_path
+                        'video' => $video_path,
+                        'portfolio_id' => $portfolio->id
                     ]);
                 }
             }
@@ -79,22 +82,47 @@ class PortfolioController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Portfolio $portfolio)
+    public function Select()
     {
         $logado = Auth::guard('user')->user();
-        $portfolio = Portfolio::where('user_id', $logado->id)->first();
-        // dd($portfolio);
+        $portfolios = Portfolio::with(['fotos', 'videos'])
+            ->where('user_id', $logado->id)
+            ->get();
+
+        // $portfolio = Portfolio::whereIn('user_id', $logado->id)->get();
+        // $portfolioId = $portfolio->pluck('id');
+        // // dd($portfolioId);
+        // $foto = Foto::whereIn('portfolio_id', $portfolioId)->get();
+        // $video = Video::whereIn('portfolio_id', $portfolioId)->get();
+        // dd($portfolios->descricao);
 
         return response()->json([
-            'descricao' => $portfolio->descricao,
-            'imagem' => asset(Storage::url($portfolio->imagem)),
-            'video' => asset(Storage::url($portfolio->video)),
+            'portfolios' => $portfolios,
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    public function SelectId(Int $id)
+    {
+        $portfolios = Portfolio::with(['fotos', 'videos'])
+            ->where('user_id', $id)
+            ->get();
+
+        // $portfolio = Portfolio::whereIn('user_id', $logado->id)->get();
+        // $portfolioId = $portfolio->pluck('id');
+        // // dd($portfolioId);
+        // $foto = Foto::whereIn('portfolio_id', $portfolioId)->get();
+        // $video = Video::whereIn('portfolio_id', $portfolioId)->get();
+        // dd($portfolios->descricao);
+
+        return response()->json([
+            'portfolios' => $portfolios,
+        ]);
+    }
+
+
+
+
+
     public function update(Request $request, Portfolio $portfolio)
     {
         //

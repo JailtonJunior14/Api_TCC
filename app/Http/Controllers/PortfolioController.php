@@ -86,26 +86,17 @@ class PortfolioController extends Controller
     {
         $logado = Auth::guard('user')->user();
         $portfolios = Portfolio::with(['fotos', 'videos'])
-            ->where('user_id', $logado->id)
-            ->get();
+            ->where('user_id', $logado->id)->orderBy('created_at', 'desc')
+            ->paginate(3);
 
-        // $portfolio = Portfolio::whereIn('user_id', $logado->id)->get();
-        // $portfolioId = $portfolio->pluck('id');
-        // // dd($portfolioId);
-        // $foto = Foto::whereIn('portfolio_id', $portfolioId)->get();
-        // $video = Video::whereIn('portfolio_id', $portfolioId)->get();
-        // dd($portfolios->descricao);
-
-        return response()->json([
-            'portfolios' => $portfolios,
-        ]);
+        return response()->json($portfolios);
     }
 
     public function SelectId(Int $id)
     {
         $portfolios = Portfolio::with(['fotos', 'videos'])
-            ->where('user_id', $id)
-            ->get();
+            ->where('user_id', $id)->orderBy('created_at', 'desc')
+            ->paginate(3);
 
         // $portfolio = Portfolio::whereIn('user_id', $logado->id)->get();
         // $portfolioId = $portfolio->pluck('id');

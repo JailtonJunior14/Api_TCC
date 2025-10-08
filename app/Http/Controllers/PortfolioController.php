@@ -31,14 +31,15 @@ class PortfolioController extends Controller
         try {
             $logado = Auth::guard('user')->user();
             // dd($logado->id);
+            // dd($request->file('videos'), $request->file('imagens'));
             $request->validate([
                 'imagens' => 'nullable|array',
                 'imagens.*' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
                 'videos' => 'nullable|array',
-                'videos.*' => 'nullable|file|mimetypes:video/mp4',
+                'videos.*' => 'nullable|file|mimes:mp4,mov,avi,mkv,webm,application/octet-stream',
                 'descricao' => 'required|string',
             ]);
-            // dd($request->file('videos'));
+            dd($request->file('videos'), $request->file('imagens'));
 
 
             $portfolio = new Portfolio();
@@ -52,7 +53,7 @@ class PortfolioController extends Controller
             if($request->hasFile('imagens')){
                 foreach ($request->file('imagens') as $imagem) {
                     $imagem_path = $imagem->store('fotos/portfolio', 'public');
-                    $portfolio->imagens()->create([
+                    $portfolio->fotos()->create([
                         'foto' => $imagem_path,
                         'portfolio_id' => $portfolio->id
                     ]);

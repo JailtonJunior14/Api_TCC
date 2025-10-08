@@ -58,6 +58,7 @@ Route::get('/ramo/nome/{nome}', [RamoController::class, 'nome']);
 Route::get('/link', [LinksController::class, 'index']);
 Route::post('/link/cadastro', [LinksController::class, 'store']);
 //rotas portfolio
+Route::get('/portfolio', [PortfolioController::class, 'show']);
 Route::post('/portfolio/cadastro', [PortfolioController::class, 'store']);
 Route::post('/portfolio/user', [PortfolioController::class, 'select']);
 Route::get('/portfolio/{id}', [PortfolioController::class, 'selectId']);

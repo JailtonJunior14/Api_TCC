@@ -36,10 +36,10 @@ class PortfolioController extends Controller
                 'imagens' => 'nullable|array',
                 'imagens.*' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
                 'videos' => 'nullable|array',
-                'videos.*' => 'nullable|file|mimes:mp4,mov,avi,mkv,webm,application/octet-stream',
+                'videos.*' => 'nullable|file',
                 'descricao' => 'required|string',
             ]);
-            dd($request->file('videos'), $request->file('imagens'));
+            // dd($request->file('videos'), $request->file('imagens'));
 
 
             $portfolio = new Portfolio();
@@ -109,6 +109,17 @@ class PortfolioController extends Controller
         return response()->json([
             'portfolios' => $portfolios,
         ]);
+    }
+
+    public function show(){
+        $portfolio = Portfolio::all();
+        $ids = Portfolio::pluck('id');
+        // dd($ids);
+
+        return response()->json([
+            'portfolios' => $portfolio,
+            'ids' => $ids
+        ], 200);
     }
 
 

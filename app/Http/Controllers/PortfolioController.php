@@ -112,13 +112,28 @@ class PortfolioController extends Controller
     }
 
     public function show(){
-        $portfolio = Portfolio::all();
-        $ids = Portfolio::pluck('id');
-        // dd($ids);
+        $portfolio = Portfolio::with(['User','fotos', 'videos'])->get();
 
+
+        $portfolio->map(function($item){
+            $tipo = $item->User->type ?? null;
+            // dd($tipo);
+
+            if($tipo === 'contratante'){
+                $item->User->load('contratante');
+            }
+            elseif($tipo === 'prestador'){
+                $item->User->load('prestador.ramo');
+            }
+            elseif($tipo === 'empresa'){
+                $item->User->load('empresa.ramo');
+            }
+                
+            // dd($item->User->load('prestador.ramo'));
+            return $item;
+        });
         return response()->json([
             'portfolios' => $portfolio,
-            'ids' => $ids
         ], 200);
     }
 

@@ -21,4 +21,9 @@ class Empresa extends Model
     public function user() {
         return $this->belongsTo(User::class);
     }
+
+    public function ramo()
+    {
+        return $this->belongsTo(Ramo::class, 'id_ramo');
+    }
 }

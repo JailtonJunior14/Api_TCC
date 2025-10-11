@@ -17,15 +17,12 @@ class Prestador extends Model
     protected $fillable = ['user_id','nome','cpf','whatsapp','fixo', 'foto', 'cep', 'id_ramo', 'localidade', 'uf', 'estado', 'cep','numero', 'rua'];
 
 
-    function comentarioRecebido(){
-        return $this->hasMany(Comentario::class, 'id_prestator_destino');
-    }
-
-    function portfolio(){
-        return $this->hasMany(Portfolio::class, 'id_prestador');
-    }
-
     public function user() {
-        return $this->belongsTo(Users::class);
+        return $this->belongsTo(User::class);
+    }
+
+    public function ramo()
+    {
+        return $this->belongsTo(Ramo::class, 'id_ramo');
     }
 }

@@ -93,7 +93,7 @@ class PortfolioController extends Controller
         return response()->json($portfolios);
     }
 
-    public function SelectId(Int $id)
+    public function SelectIdUser(Int $id)
     {
         $portfolios = Portfolio::with(['fotos', 'videos'])
             ->where('user_id', $id)->orderBy('created_at', 'desc')
@@ -108,6 +108,16 @@ class PortfolioController extends Controller
 
         return response()->json([
             'portfolios' => $portfolios,
+        ]);
+    }
+
+
+    public function SelectId(Int $id)
+    {
+        $portfolio = Portfolio::with(['fotos', 'videos'])->where('id', $id)->first();
+
+        return response()->json([
+            'portfolio' => $portfolio,
         ]);
     }
 

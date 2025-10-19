@@ -131,15 +131,29 @@ class PortfolioController extends Controller
 
             if($tipo === 'contratante'){
                 $item->User->load('contratante');
+                $item-> user_foto = $item->User->contratante->foto ? asset(Storage::url($item->User->contratante->foto)) : null;
+                $item-> user_cidade = $item->User->contratante->localidade ?? null;
+                $item-> user_estado = $item->User->contratante->estado ?? null;
+                dd($item->user_foto);
+
             }
             elseif($tipo === 'prestador'){
                 $item->User->load('prestador.ramo');
+                $item-> user_foto = $item->User->prestador->foto ? asset(Storage::url($item->User->prestador->foto)) : null;
+                $item-> user_ramo = $item->User->prestador->ramo->nome ?? null;
+                $item-> user_cidade = $item->User->prestador->localidade ?? null;
+                $item-> user_estado = $item->User->prestador->estado ?? null;
+                // dd($item->user_foto);
             }
             elseif($tipo === 'empresa'){
                 $item->User->load('empresa.ramo');
+                $item-> user_foto = $item->User->empresa->foto ? asset(Storage::url($item->User->empresa->foto)) : null;
+                $item-> user_ramo = $item->User->empresa->ramo->nome ?? null;
+                $item-> user_cidade = $item->User->empresa->localidade ?? null;
+                $item-> user_estado = $item->User->empresa->estado ?? null;
+                dd($item->user_foto);
             }
                 
-            // dd($item->User->load('prestador.ramo'));
             return $item;
         });
         return response()->json([

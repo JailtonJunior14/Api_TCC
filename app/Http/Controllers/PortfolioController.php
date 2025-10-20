@@ -122,7 +122,7 @@ class PortfolioController extends Controller
     }
 
     public function show(){
-        $portfolio = Portfolio::with(['User','fotos', 'videos'])->get();
+        $portfolio = Portfolio::with(['User','fotos', 'videos'])->paginate(3);
 
 
         $portfolio->map(function($item){

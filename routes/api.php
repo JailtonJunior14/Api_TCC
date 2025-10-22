@@ -8,6 +8,8 @@ use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\ContratanteController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\Filtro;
+use App\Http\Controllers\FiltroController;
 use App\Http\Controllers\LinksController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PaisController;
@@ -72,7 +74,8 @@ Route::get('/avaliacao', [AvaliacaoController::class, 'show']);
 Route::get('/usuarios', [UsersController::class, 'index']);
 //
 
-//rotas País, Estado, Cidade
+//filtro
+Route::get('/filtro', [FiltroController::class, 'filtro']);
 
 
 //rotas login

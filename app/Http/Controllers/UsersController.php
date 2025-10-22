@@ -26,7 +26,9 @@ class UsersController extends Controller
      */
     public function index()
     {
-       
+       return response()->json([
+        'message' => 'index users controller'
+       ]);
     }
 
     public function store(Request $request)

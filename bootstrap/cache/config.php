@@ -109,9 +109,9 @@
   array (
     'paths' => 
     array (
-      0 => 'D:\\Dev\\231465\\TCC\\Api_TCC\\resources\\views',
+      0 => 'D:\\estudos\\Tcc\\Api_TCC\\resources\\views',
     ),
-    'compiled' => 'D:\\Dev\\231465\\TCC\\Api_TCC\\storage\\framework\\views',
+    'compiled' => 'D:\\estudos\\Tcc\\Api_TCC\\storage\\framework\\views',
   ),
   'app' => 
   array (
@@ -126,7 +126,7 @@
     'fallback_locale' => 'en',
     'faker_locale' => 'en_US',
     'cipher' => 'AES-256-CBC',
-    'key' => 'base64:HlpuuYgJQKvQI14Ks3bH/vLsp0W7DjEzuv+8QL0vBSM=',
+    'key' => 'base64:/iZ2WpfX8exwoCWYet97QTURhXfdkRQsBuom2HccUPo=',
     'previous_keys' => 
     array (
     ),
@@ -278,8 +278,8 @@
       'file' => 
       array (
         'driver' => 'file',
-        'path' => 'D:\\Dev\\231465\\TCC\\Api_TCC\\storage\\framework/cache/data',
-        'lock_path' => 'D:\\Dev\\231465\\TCC\\Api_TCC\\storage\\framework/cache/data',
+        'path' => 'D:\\estudos\\Tcc\\Api_TCC\\storage\\framework/cache/data',
+        'lock_path' => 'D:\\estudos\\Tcc\\Api_TCC\\storage\\framework/cache/data',
       ),
       'memcached' => 
       array (
@@ -346,10 +346,10 @@
         'driver' => 'mysql',
         'url' => NULL,
         'host' => '127.0.0.1',
-        'port' => '3307',
+        'port' => '3306',
         'database' => 'opi_bd',
         'username' => 'root',
-        'password' => '',
+        'password' => 'Juninho@2025',
         'unix_socket' => '',
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
@@ -366,10 +366,10 @@
         'driver' => 'mariadb',
         'url' => NULL,
         'host' => '127.0.0.1',
-        'port' => '3307',
+        'port' => '3306',
         'database' => 'opi_bd',
         'username' => 'root',
-        'password' => '',
+        'password' => 'Juninho@2025',
         'unix_socket' => '',
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
@@ -386,10 +386,10 @@
         'driver' => 'pgsql',
         'url' => NULL,
         'host' => '127.0.0.1',
-        'port' => '3307',
+        'port' => '3306',
         'database' => 'opi_bd',
         'username' => 'root',
-        'password' => '',
+        'password' => 'Juninho@2025',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
@@ -401,10 +401,10 @@
         'driver' => 'sqlsrv',
         'url' => NULL,
         'host' => '127.0.0.1',
-        'port' => '3307',
+        'port' => '3306',
         'database' => 'opi_bd',
         'username' => 'root',
-        'password' => '',
+        'password' => 'Juninho@2025',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
@@ -452,7 +452,7 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => 'D:\\Dev\\231465\\TCC\\Api_TCC\\storage\\app/private',
+        'root' => 'D:\\estudos\\Tcc\\Api_TCC\\storage\\app/private',
         'serve' => true,
         'throw' => false,
         'report' => false,
@@ -460,7 +460,7 @@
       'public' => 
       array (
         'driver' => 'local',
-        'root' => 'D:\\Dev\\231465\\TCC\\Api_TCC\\storage\\app/public',
+        'root' => 'D:\\estudos\\Tcc\\Api_TCC\\storage\\app/public',
         'url' => 'http://localhost/storage',
         'visibility' => 'public',
         'throw' => false,
@@ -482,12 +482,12 @@
     ),
     'links' => 
     array (
-      'D:\\Dev\\231465\\TCC\\Api_TCC\\public\\storage' => 'D:\\Dev\\231465\\TCC\\Api_TCC\\storage\\app/public',
+      'D:\\estudos\\Tcc\\Api_TCC\\public\\storage' => 'D:\\estudos\\Tcc\\Api_TCC\\storage\\app/public',
     ),
   ),
   'jwt' => 
   array (
-    'secret' => 'EnFKqtLn935SRiDsOEQXfQNQTu9NQqMhWY07EQfRMzPs8oD7i0RRYnVAQriXh8bc',
+    'secret' => 'RGGuthet9kEahkDtqNG2Fqs8rJdtooF0IXPcxp5sSwlKyoC0JkZHd7FSZOmL7gj7',
     'keys' => 
     array (
       'public' => NULL,
@@ -542,14 +542,14 @@
       'single' => 
       array (
         'driver' => 'single',
-        'path' => 'D:\\Dev\\231465\\TCC\\Api_TCC\\storage\\logs/laravel.log',
+        'path' => 'D:\\estudos\\Tcc\\Api_TCC\\storage\\logs/laravel.log',
         'level' => 'debug',
         'replace_placeholders' => true,
       ),
       'daily' => 
       array (
         'driver' => 'daily',
-        'path' => 'D:\\Dev\\231465\\TCC\\Api_TCC\\storage\\logs/laravel.log',
+        'path' => 'D:\\estudos\\Tcc\\Api_TCC\\storage\\logs/laravel.log',
         'level' => 'debug',
         'days' => 14,
         'replace_placeholders' => true,
@@ -614,7 +614,7 @@
       ),
       'emergency' => 
       array (
-        'path' => 'D:\\Dev\\231465\\TCC\\Api_TCC\\storage\\logs/laravel.log',
+        'path' => 'D:\\estudos\\Tcc\\Api_TCC\\storage\\logs/laravel.log',
       ),
     ),
   ),
@@ -692,7 +692,7 @@
       'theme' => 'default',
       'paths' => 
       array (
-        0 => 'D:\\Dev\\231465\\TCC\\Api_TCC\\resources\\views/vendor/mail',
+        0 => 'D:\\estudos\\Tcc\\Api_TCC\\resources\\views/vendor/mail',
       ),
     ),
   ),
@@ -787,7 +787,7 @@
     'lifetime' => 120,
     'expire_on_close' => false,
     'encrypt' => false,
-    'files' => 'D:\\Dev\\231465\\TCC\\Api_TCC\\storage\\framework/sessions',
+    'files' => 'D:\\estudos\\Tcc\\Api_TCC\\storage\\framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,

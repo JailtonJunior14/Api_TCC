@@ -48,7 +48,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Telefone::class);
     }
 
-    function portfolio(){
+    function portfolios(){
         return $this->hasOne(Portfolio::class, 'user_id');
+    }
+
+    function avaliacoes(){
+        return $this->hasMany(Avaliacao::class, 'user_id');
     }
 }

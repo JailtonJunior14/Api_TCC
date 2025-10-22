@@ -68,7 +68,9 @@ Route::get('/portfolio/user/{id}', [PortfolioController::class, 'selectIdUser'])
 Route::post('/avaliar', [AvaliacaoController::class, 'store']);
 Route::get('/avaliacao', [AvaliacaoController::class, 'show']);
 
-
+//rota que para fazer os cars funcionarios(ariane)
+Route::get('/usuarios', [UsersController::class, 'index']);
+//
 
 //rotas País, Estado, Cidade
 

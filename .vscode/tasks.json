@@ -2,7 +2,15 @@
   "version": "2.0.0", 
   "tasks": [
     // ===== Laravel =====
-	{
+    // ===== Composer =====
+    {
+      "label": "Setup: Composer Install", 
+      "type": "shell",
+      "command": "composer install",
+      "group": "build",
+      "problemMatcher": []
+    },
+	  {
       "label": "Setup: Copiar .env",
       "type": "shell",
       "command": "copy .env.example .env",
@@ -23,6 +31,7 @@
     {
       "label": "Setup Laravel Project",
       "dependsOn": [
+        "Setup: Composer Install",
         "Setup: Copiar .env",
         "Setup: Key Generate",
         "Setup: JWT Secret"
@@ -68,14 +77,6 @@
       "problemMatcher": []
     },
 
-    // ===== Composer =====
-    {
-      "label": "Composer: Install",
-      "type": "shell",
-      "command": "composer install",
-      "group": "build",
-      "problemMatcher": []
-    },
     {
       "label": "Composer: Update",
       "type": "shell",

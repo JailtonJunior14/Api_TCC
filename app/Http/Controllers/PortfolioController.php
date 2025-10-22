@@ -131,6 +131,7 @@ class PortfolioController extends Controller
 
             if($tipo === 'contratante'){
                 $item->User->load('contratante');
+                $item-> user_nome = $item->User->contratante->nome;
                 $item-> user_foto = $item->User->contratante->foto ? asset(Storage::url($item->User->contratante->foto)) : null;
                 $item-> user_cidade = $item->User->contratante->localidade ?? null;
                 $item-> user_estado = $item->User->contratante->estado ?? null;
@@ -139,6 +140,7 @@ class PortfolioController extends Controller
             }
             elseif($tipo === 'prestador'){
                 $item->User->load('prestador.ramo');
+                $item-> user_nome = $item->User->prestador->nome;
                 $item-> user_foto = $item->User->prestador->foto ? asset(Storage::url($item->User->prestador->foto)) : null;
                 $item-> user_ramo = $item->User->prestador->ramo->nome ?? null;
                 $item-> user_cidade = $item->User->prestador->localidade ?? null;
@@ -148,6 +150,7 @@ class PortfolioController extends Controller
             elseif($tipo === 'empresa'){
                 $item->User->load('empresa.ramo');
                 $item-> user_foto = $item->User->empresa->foto ? asset(Storage::url($item->User->empresa->foto)) : null;
+                $item-> user_nome = $item->User->empresa->nome;
                 $item-> user_ramo = $item->User->empresa->ramo->nome ?? null;
                 $item-> user_cidade = $item->User->empresa->localidade ?? null;
                 $item-> user_estado = $item->User->empresa->estado ?? null;

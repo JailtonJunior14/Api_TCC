@@ -159,9 +159,7 @@ class PortfolioController extends Controller
                 
             return $item;
         });
-        return response()->json([
-            'portfolios' => $portfolio,
-        ], 200);
+        return response()->json($portfolio, 200);
     }
 
 

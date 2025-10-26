@@ -31,11 +31,20 @@ class RamoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $modalidade)
+    public function show()
     {
+        // try {
+        //     $categoria = Ramo::where('categoria','=', $categoria)->get();
+        //     return $categoria;
+        // } catch (QueryException $e) {
+        //     Log::error('erro ao buscar', ['error' =>$e->getMessage()]);
+        // }catch (Exception $e) {
+        //     Log::error('erro', ['error' =>$e->getMessage()]);
+        // }
+
         try {
-            $modalidade = Ramo::where('modalidade','=', $modalidade)->get();
-            return $modalidade;
+            $categoria = Ramo::select('categoria')->get();
+            return $categoria;
         } catch (QueryException $e) {
             Log::error('erro ao buscar', ['error' =>$e->getMessage()]);
         }catch (Exception $e) {

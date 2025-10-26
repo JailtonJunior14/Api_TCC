@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AvaliacaoController;
+use App\Http\Controllers\CategoriaController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CidadeController;
@@ -51,9 +52,10 @@ Route::post('/usuario-teste', [UsersController::class, 'select']);
 
 
 
-//rotas ramo
+//rotas ramo e categoria
 Route::get('/ramo', [RamoController::class, 'index']);
-Route::get('/ramo/{modalidade}', [RamoController::class, 'show']);
+Route::get('/categoria', [CategoriaController::class, 'index']);
+
 Route::get('/ramo/nome/{nome}', [RamoController::class, 'nome']);
 //rotas links
 

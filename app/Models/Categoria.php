@@ -5,17 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Telefone extends Model
+class Categoria extends Model
 {
     use HasFactory;
-    protected $table = 'telefone';
+    
+    protected $table = 'categoria';
 
     public $timestamps = false;
+    public $fillable = ['categoria'];
 
-    public $fillable = ['user_id','telefone'];
-
-
-    public function user() {
-        return $this->belongsTo(User::class);
+    function ramos(){
+        return $this->hasMany(Ramo::class);
     }
 }

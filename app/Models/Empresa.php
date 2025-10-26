@@ -18,6 +18,17 @@ class Empresa extends Model
 
     protected $fillable = ['user_id','razao_social','telefone', 'foto', 'cnpj','id_ramo','localidade', 'uf', 'estado', 'cep', 'rua', 'numero', 'infoadd'];
 
+    protected $casts = [
+        'disponivel' => 'boolean',
+    ];
+
+    protected $appends = ['status'];
+
+    public function getStatusAttribute()
+    {
+        return $this->disponivel ? 'Disponível' : 'Indisponível';
+    }
+
     public function user() {
         return $this->belongsTo(User::class);
     }

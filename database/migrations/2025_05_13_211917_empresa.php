@@ -15,6 +15,7 @@ return new class extends Migration
         {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->boolean('disponivel')->default(true);
             $table->string('cnpj')->unique();
             $table->string('razao_social');
             $table->string('foto')->nullable();

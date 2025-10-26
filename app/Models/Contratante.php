@@ -18,23 +18,20 @@ class Contratante extends Model
     'telefone','cpf','localidade', 
     'uf', 'estado', 'cep', 'rua','numero', 'infoadd'];
 
-    function comentarioFeito(){
-        return $this->hasMany(Comentario::class, 'id_contratante_autor');
+    protected $casts = [
+        'disponivel' => 'boolean',
+    ];
+
+    protected $appends = ['status'];
+
+    public function getStatusAttribute()
+    {
+        return $this->disponivel ? 'Disponível' : 'Indisponível';
     }
-
-    // public function getJWTIdentifier()
-    // {
-    //     return $this->getKey();
-    // }
-
-    // public function getJWTCustomClaims()
-    // {
-    //     return [];
-    // }
 
 
     public function user() {
-        return $this->belongsTo(Users::class);
+        return $this->belongsTo(User::class);
     }
 
 }

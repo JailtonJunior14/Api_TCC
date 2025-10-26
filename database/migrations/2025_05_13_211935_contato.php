@@ -11,12 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('telefone', function (Blueprint $table)
+        Schema::create('contatos', function(Blueprint $table)
         {
             $table->id();
+            $table->string('whatsapp');
+            $table->string('telefone');
+            $table->string('site');
+            $table->string('instagram');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-             $table->string('telefone')->unique();
-        });
+
+
+        }
+    );
     }
 
     /**
@@ -24,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('telefone');
+        Schema::dropIfExists('contatos');
     }
 };

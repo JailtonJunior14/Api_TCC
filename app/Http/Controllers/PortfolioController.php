@@ -69,6 +69,14 @@ class PortfolioController extends Controller
                 }
             }
 
+            $portfolio->load(['fotos', 'videos']);
+
+            // Retorna JSON completo do portfolio
+            return response()->json([
+                'message' => 'Post criado com sucesso',
+                'portfolio' => $portfolio
+            ], 201);
+
 
 
         } catch (ValidationException $e) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Avaliacao;
+use App\Models\Contatos;
 use App\Models\Contratante;
 use App\Models\Empresa;
 use App\Models\Prestador;
@@ -65,7 +66,7 @@ class UsersController extends Controller
             $user->type = $request['type'];
             $user->save();
 
-            $telefone = new Telefone();
+            $telefone = new Contatos();
             $telefone->user_id = $user->id;
             $telefone->telefone = $request->telefone;
             $telefone->save();

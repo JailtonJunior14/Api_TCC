@@ -10,7 +10,11 @@ class Ramo extends Model
     use HasFactory;
 
     protected $table = 'ramo';
-    protected $fillable = ['nome', 'modalidade'];
+    protected $fillable = ['nome', 'id_categoria'];
 
     public $timestamps = false;
+
+    function categorias(){
+        return $this->belongsTo(Categoria::class);
+    }
 }

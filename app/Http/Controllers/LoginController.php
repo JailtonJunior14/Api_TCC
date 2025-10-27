@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Avaliacao;
+use App\Models\Categoria;
+use App\Models\Contato;
 use App\Models\Empresa;
 use App\Models\Contratante;
 use App\Models\Prestador;
@@ -25,17 +27,26 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         try {
+            // dd(get_class(Auth::guard('user')));
+
             $credentials = $request->only('email', 'password');
             $token = Auth::guard('user')->attempt($credentials);
             $logado = Auth::guard('user')->user();
-            // dd($logado);
+            $contato = Contato::where('user_id', $logado->id)->first();
+            // dd($token);
+            // dd($contato);
+
+            if(!$token){
+                return response()->json(['error' => 'Credenciais inválidas'], 401);
+            }
+
             switch($logado->type){
                 case "empresa":
                     $empresa = Empresa::where('user_id', $logado->id)->first();
-                    $ramo = Ramo::where('id', $empresa->id_ramo)->first();
+                    $categoria = Categoria::where('id', $empresa->id_categoria)->first();
                     $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
 
-                    // dd($ramo->nome);
+                    // dd($categoria->nome);
                     // dd($empresa);
                     return response()->json([
                         'access_token' => $token,
@@ -43,8 +54,9 @@ class LoginController extends Controller
                         'logado' => $logado,
                         'user' => $empresa,
                         'foto' => $empresa->foto ? asset(Storage::url($empresa->foto)) : null,
-                        'ramo' => $ramo,
-                        'avaliacao' => $avaliacao
+                        'categoria' => $categoria,
+                        'avaliacao' => $avaliacao,
+                        'contatos' => $contato,
                     ]);
                     break;
                 case "contratante":
@@ -55,6 +67,7 @@ class LoginController extends Controller
                         'logado' => $logado,
                         'user' => $contratante,
                         'foto' => $contratante->foto ? asset(Storage::url($contratante->foto)) : null,
+                        'contatos' => $contato,
                     ]);
                     break;
                 case "prestador":
@@ -68,7 +81,8 @@ class LoginController extends Controller
                         'user' => $prestador,
                         'foto' => $prestador->foto ? asset(Storage::url($prestador->foto)) : null,
                         'ramo' => $ramo,
-                        'avaliacao' => $avaliacao
+                        'avaliacao' => $avaliacao,
+                        'contatos' => $contato,
                     ]);
                     break;
                 default:
@@ -76,16 +90,7 @@ class LoginController extends Controller
                         'message' => 'erro'
                     ]);
             }
-
-                // if ($token) {
-                //     return response()->json([
-                //         'access_token' => $token,
-                //         'token_type' => 'bearer',
-                //         'user' => $logado,
-                //     ]);
-                // }
-
-            return response()->json(['error' => 'Credenciais inválidas'], 401);
+            
         }catch(ValidationException $e){
                 Log::error('ta errado algo', ['error' => $e->getMessage()]);
             }

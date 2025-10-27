@@ -16,7 +16,11 @@ class Empresa extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['user_id','razao_social','telefone', 'foto', 'cnpj','id_ramo','localidade', 'uf', 'estado', 'cep', 'rua', 'numero', 'infoadd'];
+    protected $fillable = [
+        'user_id','razao_social','telefone', 'foto','descricao',
+        'cnpj','id_categoria','localidade', 'uf',
+        'estado', 'cep', 'rua', 'numero', 'infoadd'
+    ];
 
     protected $casts = [
         'disponivel' => 'boolean',
@@ -35,6 +39,6 @@ class Empresa extends Model
 
     public function ramo()
     {
-        return $this->belongsTo(Ramo::class, 'id_ramo');
+        return $this->belongsTo(Categoria::class, 'id_categoria');
     }
 }

@@ -19,13 +19,14 @@ return new class extends Migration
             $table->boolean('disponivel')->default(true);
             $table->string('cpf');
             $table->string('foto')->nullable();
+            $table->string('capa')->nullable();
             $table->string('localidade');
             $table->string('uf');
             $table->string('estado');
             $table->string('cep');
             $table->string('numero');
             $table->string('rua');
-            $table->string('infoadd');
+            $table->string('infoadd')->nullable();
             $table->foreignId('id_ramo')->constrained('ramo')->onDelete('cascade');
 
         });

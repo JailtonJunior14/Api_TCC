@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('contatos', function(Blueprint $table)
         {
             $table->id();
-            $table->string('whatsapp');
-            $table->string('telefone');
-            $table->string('site');
-            $table->string('instagram');
+            $table->string('whatsapp')->nullable();
+            $table->string('telefone')->nullable();
+            $table->string('site')->nullable();
+            $table->string('instagram')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
 
 

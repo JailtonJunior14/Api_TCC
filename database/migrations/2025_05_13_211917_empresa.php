@@ -19,14 +19,16 @@ return new class extends Migration
             $table->string('cnpj')->unique();
             $table->string('razao_social');
             $table->string('foto')->nullable();
+            $table->string('capa')->nullable();
             $table->string('localidade');
             $table->string('uf');
             $table->string('estado');
             $table->string('cep');
             $table->string('numero');
             $table->string('rua');
-            $table->string('infoadd');
-            $table->foreignId('id_ramo')->constrained('ramo')->onDelete('cascade');
+            $table->string('infoadd')->nullable();
+            $table->string('descricao')->nullable();
+            $table->foreignId('id_categoria')->constrained('categoria')->onDelete('cascade');
         });
     }
 

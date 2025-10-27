@@ -129,7 +129,7 @@ class ValidationController extends Controller
 
             'valor' => [
                 'required',
-                'unique:telefone,telefone'
+                'unique:contatos,telefone'
                 
             ]
             ],

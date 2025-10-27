@@ -17,4 +17,8 @@ class Categoria extends Model
     function ramos(){
         return $this->hasMany(Ramo::class);
     }
+
+    function empresas(){
+        return $this->hasMany(Empresa::class);
+    }
 }

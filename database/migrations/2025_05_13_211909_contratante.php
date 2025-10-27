@@ -25,7 +25,8 @@ return new class extends Migration
             $table->string('cep');
             $table->string('rua');
             $table->string('numero');
-            $table->string('infoadd');
+            $table->string('infoadd')->nullable();
+            $table->string('descricao')->nullable();
         });
     }
 

@@ -47,7 +47,9 @@ Route::get('/verificar-codigo', [PasswordController::class, 'verificar_code']);
 Route::get('/atualizar-senha', [PasswordController::class, 'atualizar_senha']);
 
 Route::post('/usuario/cadastro', [UsersController::class, 'store']);
+
 Route::post('/usuario/update', [UsersController::class, 'update']);
+
 Route::post('/usuario-teste', [UsersController::class, 'select']);
 
 
@@ -59,8 +61,7 @@ Route::get('/categoria', [CategoriaController::class, 'index']);
 Route::get('/ramo/nome/{nome}', [RamoController::class, 'nome']);
 //rotas links
 
-Route::get('/link', [LinksController::class, 'index']);
-Route::post('/link/cadastro', [LinksController::class, 'store']);
+
 //rotas portfolio
 Route::get('/portfolio', [PortfolioController::class, 'show']);
 Route::get('/portfolio/{id}', [PortfolioController::class, 'selectId']);

@@ -216,7 +216,7 @@
   array (
     'defaults' => 
     array (
-      'guard' => 'api',
+      'guard' => 'user',
       'passwords' => '',
     ),
     'guards' => 

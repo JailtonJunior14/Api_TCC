@@ -331,7 +331,8 @@ class UsersController extends Controller
             'nome' => 'sometimes|string',
             'descricao' => 'sometimes|string',
             ]);
-             $userID = $logado->id;
+            // dd($request->descricao);
+            $userID = $logado->id;
 
             $usuario = User::findOrFail($userID);
             // var_dump($usuario);
@@ -373,9 +374,12 @@ class UsersController extends Controller
             }
 
             $usuario->save();
+            $contato = Contato::where('user_id', $logado->id)->first();
+
             switch ($logado->type) {
                 case 'contratante':
                     $contratante = $logado->contratante;
+                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
                     $dados = $request->only([
                         'nome', 'cpf', 'localidade', 'uf', 'estado', 'cep', 'rua','numero', 'infoadd'
                     ]);
@@ -389,9 +393,19 @@ class UsersController extends Controller
                     }
 
                     $contratante->save();
+                    return response()->json([
+                                'logado' => $logado,
+                                'user' => $contratante,
+                                'foto' => $contratante->foto ? asset(Storage::url($contratante->foto)) : null,
+                                'avaliacao' => $avaliacao,
+                                'contatos' => $contato,
+
+                            ]);
                     break;
                 case 'prestador':
                     $prestador = $logado->prestador;
+                    $ramo = Ramo::where('id', $prestador->id_ramo)->first();
+                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
                     $dados = $request->only([
                         'nome','cpf', 'foto', 'cep', 'id_ramo', 'localidade', 'uf', 'estado', 'cep','numero', 'rua', 'infoadd', 'descricao',
                     ]);
@@ -405,20 +419,41 @@ class UsersController extends Controller
                     }
 
                     $prestador->save();
+                    return response()->json([
+                                'logado' => $logado,
+                                'user' => $prestador,
+                                'foto' => $prestador->foto ? asset(Storage::url($prestador->foto)) : null,
+                                'ramo' => $ramo,
+                                'avaliacao' => $avaliacao,
+                                'contatos' => $contato,
+
+                            ]);
                     break;
                 case 'empresa':
                     $empresa = $logado->empresa;
+                    $categoria = Categoria::where('id', $empresa->id_categoria)->first();
+                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
                     $dados = $request->only([
                         'razao_social','whatsapp','fixo', 'foto', 'cnpj','id_ramo', 'descricao',
                         'localidade', 'uf', 'estado', 'cep', 'rua', 'numero', 'infoadd'
                     ]);
-                    $dados = array_filter($dados, fn($valor) => !is_null($valor));
+                    // $dados = array_filter($dados, fn($valor) => !is_null($valor));
+                    // dd($dados);
                     $empresa->fill($dados);
                     if($request->has('foto')){
                         $path = $request->file('foto')->store('fotos', 'public');
                         $empresa->foto = $path;
                     }
                     $empresa->save();
+                    return response()->json([
+                                'logado' => $logado,
+                                'user' => $empresa,
+                                'foto' => $empresa->foto ? asset(Storage::url($empresa->foto)) : null,
+                                'categoria' => $categoria,
+                                'avaliacao' => $avaliacao,
+                                'contatos' => $contato,
+
+                            ]);
                     break;
 
                 

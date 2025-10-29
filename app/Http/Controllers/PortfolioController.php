@@ -162,7 +162,7 @@ class PortfolioController extends Controller
                 $item-> user_ramo = $item->User->empresa->ramo->nome ?? null;
                 $item-> user_cidade = $item->User->empresa->localidade ?? null;
                 $item-> user_estado = $item->User->empresa->estado ?? null;
-                dd($item->user_foto);
+                // dd($item->user_foto);
             }
                 
             return $item;

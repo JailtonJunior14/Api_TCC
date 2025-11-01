@@ -22,3 +22,5 @@ yarn-error.log
 /.vscode/*
 !.vscode/tasks.json
 /.zed
+/bootstrap/cache/*
+!.gitignore

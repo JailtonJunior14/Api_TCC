@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Contatos;
+use App\Models\Contato;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -16,7 +16,7 @@ class ContatosController extends Controller
      */
     public function index()
     {
-        $Contatos = Contatos::all();
+        $Contatos = Contato::all();
         return $Contatos;
     }
 
@@ -35,7 +35,7 @@ class ContatosController extends Controller
             ]);
             $logado = Auth::guard('user')->user();
 
-            $contatos = new Contatos();
+            $contatos = new Contato();
 
             $contatos->user_id = $logado->id;
             $contatos->whatsapp = $request->whatsapp;
@@ -58,17 +58,17 @@ class ContatosController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Contatos $Contatos)
+    public function show(Contato $Contatos)
     {
         $logado = Auth::guard('user')->user();
 
-        $contatos = Contatos::where('user_id', $logado->id);
+        $contatos = Contato::where('user_id', $logado->id);
 
         return response()->json($contatos);
     }
 
     
-    public function update(Request $request, Contatos $Contatos)
+    public function update(Request $request, Contato $Contatos)
     {
         //
     }
@@ -76,7 +76,7 @@ class ContatosController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Contatos $Contatos)
+    public function destroy(Contato $Contatos)
     {
         //
     }

@@ -6,6 +6,7 @@ use App\Models\Contratante;
 use App\Models\Empresa;
 use App\Models\Password_reset;
 use App\Models\Prestador;
+use App\Models\User;
 use App\Notifications\PasswordRequest;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -25,37 +26,29 @@ class PasswordController extends Controller
             $request->validate([
             'email' => 'required|email'
             ]);
+            // dd($request->all());
+            $user = User::where('email', $request->email)->first();
+            // dd($user);
 
-            $code = mt_rand(100000,999999);
+            // dd($user);
+
+            if($user){
+                $code = mt_rand(100000,999999);
 
             // dd($code);
 
-            Password_reset::updateOrCreate(
-                ['email' => $request->email],
+                $pass = Password_reset::updateOrCreate(
+                    ['email' => $request->email],
 
-                ['code' => $code, 'expires_at' => now()->addMinutes(10)]
-            );
+                    ['code' => $code, 'expires_at' => now()->addMinutes(10)]
+                );
+                // dd($pass);
 
-            $prestador = Prestador::where('email', $request->email)->first();
-            $empresa = Empresa::where('email', $request->email)->first();
-            $contratante = Contratante::where('email', $request->email)->first();
-            //dd($user);
-
-            if($prestador){
-
-                $prestador->notify(new PasswordRequest($code));
+                Log::info('ta enviando');
+                $user->notify(new PasswordRequest($code));
+                Log::info('enviou');
                 //return response()->json('eu existo');
-                dd($prestador);
-
-            }elseif($empresa){
-
-                $empresa->notify(new PasswordRequest($code));
-                dd($empresa);
-
-            }elseif($contratante){
-
-                $contratante->notify(new PasswordRequest($code));
-                dd($contratante);
+                // dd($not);
 
             }
             else{
@@ -70,6 +63,9 @@ class PasswordController extends Controller
 
         } catch(Exception $e){
             Log::error('deu errado', [$e->getMessage()]);
+            response()->json([
+                'erro' => $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -111,36 +107,33 @@ class PasswordController extends Controller
             $codigo = Password_reset::where('email', $request->email)
             ->where('code', $request->code)
             ->where('expires_at', '>', now())->first();
+            // dd($codigo);
 
             if ($codigo) {
-                $prestador = Prestador::where('email', $request->email)->first();
-                $empresa = Empresa::where('email', $request->email)->first();
-                $contratante = Contratante::where('email', $request->email)->first();
+                
+                $user = User::where('email', $request->email)->first();
 
-                if($prestador){
+                if($user){
                     if ($request->has('password')){
-                        $prestador->password = Hash::make($request['password']);
+                        $user->password = Hash::make($request['password']);
 
                         //dd($user);
-                        $prestador->save();
+                        $user->save();
+
+                        return response()->json([
+                            'message' => 'Senha atualizada com sucesso'
+                        ], 200);
                     }
                 }
-
-                elseif($empresa){
-                    $empresa->password = Hash::make($request['password']);
-
-                    //dd($empresa);
-                    $empresa->save();
-                }
-                elseif($contratante){
-                    $contratante->password = Hash::make($request['password']);
-
-                    //dd($contratante);
-                    $contratante->save();
-                } 
                 else{
-
+                    response()->json([
+                        'message' => 'deu ruim em salvar'
+                    ]);
                 }
+            }else{
+                return response()->json([
+                    'message' => 'não existe o codigo'
+                ]);
             }
 
 

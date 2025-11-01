@@ -96,6 +96,7 @@ return [
             ],
             'retry_after' => 60,
         ],
+        'log_channel' => env('MAIL_LOG_CHANNEL', 'stack'),
 
     ],
 

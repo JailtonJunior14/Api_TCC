@@ -8,8 +8,11 @@ use Illuminate\Support\Facades\Storage;
 class Foto extends Model
 {
     protected $table = 'fotos';
+
     public $timestamps = true;
+
     public $fillable = ['foto', 'portfolio_id'];
+
     protected $appends = ['url'];
 
     public function portfolio()

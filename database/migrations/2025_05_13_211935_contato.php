@@ -11,8 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('contatos', function(Blueprint $table)
-        {
+        Schema::create('contatos', function (Blueprint $table) {
             $table->id();
             $table->string('whatsapp')->nullable();
             $table->string('telefone')->nullable();
@@ -20,9 +19,8 @@ return new class extends Migration
             $table->string('instagram')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
 
-
         }
-    );
+        );
     }
 
     /**

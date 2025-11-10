@@ -8,17 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class Categoria extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'categoria';
 
     public $timestamps = false;
+
     public $fillable = ['categoria'];
 
-    function ramos(){
+    public function ramos()
+    {
         return $this->hasMany(Ramo::class);
     }
 
-    function empresas(){
+    public function empresas()
+    {
         return $this->hasMany(Empresa::class);
     }
 }

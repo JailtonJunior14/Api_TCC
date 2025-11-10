@@ -2,21 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
+
     protected $table = 'users';
 
     public $timestamps = false;
 
     public $fillable = ['email', 'password', 'type'];
+
     protected $hidden = ['password'];
 
     public function getJWTIdentifier()
@@ -44,15 +44,18 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Contratante::class, 'user_id');
     }
 
-    public function contato() {
+    public function contato()
+    {
         return $this->hasOne(Contato::class);
     }
 
-    function portfolios (){
+    public function portfolios()
+    {
         return $this->hasOne(Portfolio::class, 'user_id');
     }
 
-    function avaliacoes(){
+    public function avaliacoes()
+    {
         return $this->hasMany(Avaliacao::class, 'user_id');
     }
 }

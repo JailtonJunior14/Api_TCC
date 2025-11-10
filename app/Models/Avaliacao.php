@@ -9,10 +9,11 @@ class Avaliacao extends Model
 {
     use HasFactory;
 
-    protected $fillable = 
+    protected $fillable =
         [
-            'user_id', 'comentario', 'estrelas', 'alvo_id'
+            'user_id', 'comentario', 'estrelas', 'alvo_id',
         ];
+
     protected $table = 'avaliacao';
 
     public $timestamps = true;
@@ -21,5 +22,4 @@ class Avaliacao extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-    
 }

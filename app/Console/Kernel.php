@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\BackupDB::class,
-        \App\Console\Commands\BackupServe::class
+        \App\Console\Commands\BackupServe::class,
     ];
 
     /**

@@ -14,11 +14,12 @@ class Password_reset extends Model
     public $timestamps = true;
 
     protected $table = 'password_code';
+
     protected $fillable = ['email', 'code', 'expires_at'];
 
     protected $dates = [
         'expires_at',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 }

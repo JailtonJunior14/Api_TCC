@@ -2,29 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Contratante;
-use App\Models\Empresa;
 use App\Models\Password_reset;
-use App\Models\Prestador;
 use App\Models\User;
 use App\Notifications\PasswordRequest;
 use Exception;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-
 
 class PasswordController extends Controller
 {
-    public function forgot_password (Request $request){
-        try
-        {
+    public function forgot_password(Request $request)
+    {
+        try {
             $request->validate([
-            'email' => 'required|email'
+                'email' => 'required|email',
             ]);
             // dd($request->all());
             $user = User::where('email', $request->email)->first();
@@ -32,10 +26,10 @@ class PasswordController extends Controller
 
             // dd($user);
 
-            if($user){
-                $code = mt_rand(100000,999999);
+            if ($user) {
+                $code = mt_rand(100000, 999999);
 
-            // dd($code);
+                // dd($code);
 
                 $pass = Password_reset::updateOrCreate(
                     ['email' => $request->email],
@@ -47,21 +41,18 @@ class PasswordController extends Controller
                 Log::info('ta enviando');
                 $user->notify(new PasswordRequest($code));
                 Log::info('enviou');
-                //return response()->json('eu existo');
+                // return response()->json('eu existo');
                 // dd($not);
 
-            }
-            else{
+            } else {
                 return response()->json([
-                    'message' => 'Usuario não encontrado'
+                    'message' => 'Usuario não encontrado',
                 ]);
             }
 
             return response()->json(['message' => 'Código enviado para o e-mail.'], Response::HTTP_OK);
 
-
-
-        } catch(Exception $e){
+        } catch (Exception $e) {
             Log::error('deu errado', [$e->getMessage()]);
             response()->json([
                 'erro' => $e->getMessage(),
@@ -69,78 +60,74 @@ class PasswordController extends Controller
         }
     }
 
-    public function verificar_code(Request $request){
+    public function verificar_code(Request $request)
+    {
 
         try {
             $request->validate([
-            'email'=> 'required|email',
-            'code' => 'required'
+                'email' => 'required|email',
+                'code' => 'required',
             ]);
 
             $codigo = Password_reset::where('email', $request->email)
-            ->where('code', $request->code)
-            ->where('expires_at', '>', now())->first();
+                ->where('code', $request->code)
+                ->where('expires_at', '>', now())->first();
 
             if ($codigo) {
                 return response()->json([
-                    'status' => 'ok'
+                    'status' => 'ok',
                 ], 200);
             }
-
 
         } catch (Exception $e) {
             Log::error('deu errado', [$e->getMessage()]);
         }
-        
-
 
     }
 
-    public function atualizar_senha(Request $request){
+    public function atualizar_senha(Request $request)
+    {
         try {
             $request->validate([
-            'email'=> 'required|email',
-            'code' => 'required',
-            'password' => 'required'
+                'email' => 'required|email',
+                'code' => 'required',
+                'password' => 'required',
             ]);
 
             $codigo = Password_reset::where('email', $request->email)
-            ->where('code', $request->code)
-            ->where('expires_at', '>', now())->first();
+                ->where('code', $request->code)
+                ->where('expires_at', '>', now())->first();
             // dd($codigo);
 
             if ($codigo) {
-                
+
                 $user = User::where('email', $request->email)->first();
 
-                if($user){
-                    if ($request->has('password')){
+                if ($user) {
+                    if ($request->has('password')) {
                         $user->password = Hash::make($request['password']);
 
-                        //dd($user);
+                        // dd($user);
                         $user->save();
 
                         return response()->json([
-                            'message' => 'Senha atualizada com sucesso'
+                            'message' => 'Senha atualizada com sucesso',
                         ], 200);
                     }
-                }
-                else{
+                } else {
                     response()->json([
-                        'message' => 'deu ruim em salvar'
+                        'message' => 'deu ruim em salvar',
                     ]);
                 }
-            }else{
+            } else {
                 return response()->json([
-                    'message' => 'não existe o codigo'
+                    'message' => 'não existe o codigo',
                 ]);
             }
 
-
-        }catch(QueryException $e){
+        } catch (QueryException $e) {
             Log::error('deu merda bd', [$e->getMessage()]);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             Log::error('deu errado', [$e->getMessage()]);
         }
     }

@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notification;
 class PasswordRequest extends Notification implements ShouldQueue
 {
     use Queueable;
+
     private $code;
 
     /**
@@ -36,11 +37,11 @@ class PasswordRequest extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-        ->subject('Código para redefinição de senha')
-        ->line('Olá,')
-        ->line('Seu código para redefinir a senha é: **'.$this->code.'**')
-        ->line('Este código é válido por 10 minutos.')
-        ->line('Se você não solicitou a redefinição, ignore este e-mail.');
+            ->subject('Código para redefinição de senha')
+            ->line('Olá,')
+            ->line('Seu código para redefinir a senha é: **'.$this->code.'**')
+            ->line('Este código é válido por 10 minutos.')
+            ->line('Se você não solicitou a redefinição, ignore este e-mail.');
     }
 
     /**

@@ -44,24 +44,25 @@ class RamoController extends Controller
 
         try {
             $categoria = Ramo::select('categoria')->get();
+
             return $categoria;
         } catch (QueryException $e) {
-            Log::error('erro ao buscar', ['error' =>$e->getMessage()]);
-        }catch (Exception $e) {
-            Log::error('erro', ['error' =>$e->getMessage()]);
+            Log::error('erro ao buscar', ['error' => $e->getMessage()]);
+        } catch (Exception $e) {
+            Log::error('erro', ['error' => $e->getMessage()]);
         }
     }
 
     public function nome(string $nome)
     {
         try {
-            $nome = Ramo::where('nome','=', $nome)->get();
+            $nome = Ramo::where('nome', '=', $nome)->get();
+
             return $nome;
         } catch (QueryException $e) {
-            Log::error('erro ao buscar', ['error' =>$e->getMessage()]);
-        }catch (Exception $e) {
-            Log::error('erro', ['error' =>$e->getMessage()]);
+            Log::error('erro ao buscar', ['error' => $e->getMessage()]);
+        } catch (Exception $e) {
+            Log::error('erro', ['error' => $e->getMessage()]);
         }
     }
-
 }

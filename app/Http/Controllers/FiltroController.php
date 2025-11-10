@@ -15,7 +15,7 @@ class FiltroController extends Controller
 
             $dataInicio = match ($request->periodo) {
                 '24h' => now()->subDay(),
-                '7d'  => now()->subDays(7),
+                '7d' => now()->subDays(7),
                 '30d' => now()->subDays(30),
                 default => null,
             };
@@ -24,7 +24,7 @@ class FiltroController extends Controller
                 ->with([
                     'user:id,email,type',
                     'fotos:id,portfolio_id,foto',
-                    'videos:id,portfolio_id,video'
+                    'videos:id,portfolio_id,video',
                 ])
                 ->when($dataInicio, function ($q) use ($dataInicio) {
                     $q->where('created_at', '>=', $dataInicio);
@@ -38,14 +38,14 @@ class FiltroController extends Controller
                 )
                 ->when($request->filled('segmento'), function ($q) use ($request) {
                     // filtra posts por tipo de usuário (prestador/empresa)
-                    $q->whereHas('user', fn($u) => $u->where('type', $request->segmento));
+                    $q->whereHas('user', fn ($u) => $u->where('type', $request->segmento));
                 })
                 ->orderByDesc('created_at')
                 ->paginate(10);
 
             return response()->json([
                 'tipo' => 'posts',
-                'data' => $posts
+                'data' => $posts,
             ]);
         }
 
@@ -58,7 +58,7 @@ class FiltroController extends Controller
                 $q->whereBetween('curtidas', [$request->curtida_min, $request->curtida_max]);
             })
             ->when($request->filled('avaliacao_min'), function ($q) use ($request) {
-                $q->whereHas('avaliacoes', fn($a) => $a->where('estrelas', '>=', $request->avaliacao_min));
+                $q->whereHas('avaliacoes', fn ($a) => $a->where('estrelas', '>=', $request->avaliacao_min));
             })
             ->withAvg('avaliacoes', 'estrelas')
             ->withCount('portfolios')
@@ -66,7 +66,7 @@ class FiltroController extends Controller
 
         return response()->json([
             'tipo' => 'usuarios',
-            'data' => $usuarios
+            'data' => $usuarios,
         ]);
     }
 }

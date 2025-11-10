@@ -4,9 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class Empresa extends Model
 {
@@ -17,9 +14,9 @@ class Empresa extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'user_id','razao_social','telefone', 'foto','descricao',
-        'cnpj','id_categoria','localidade', 'uf',
-        'estado', 'cep', 'rua', 'numero', 'infoadd'
+        'user_id', 'razao_social', 'telefone', 'foto', 'descricao',
+        'cnpj', 'id_categoria', 'localidade', 'uf',
+        'estado', 'cep', 'rua', 'numero', 'infoadd',
     ];
 
     protected $casts = [
@@ -33,7 +30,8 @@ class Empresa extends Model
         return $this->disponivel ? 'Disponível' : 'Indisponível';
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 

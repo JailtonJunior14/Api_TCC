@@ -17,6 +17,7 @@ class ContatosController extends Controller
     public function index()
     {
         $Contatos = Contato::all();
+
         return $Contatos;
     }
 
@@ -26,7 +27,7 @@ class ContatosController extends Controller
     public function store(Request $request)
     {
         try {
- 
+
             $request->validate([
                 'whatsapp' => 'unique:telefone,telefone',
                 'telefone' => 'unique:telefone,telefone',
@@ -35,7 +36,7 @@ class ContatosController extends Controller
             ]);
             $logado = Auth::guard('user')->user();
 
-            $contatos = new Contato();
+            $contatos = new Contato;
 
             $contatos->user_id = $logado->id;
             $contatos->whatsapp = $request->whatsapp;
@@ -43,15 +44,11 @@ class ContatosController extends Controller
             $contatos->instagram = $request->instagram;
             $contatos->site = $request->site;
 
-
-
-
         } catch (QueryException $e) {
             Log::error('erro do banco', ['error' => $e->getMessage()]);
         } catch (Exception $e) {
             Log::error('erro', ['error' => $e->getMessage()]);
         }
-
 
     }
 
@@ -67,7 +64,6 @@ class ContatosController extends Controller
         return response()->json($contatos);
     }
 
-    
     public function update(Request $request, Contato $Contatos)
     {
         //

@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('prestador', function(Blueprint $table)
-        {
+        Schema::create('prestador', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->boolean('disponivel')->default(true);
             $table->string('cpf');
+            $table->string('descricao')->nullable();
             $table->string('foto')->nullable();
             $table->string('capa')->nullable();
             $table->string('localidade');

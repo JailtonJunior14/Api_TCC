@@ -8,10 +8,12 @@ use Illuminate\Support\Facades\Storage;
 class Video extends Model
 {
     protected $table = 'videos';
-    public $timestamps = true;
-    public $fillable = ['video', 'portfolio_id'];
-    protected $appends = ['url'];
 
+    public $timestamps = true;
+
+    public $fillable = ['video', 'portfolio_id'];
+
+    protected $appends = ['url'];
 
     public function portfolio()
     {

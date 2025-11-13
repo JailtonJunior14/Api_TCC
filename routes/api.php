@@ -58,6 +58,7 @@ Route::middleware(['auth:user'])->prefix('portfolio')->group(function(){
     Route::get('/', [PortfolioController::class, 'show']);
     Route::get('/{id}', [PortfolioController::class, 'selectId']);
     Route::post('/cadastro', [PortfolioController::class, 'store']);
+    Route::post('/update/{id}', [PortfolioController::class, 'update']);
     Route::post('/user', [PortfolioController::class, 'select']);
     Route::get('/user/{id}', [PortfolioController::class, 'selectIdUser']);
 

@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Foto;
 use App\Models\Portfolio;
+use App\Models\User;
 use App\Models\Video;
 use Exception;
+use GuzzleHttp\Psr7\Query;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -127,7 +129,8 @@ class PortfolioController extends Controller
 
     public function show()
     {
-        $portfolio = Portfolio::with(['User', 'fotos', 'videos'])->paginate(3);
+        // dd(Auth::id());
+        $portfolio = Portfolio::with(['User', 'fotos', 'videos'])->where('user_id', '!=', Auth::id())->paginate(3);
 
         $portfolio->map(function ($item) {
             $tipo = $item->User->type ?? null;
@@ -152,7 +155,7 @@ class PortfolioController extends Controller
             } elseif ($tipo === 'empresa') {
                 $item->User->load('empresa.ramo');
                 $item->user_foto = $item->User->empresa->foto ? asset(Storage::url($item->User->empresa->foto)) : null;
-                $item->user_nome = $item->User->empresa->nome;
+                $item->user_nome = $item->User->empresa->razao_social;
                 $item->user_ramo = $item->User->empresa->ramo->nome ?? null;
                 $item->user_cidade = $item->User->empresa->localidade ?? null;
                 $item->user_estado = $item->User->empresa->estado ?? null;
@@ -165,9 +168,78 @@ class PortfolioController extends Controller
         return response()->json($portfolio, 200);
     }
 
-    public function update(Request $request, Portfolio $portfolio)
+    public function update(Request $request, int $idPost)
     {
-        //
+        try{
+            $logado = Auth::guard('user')->user();
+            // dd($logado);
+            // dd($id);
+
+            if (!$logado) {
+                response()->json([
+                    'message' => 'usuario não autenticado',
+                ]);
+            }
+            $userId = $logado->id;
+            $usuario = User::findOrFail($userId);
+            $post = Portfolio::with(['fotos', 'videos'])->where('id', $idPost)->first();
+
+            $idUserPost = $post->user_id;
+            // dd($idUserPost);
+
+            if($idUserPost !== $userId){
+                return response()->json(['message'=> 'este post não te pertence chefe'], 500);
+            }
+                
+
+            $request->validate([
+                'imagens' => 'nullable|array',
+                'imagens.*' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+                'videos' => 'nullable|array',
+                'videos.*' => 'nullable|file',
+                'descricao' => 'nullable|string',
+            ]);
+
+            if($request->has('descricao')){
+                $post->descricao = $request->descricao;
+                $post->save();
+            }
+
+            if ($request->hasFile('imagens')) {
+                $post->fotos()->delete();
+                foreach ($request->file('imagens') as $imagem) {
+                    $imagem_path = $imagem->store('portfolio/fotos', 'public');
+                    $post->fotos()->create([
+                        'foto' => $imagem_path,
+                    ]);
+                }
+            }
+            if ($request->hasFile('videos')) {
+                $post->videos()->delete();
+                foreach ($request->file('videos') as $videos) {
+                    $video_path = $videos->store('portfolio/videos', 'public');
+                    $post->videos()->store([
+                        'video' => $video_path,
+                    ]);
+                }
+            }
+
+            $post->load(['fotos', 'videos']);
+
+            // Retorna JSON completo do portfolio
+            return response()->json([
+                'message' => 'Post editado com sucesso',
+                'portfolio' => $post,
+            ], 201);
+
+
+        }catch(ValidationException $e){
+            Log::error('erro validaçao', ['error: ' => $e->getMessage()]);
+        }catch(QueryException $e){
+            Log::error('erro banco', ['error: ' => $e->getMessage()]);
+        }catch(Exception $e){
+            Log::error('erro exception', ['error: ' => $e->getMessage()]);
+        }
     }
 
     /**

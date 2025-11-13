@@ -9,7 +9,6 @@ use App\Models\Contratante;
 use App\Models\Empresa;
 use App\Models\Prestador;
 use App\Models\Ramo;
-use App\Models\Telefone;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\QueryException;

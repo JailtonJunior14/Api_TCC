@@ -9,7 +9,7 @@ class Contato extends Model
 {
     use HasFactory;
 
-    protected $table = 'contatos';
+     protected $table = 'contatos';
 
     protected $fillable = ['whatsapp', 'telefone', 'insta', 'site', 'user_id'];
 

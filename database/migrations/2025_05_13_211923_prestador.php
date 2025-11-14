@@ -28,6 +28,8 @@ return new class extends Migration
             $table->string('rua');
             $table->string('infoadd')->nullable();
             $table->foreignId('id_ramo')->constrained('ramo')->onDelete('cascade');
+            $table->timestamps();
+
 
         });
     }

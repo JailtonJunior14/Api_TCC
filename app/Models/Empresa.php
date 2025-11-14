@@ -11,7 +11,7 @@ class Empresa extends Model
 
     protected $table = 'empresa';
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'user_id', 'razao_social', 'telefone', 'foto', 'descricao',

@@ -19,4 +19,9 @@ class Ramo extends Model
     {
         return $this->belongsTo(Categoria::class);
     }
+
+    public function skills()
+    {
+        return $this->hasMany(Skill::class);
+    }
 }

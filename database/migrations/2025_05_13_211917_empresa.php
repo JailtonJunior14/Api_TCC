@@ -28,6 +28,8 @@ return new class extends Migration
             $table->string('infoadd')->nullable();
             $table->string('descricao')->nullable();
             $table->foreignId('id_categoria')->constrained('categoria')->onDelete('cascade');
+            $table->timestamps();
+
         });
     }
 

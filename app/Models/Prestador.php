@@ -11,7 +11,7 @@ class Prestador extends Model
 
     protected $table = 'prestador';
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'user_id', 'nome', 'cpf', 'whatsapp', 'fixo', 'foto', 'descricao',
@@ -26,5 +26,10 @@ class Prestador extends Model
     public function ramo()
     {
         return $this->belongsTo(Ramo::class, 'id_ramo');
+    }
+
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class);
     }
 }

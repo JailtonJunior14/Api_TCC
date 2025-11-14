@@ -340,6 +340,8 @@ class UsersController extends Controller
                 'cpf' => 'sometimes|string',
                 'nome' => 'sometimes|string',
                 'descricao' => 'sometimes|string',
+                'skills' => 'sometimes|array',
+                'skills.*' => 'sometimes|integer|exists:skills,id',
             ]);
             // dd($request->descricao);
             // dd($request->capa);
@@ -376,6 +378,11 @@ class UsersController extends Controller
                 $site->site = $request->site;
                 $site->save();
             }
+            if ($request->has('instagram')) {
+                $instagram = $usuario->contato;
+                $instagram->instagram = $request->instagram;
+                $instagram->save();
+            }
 
             if ($request->has('telefone')) {
                 $telefone = $usuario->contato;
@@ -384,6 +391,8 @@ class UsersController extends Controller
             }
 
             $usuario->save();
+
+
             $contato = Contato::where('user_id', $logado->id)->first();
 
             switch ($logado->type) {
@@ -435,6 +444,10 @@ class UsersController extends Controller
                         $prestador->capa = $path;
                     }
 
+                    if($request->has('skills')){
+                        $prestador->skills()->sync($request->skills);
+                    }
+
                     $prestador->save();
 
                     return response()->json([
@@ -443,6 +456,7 @@ class UsersController extends Controller
                         'foto' => $prestador->foto ? asset(Storage::url($prestador->foto)) : null,
                         'capa' => $prestador->capa ? asset(Storage::url($prestador->capa)) : null,
                         'ramo' => $ramo,
+                        'skills' => $prestador->load('skills'),
                         'avaliacao' => $avaliacao,
                         'contatos' => $contato,
 

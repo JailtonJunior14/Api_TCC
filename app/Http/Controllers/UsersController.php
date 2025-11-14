@@ -26,10 +26,24 @@ class UsersController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        return response()->json([
-            'message' => 'index users controller',
-        ]);
+    {//editado por mim
+        try {
+            $usuarios = User::with([
+                'prestador',
+                'empresa',
+                'contratante',
+                'contato'
+            ])->get();
+    
+            return response()->json($usuarios);
+    
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Erro ao carregar usuários',
+                'details' => $e->getMessage()
+            ], 500);
+        }
+        //fim da edição
     }
 
     public function store(Request $request)

@@ -19,6 +19,10 @@ class User extends Authenticatable implements JWTSubject
 
     protected $hidden = ['password'];
 
+
+    protected $appends = ['dados'];
+
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -51,7 +55,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function portfolios()
     {
-        return $this->hasOne(Portfolio::class, 'user_id');
+        return $this->hasMany(Portfolio::class, 'user_id');
     }
 
     public function avaliacoes()
@@ -59,5 +63,33 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Avaliacao::class, 'user_id');
     }
 
+
+    public function curtidasQueRecebi()
+    {
+        return $this->hasMany(Curtidas::class, 'perfil_id');
+    }
+
+    public function curtidasQueEuDei()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'curtidas',
+            'user_id',       // quem curtiu
+            'perfil_id'  // quem foi curtido
+        );
+    }
+
+    public function getDadosAttribute()
+    {
+        if ($this->type === 'prestador') {
+            return $this->prestador;
+        }
+
+        if ($this->type === 'empresa') {
+            return $this->empresa;
+        }
+
+        return null;
+    }
     
 }

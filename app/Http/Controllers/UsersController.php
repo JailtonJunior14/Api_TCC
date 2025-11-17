@@ -519,6 +519,27 @@ class UsersController extends Controller
 
     }
 
+
+    public function selectID(int $id){
+
+        $user = User::with([
+            'prestador.ramo',
+            'empresa.categoria',
+            'portfolios.fotos',
+            'portfolios.videos',
+            'avaliacoes',
+            'contato',
+            ])->withCount([
+            'curtidasQueRecebi'
+            ])
+            ->findOrfail($id);
+
+        // dd($user);
+        return response()->json([
+            'user' => $user
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      */

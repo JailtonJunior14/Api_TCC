@@ -35,7 +35,7 @@ class Empresa extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function ramo()
+    public function categoria()
     {
         return $this->belongsTo(Categoria::class, 'id_categoria');
     }

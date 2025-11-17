@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AvaliacaoController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\CurtidasController;
 use App\Http\Controllers\Filtro;
 use App\Http\Controllers\FiltroController;
 use App\Http\Controllers\LoginController;
@@ -38,11 +39,20 @@ Route::prefix('usuario')->group(function(){
 
     Route::middleware(['auth:user'])->group(function(){
         Route::post('/update', [UsersController::class, 'update']);
+        Route::get('/{id}/posts', [UsersController::class, 'selectID']);
     });
 
     Route::get('/', [UsersController::class, 'index']);
 
     Route::post('/usuario-teste', [UsersController::class, 'select']);
+});
+
+//curtidas perfil
+Route::middleware(['auth:user'])->prefix('curtidas')->group(function (){
+    Route::post('/auth',[CurtidasController::class, 'contarCurtidasAuth']);
+    Route::post('/curtir/{id}',[CurtidasController::class, 'curtir']);
+    Route::post('/descurtir/{id}',[CurtidasController::class, 'descurtir']);
+    Route::post('/verificar/{id}',[CurtidasController::class, 'verificarCurtida']);
 });
 
 
@@ -60,7 +70,7 @@ Route::middleware(['auth:user'])->prefix('portfolio')->group(function(){
     Route::post('/cadastro', [PortfolioController::class, 'store']);
     Route::post('/update/{id}', [PortfolioController::class, 'update']);
     Route::post('/user', [PortfolioController::class, 'select']);
-    Route::get('/user/{id}', [PortfolioController::class, 'selectIdUser']);
+    // Route::get('/user/{id}', [PortfolioController::class, 'selectIdUser']);
 
 });
 

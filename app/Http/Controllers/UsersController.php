@@ -533,6 +533,34 @@ class UsersController extends Controller
         }
 
     }
+    public function listarPrestadores()
+{
+    try {
+        $prestadores = User::where('type', 'prestador')
+            ->with(['prestador', 'contato'])
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                    'nome' => $user->prestador->nome ?? null,
+                    'foto' => $user->prestador->foto ? asset(Storage::url($user->prestador->foto)) : null,
+                    'uf' => $user->prestador->uf ?? null,
+                    'estado' => $user->prestador->estado ?? null,
+                    'cidade' => $user->prestador->cidade ?? null,
+                    'telefone' => $user->contato->telefone ?? null,
+                ];
+            });
+
+        return response()->json($prestadores);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Erro ao carregar prestadores',
+            'details' => $e->getMessage()
+        ], 500);
+    }
+}
 
     /**
      * Remove the specified resource from storage.

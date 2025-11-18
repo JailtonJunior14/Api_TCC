@@ -27,6 +27,8 @@ Route::prefix('/check')->group(function (){
     Route::get('/razaosocial', [ValidationController::class, 'check_razaoSocial']);
 });
 
+Route::get('/prestadores', [UsersController::class, 'listarPrestadores']);
+
 //rotas esqueceu a senha
 Route::get('/forgot-password', [PasswordController::class, 'forgot_password']);
 Route::get('/verificar-codigo', [PasswordController::class, 'verificar_code']);

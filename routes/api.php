@@ -9,6 +9,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\RamoController;
+use App\Http\Controllers\SkillController;
 use App\Http\Controllers\TelefoneController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\ValidationController;
@@ -56,10 +57,11 @@ Route::middleware(['auth:user'])->prefix('curtidas')->group(function (){
 });
 
 
-// rotas ramo e categoria
+// rotas ramo, categoria e skills
 Route::get('/ramo', [RamoController::class, 'index']);
 Route::get('/categoria', [CategoriaController::class, 'index']);
 Route::get('/ramo/nome/{nome}', [RamoController::class, 'nome']);
+Route::get('/skills/{id}', [SkillController::class, 'index']);
 
 
 // rotas portfolio

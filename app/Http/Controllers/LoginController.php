@@ -78,11 +78,13 @@ class LoginController extends Controller
                         'access_token' => $token,
                         'token_type' => 'bearer',
                         'logado' => $logado,
-                        'user' => $prestador,
+                        'user' => $prestador->load('skills'),
                         'foto' => $prestador->foto ? asset(Storage::url($prestador->foto)) : null,
                         'ramo' => $ramo,
                         'avaliacao' => $avaliacao,
                         'contatos' => $contato,
+                        
+                        
                     ]);
                     break;
                 default:

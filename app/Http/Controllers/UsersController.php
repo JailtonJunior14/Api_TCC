@@ -197,7 +197,7 @@ class UsersController extends Controller
                         'ramo' => $ramo,
                         'avaliacao' => $avaliacao,
                         'contatos' => $contato,
-
+                        'skills' => $prestador->load('skills'),
                     ]);
                     break;
                 default:
@@ -524,6 +524,7 @@ class UsersController extends Controller
 
         $user = User::with([
             'prestador.ramo',
+            'prestador.skills',
             'empresa.categoria',
             'portfolios.fotos',
             'portfolios.videos',

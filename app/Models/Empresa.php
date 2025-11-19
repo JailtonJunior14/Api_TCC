@@ -19,11 +19,11 @@ class Empresa extends Model
         'estado', 'cep', 'rua', 'numero', 'infoadd',
     ];
 
-    protected $casts = [
-        'disponivel' => 'boolean',
-    ];
+    // protected $casts = [
+    //     'disponivel' => 'boolean',
+    // ];
 
-    protected $appends = ['status'];
+    // protected $appends = ['status'];
 
     public function getStatusAttribute()
     {

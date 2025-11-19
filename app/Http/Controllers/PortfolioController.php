@@ -153,10 +153,10 @@ class PortfolioController extends Controller
                 $item->user_estado = $item->User->prestador->estado ?? null;
                 // dd($item->user_foto);
             } elseif ($tipo === 'empresa') {
-                $item->User->load('empresa.ramo');
+                $item->User->load('empresa.categoria');
                 $item->user_foto = $item->User->empresa->foto ? asset(Storage::url($item->User->empresa->foto)) : null;
                 $item->user_nome = $item->User->empresa->razao_social;
-                $item->user_ramo = $item->User->empresa->ramo->nome ?? null;
+                $item->user_ramo = $item->User->empresa->categoria->nome ?? null;
                 $item->user_cidade = $item->User->empresa->localidade ?? null;
                 $item->user_estado = $item->User->empresa->estado ?? null;
                 // dd($item->user_foto);

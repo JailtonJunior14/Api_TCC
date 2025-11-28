@@ -28,9 +28,121 @@ class UsersController extends Controller
      */
     public function index()
     {
-        return response()->json([
-            'message' => 'index users controller',
-        ]);
+        try {
+            // Busca todos os usuários com seus relacionamentos
+            $usuarios = User::with([
+                'prestador.ramo',
+                'empresa.categoria', 
+                'contratante',
+                'contato'
+            ])
+            ->withCount('curtidasQueRecebi') // Conta as curtidas
+            ->get()
+            ->map(function ($user) {
+                // Dados base
+                $data = [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                    'type' => $user->type,
+                    'curtidas' => $user->curtidas_que_recebi_count ?? 0
+                ];
+    
+                // Adiciona dados do contato
+                if ($user->contato) {
+                    $data['contato'] = [
+                        'telefone' => $user->contato->telefone,
+                        'whatsapp' => $user->contato->whatsapp,
+                        'site' => $user->contato->site,
+                        'instagram' => $user->contato->instagram,
+                    ];
+                }
+    
+                // Adiciona avaliações
+                $avaliacoes = Avaliacao::where('alvo_id', $user->id)
+                    ->selectRaw('AVG(estrelas) as media, COUNT(*) as total')
+                    ->first();
+                
+                $data['avaliacao'] = [
+                    'media' => $avaliacoes->media ?? 0,
+                    'total' => $avaliacoes->total ?? 0
+                ];
+    
+                // Adiciona dados específicos de acordo com o tipo
+                switch ($user->type) {
+                    case 'prestador':
+                        if ($user->prestador) {
+                            $data['prestador'] = [
+                                'nome' => $user->prestador->nome,
+                                'cpf' => $user->prestador->cpf,
+                                'foto' => $user->prestador->foto ? asset(Storage::url($user->prestador->foto)) : null,
+                                'capa' => $user->prestador->capa ? asset(Storage::url($user->prestador->capa)) : null,
+                                'localidade' => $user->prestador->localidade,
+                                'uf' => $user->prestador->uf,
+                                'estado' => $user->prestador->estado,
+                                'cep' => $user->prestador->cep,
+                                'rua' => $user->prestador->rua,
+                                'numero' => $user->prestador->numero,
+                                'infoadd' => $user->prestador->infoadd,
+                                'descricao' => $user->prestador->descricao,
+                            ];
+                            
+                            if ($user->prestador->ramo) {
+                                $data['ramo'] = [
+                                    'id' => $user->prestador->ramo->id,
+                                    'nome' => $user->prestador->ramo->nome
+                                ];
+                            }
+                        }
+                        break;
+    
+                    case 'empresa':
+                        if ($user->empresa) {
+                            $data['empresa'] = [
+                                'razao_social' => $user->empresa->razao_social,
+                                'cnpj' => $user->empresa->cnpj,
+                                'foto' => $user->empresa->foto ? asset(Storage::url($user->empresa->foto)) : null,
+                                'capa' => $user->empresa->capa ? asset(Storage::url($user->empresa->capa)) : null,
+                                'localidade' => $user->empresa->localidade,
+                                'uf' => $user->empresa->uf,
+                                'estado' => $user->empresa->estado,
+                                'descricao' => $user->empresa->descricao,
+                            ];
+    
+                            if ($user->empresa->categoria) {
+                                $data['categoria'] = [
+                                    'id' => $user->empresa->categoria->id,
+                                    'nome' => $user->empresa->categoria->nome
+                                ];
+                            }
+                        }
+                        break;
+    
+                    case 'contratante':
+                        if ($user->contratante) {
+                            $data['contratante'] = [
+                                'nome' => $user->contratante->nome,
+                                'cpf' => $user->contratante->cpf,
+                                'foto' => $user->contratante->foto ? asset(Storage::url($user->contratante->foto)) : null,
+                                'localidade' => $user->contratante->localidade,
+                                'uf' => $user->contratante->uf,
+                            ];
+                        }
+                        break;
+                }
+    
+                return $data;
+            });
+    
+            return response()->json($usuarios);
+    
+        } catch (Exception $e) {
+            Log::error('Erro ao buscar usuários:', ['message' => $e->getMessage()]);
+            
+            return response()->json([
+                'error' => 'Erro ao buscar usuários',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function store(Request $request)

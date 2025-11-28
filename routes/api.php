@@ -47,6 +47,7 @@ Route::prefix('usuario')->group(function(){
 
     Route::post('/usuario-teste', [UsersController::class, 'select']);
 });
+Route::get('/usuarios/{id}', [UsersController::class, 'selectID']);
 
 //curtidas perfil
 Route::middleware(['auth:user'])->prefix('curtidas')->group(function (){

@@ -9,12 +9,12 @@ use App\Models\Contratante;
 use App\Models\Empresa;
 use App\Models\Prestador;
 use App\Models\Ramo;
-use App\Models\Telefone;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -36,7 +36,6 @@ class UsersController extends Controller
                 'contratante',
                 'contato'
             ])
-            ->withCount('curtidasQueRecebi') // Conta as curtidas
             ->get()
             ->map(function ($user) {
                 // Dados base
@@ -44,7 +43,6 @@ class UsersController extends Controller
                     'id' => $user->id,
                     'email' => $user->email,
                     'type' => $user->type,
-                    'curtidas' => $user->curtidas_que_recebi_count ?? 0
                 ];
     
                 // Adiciona dados do contato
@@ -136,7 +134,11 @@ class UsersController extends Controller
             return response()->json($usuarios);
     
         } catch (Exception $e) {
-            Log::error('Erro ao buscar usuários:', ['message' => $e->getMessage()]);
+            Log::error('Erro ao buscar usuários:', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
+            ]);
             
             return response()->json([
                 'error' => 'Erro ao buscar usuários',
@@ -161,7 +163,6 @@ class UsersController extends Controller
                 'rua' => 'required|string|max:255',
                 'numero' => 'required|string|max:255',
                 'infoadd' => 'nullable|sometimes|string|max:255',
-                // dados específicos (validação condicional)
                 'cnpj' => 'nullable|required_if:type,empresa',
                 'razao_social' => 'required_if:type,empresa',
                 'id_ramo' => 'nullable|required_if:type,prestador|integer|exists:ramo,id',
@@ -171,9 +172,9 @@ class UsersController extends Controller
             ]);
 
             $imagem_path = $request->hasFile('foto')
-            ? $request->file('foto')->store('fotos/perfil', 'public')
-            : null;
-            // dd($imagem_path);
+                ? $request->file('foto')->store('fotos/perfil', 'public')
+                : null;
+
             $user = new User;
             $user->email = $request['email'];
             $user->password = Hash::make($request['password']);
@@ -200,7 +201,6 @@ class UsersController extends Controller
                     $empresa->rua = $request->rua;
                     $empresa->numero = $request->numero;
                     $empresa->infoadd = $request->infoadd;
-
                     $empresa->save();
                     break;
 
@@ -218,7 +218,6 @@ class UsersController extends Controller
                     $prestador->rua = $request->rua;
                     $prestador->numero = $request->numero;
                     $prestador->infoadd = $request->infoadd;
-
                     $prestador->save();
                     break;
 
@@ -240,33 +239,25 @@ class UsersController extends Controller
             }
 
             $credentials = $request->only('email', 'password');
-
             $token = auth('user')->attempt($credentials);
 
-            if (! $token) {
+            if (!$token) {
                 return response()->json([
-                    'error' => 'token não ta sendo gerado',
-                ]);
+                    'error' => 'Falha ao gerar token',
+                ], 401);
             }
 
             $logado = auth('user')->user();
-
-            // return response()->json([
-            //     'message' => 'Usuário cadastrado com sucesso!',
-            //     'user' => $user->load($user->type),
-            //     'token' => $token,
-            //     'logado' => $logado
-            // ], 201);
             $contato = Contato::where('user_id', $logado->id)->first();
 
             switch ($logado->type) {
                 case 'empresa':
                     $empresa = Empresa::where('user_id', $logado->id)->first();
                     $categoria = Categoria::where('id', $empresa->id_categoria)->first();
-                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
+                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)
+                        ->selectRaw('AVG(estrelas) as media, COUNT(*) as total')
+                        ->first();
 
-                    // dd($ramo->nome);
-                    // dd($empresa);
                     return response()->json([
                         'access_token' => $token,
                         'token_type' => 'bearer',
@@ -276,12 +267,13 @@ class UsersController extends Controller
                         'categoria' => $categoria,
                         'avaliacao' => $avaliacao,
                         'contatos' => $contato,
-
                     ]);
-                    break;
+
                 case 'contratante':
                     $contratante = Contratante::where('user_id', $logado->id)->first();
-                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
+                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)
+                        ->selectRaw('AVG(estrelas) as media, COUNT(*) as total')
+                        ->first();
 
                     return response()->json([
                         'access_token' => $token,
@@ -290,15 +282,14 @@ class UsersController extends Controller
                         'user' => $contratante,
                         'foto' => $contratante->foto ? asset(Storage::url($contratante->foto)) : null,
                         'contatos' => $contato,
-
-                        // 'ramo' => $ramo,
-                        // 'avaliacao' => $avaliacao
                     ]);
-                    break;
+
                 case 'prestador':
                     $prestador = Prestador::where('user_id', $logado->id)->first();
                     $ramo = Ramo::where('id', $prestador->id_ramo)->first();
-                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
+                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)
+                        ->selectRaw('AVG(estrelas) as media, COUNT(*) as total')
+                        ->first();
 
                     return response()->json([
                         'access_token' => $token,
@@ -311,62 +302,50 @@ class UsersController extends Controller
                         'contatos' => $contato,
                         'skills' => $prestador->load('skills'),
                     ]);
-                    break;
+
                 default:
-                    return response()->json([
-                        'message' => 'erro',
-                    ]);
-
+                    return response()->json(['error' => 'Tipo de usuário inválido'], 400);
             }
-        } catch (ValidationException $e) {
-            Log::error('Validation error', ['message' => $e->getMessage()]);
 
+        } catch (ValidationException $e) {
+            Log::error('Validation error', ['errors' => $e->errors()]);
             return response()->json([
                 'error' => 'Erro de validação',
                 'details' => $e->errors(),
             ], 422);
+
         } catch (QueryException $e) {
             Log::error('Database error', ['message' => $e->getMessage()]);
-
             return response()->json([
                 'error' => 'Erro no banco de dados',
                 'details' => $e->getMessage(),
             ], 500);
+
         } catch (Exception $e) {
             Log::error('General error', ['message' => $e->getMessage()]);
-
             return response()->json([
                 'error' => 'Erro inesperado',
                 'details' => $e->getMessage(),
             ], 500);
         }
-
     }
 
     public function select()
     {
         $logado = Auth::guard('user')->user();
 
-        // return response()->json([
-        //     'message' => $logado
-        // ]);
-        // $empresa = Empresa::findOr($logado->id);
-        // dd($empresa);
-
         switch ($logado->type) {
             case 'empresa':
                 $empresa = Empresa::where('user_id', $logado->id)->first();
                 $ramo = Ramo::where('id', $empresa->id_ramo)->first();
 
-                // dd($ramo->nome);
-                // dd($empresa);
                 return response()->json([
                     'message' => 'empresa',
                     'user' => $empresa,
                     'foto' => $empresa->foto ? Storage::url($empresa->foto) : null,
                     'ramo' => $ramo,
                 ]);
-                break;
+
             case 'contratante':
                 $contratante = Contratante::where('user_id', $logado->id)->first();
 
@@ -374,7 +353,7 @@ class UsersController extends Controller
                     'message' => 'contratante',
                     'user' => $contratante,
                 ]);
-                break;
+
             case 'prestador':
                 $prestador = Prestador::where('user_id', $logado->id)->first();
 
@@ -389,11 +368,11 @@ class UsersController extends Controller
     {
         try {
             $logado = Auth::guard('user')->user();
-            // dd($logado->id);
+
             if (!$logado) {
-                response()->json([
-                    'message' => 'usuario não autenticado',
-                ]);
+                return response()->json([
+                    'message' => 'Usuário não autenticado',
+                ], 401);
             }
 
             $request->validate([
@@ -405,32 +384,10 @@ class UsersController extends Controller
                 'foto' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
                 'capa' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
                 'telefone' => [
-                    'sometimes',
-                    'string',
+                    'sometimes', 'string',
                     Rule::unique('contatos', 'telefone')->ignore($logado->id, 'user_id'),
                 ],
-                'whatsapp' => [
-                    'sometimes',
-                    'string',
-                    function ($attribute, $value, $fail) use ($request, $logado) {
-                        // ✅ 1. Pode ser igual ao telefone do mesmo usuário
-                        if ($request->telefone && $value === $request->telefone) {
-                            return;
-                        }
-
-                        // ✅ 2. Impede duplicar com o telefone OU whatsapp de outro usuário
-                        $existe = Contato::where(function ($query) use ($value) {
-                            $query->where('whatsapp', $value)
-                                ->orWhere('telefone', $value);
-                        })
-                            ->where('user_id', '!=', $logado->id)
-                            ->exists();
-
-                        if ($existe) {
-                            return response()->json($fail('Este número já está em uso por outro usuário.'));
-                        }
-                    },
-                ],
+                'whatsapp' => 'sometimes|string',
                 'site' => [
                     'sometimes', 'string',
                     Rule::unique('contatos', 'site')->ignore($logado->id, 'user_id'),
@@ -455,70 +412,42 @@ class UsersController extends Controller
                 'skills' => 'sometimes|array',
                 'skills.*' => 'sometimes|integer|exists:skills,id',
             ]);
-            // dd($request->descricao);
-            // dd($request->capa);
-            $userID = $logado->id;
 
-            $usuario = User::findOrFail($userID);
-            // var_dump($usuario);
+            $usuario = User::findOrFail($logado->id);
 
             if ($request->has('email')) {
-                $usuario->email = $request['email'];
-                // return response()->json([
-                //     'message' => 'toaqui'
-                // ]);
+                $usuario->email = $request->email;
             }
 
             if ($request->has('password')) {
                 $usuario->password = Hash::make($request->password);
             }
 
-            if ($request->has('telefone')) {
-                $telefone = $usuario->contato;
-                $telefone->telefone = $request->telefone;
-                $telefone->save();
-            }
-
-            if ($request->has('whatsapp')) {
-                $whatsapp = $usuario->contato;
-                $whatsapp->whatsapp = $request->whatsapp;
-                $whatsapp->save();
-            }
-
-            if ($request->has('site')) {
-                $site = $usuario->contato;
-                $site->site = $request->site;
-                $site->save();
-            }
-            if ($request->has('instagram')) {
-                $instagram = $usuario->contato;
-                $instagram->instagram = $request->instagram;
-                $instagram->save();
-            }
-
-            if ($request->has('telefone')) {
-                $telefone = $usuario->contato;
-                $telefone->telefone = $request->telefone;
-                $telefone->save();
-            }
-
             $usuario->save();
 
+            // Atualiza contatos
+            if ($request->hasAny(['telefone', 'whatsapp', 'site', 'instagram'])) {
+                $contato = $usuario->contato;
+                $contato->fill($request->only(['telefone', 'whatsapp', 'site', 'instagram']));
+                $contato->save();
+            }
 
             $contato = Contato::where('user_id', $logado->id)->first();
 
             switch ($logado->type) {
                 case 'contratante':
                     $contratante = $logado->contratante;
-                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
+                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)
+                        ->selectRaw('AVG(estrelas) as media, COUNT(*) as total')
+                        ->first();
+
                     $dados = $request->only([
                         'nome', 'cpf', 'localidade', 'uf', 'estado', 'cep', 'rua', 'numero', 'infoadd',
                     ]);
-
-                    $dados = array_filter($dados, fn ($valor) => ! is_null($valor));
+                    $dados = array_filter($dados, fn ($valor) => !is_null($valor));
                     $contratante->fill($dados);
 
-                    if ($request->has('foto')) {
+                    if ($request->hasFile('foto')) {
                         $path = $request->file('foto')->store('fotos/perfil', 'public');
                         $contratante->foto = $path;
                     }
@@ -532,31 +461,33 @@ class UsersController extends Controller
                         'capa' => $contratante->capa ? asset(Storage::url($contratante->capa)) : null,
                         'avaliacao' => $avaliacao,
                         'contatos' => $contato,
-
                     ]);
-                    break;
+
                 case 'prestador':
                     $prestador = $logado->prestador;
                     $ramo = Ramo::where('id', $prestador->id_ramo)->first();
-                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
-                    $dados = $request->only([
-                        'nome', 'cpf', 'foto', 'cep', 'id_ramo', 'localidade', 'uf', 'estado', 'cep', 'numero', 'rua', 'infoadd', 'descricao',
-                    ]);
+                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)
+                        ->selectRaw('AVG(estrelas) as media, COUNT(*) as total')
+                        ->first();
 
-                    $dados = array_filter($dados, fn ($valor) => ! is_null($valor));
+                    $dados = $request->only([
+                        'nome', 'cpf', 'id_ramo', 'localidade', 'uf', 'estado', 
+                        'cep', 'numero', 'rua', 'infoadd', 'descricao',
+                    ]);
+                    $dados = array_filter($dados, fn ($valor) => !is_null($valor));
                     $prestador->fill($dados);
 
-                    if ($request->has('foto')) {
+                    if ($request->hasFile('foto')) {
                         $path = $request->file('foto')->store('fotos/perfil', 'public');
                         $prestador->foto = $path;
                     }
-                    if ($request->has('capa')) {
-                        // dd($request->capa);
+
+                    if ($request->hasFile('capa')) {
                         $path = $request->file('capa')->store('fotos/capa', 'public');
                         $prestador->capa = $path;
                     }
 
-                    if($request->has('skills')){
+                    if ($request->has('skills')) {
                         $prestador->skills()->sync($request->skills);
                     }
 
@@ -571,24 +502,31 @@ class UsersController extends Controller
                         'skills' => $prestador->load('skills'),
                         'avaliacao' => $avaliacao,
                         'contatos' => $contato,
-
                     ]);
-                    break;
+
                 case 'empresa':
                     $empresa = $logado->empresa;
                     $categoria = Categoria::where('id', $empresa->id_categoria)->first();
-                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
+                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)
+                        ->selectRaw('AVG(estrelas) as media, COUNT(*) as total')
+                        ->first();
+
                     $dados = $request->only([
-                        'razao_social', 'whatsapp', 'fixo', 'foto', 'cnpj', 'id_ramo', 'descricao',
+                        'razao_social', 'cnpj', 'id_categoria', 'descricao',
                         'localidade', 'uf', 'estado', 'cep', 'rua', 'numero', 'infoadd',
                     ]);
-                    // $dados = array_filter($dados, fn($valor) => !is_null($valor));
-                    // dd($dados);
                     $empresa->fill($dados);
-                    if ($request->has('foto')) {
+
+                    if ($request->hasFile('foto')) {
                         $path = $request->file('foto')->store('fotos/perfil', 'public');
                         $empresa->foto = $path;
                     }
+
+                    if ($request->hasFile('capa')) {
+                        $path = $request->file('capa')->store('fotos/capa', 'public');
+                        $empresa->capa = $path;
+                    }
+
                     $empresa->save();
 
                     return response()->json([
@@ -599,63 +537,66 @@ class UsersController extends Controller
                         'categoria' => $categoria,
                         'avaliacao' => $avaliacao,
                         'contatos' => $contato,
-
                     ]);
-                    break;
 
                 default:
-                    return response()->json([
-                        'message' => 'deu merda',
-                    ]);
-                    break;
+                    return response()->json(['error' => 'Tipo de usuário inválido'], 400);
             }
+
         } catch (ValidationException $e) {
-            Log::error('erro validaçao', [$e->getMessage()]);
-
+            Log::error('Erro de validação', ['errors' => $e->errors()]);
             return response()->json([
-                'message' => $e->getMessage(),
-            ]);
+                'error' => 'Erro de validação',
+                'details' => $e->errors(),
+            ], 422);
+
         } catch (QueryException $e) {
-            Log::error('erro banco', [$e->getMessage()]);
-
+            Log::error('Erro no banco de dados', ['message' => $e->getMessage()]);
             return response()->json([
-                'message banco' => $e,
-            ]);
+                'error' => 'Erro no banco de dados',
+                'details' => $e->getMessage(),
+            ], 500);
 
         } catch (Exception $e) {
-            Log::error('erro validaçao', [$e->getMessage()]);
-
-            return response()->json($e);
-
+            Log::error('Erro geral', ['message' => $e->getMessage()]);
+            return response()->json([
+                'error' => 'Erro inesperado',
+                'details' => $e->getMessage(),
+            ], 500);
         }
-
     }
 
-
-    public function selectID(int $id){
-
+    public function selectID(int $id)
+{
+    try {
         $user = User::with([
             'prestador.ramo',
             'prestador.skills',
             'empresa.categoria',
+            'contratante',
             'portfolios.fotos',
             'portfolios.videos',
             'avaliacoes',
             'contato',
-            ])->withCount([
-            'curtidasQueRecebi'
-            ])
-            ->findOrfail($id);
+        ])->findOrFail($id);
 
-        // dd($user);
         return response()->json([
-            'user' => $user
+            'user' => $user // IMPORTANTE: retornar com a chave 'user'
         ]);
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    } catch (Exception $e) {
+        Log::error('Erro ao buscar usuário por ID', [
+            'id' => $id,
+            'message' => $e->getMessage()
+        ]);
+
+        return response()->json([
+            'error' => 'Usuário não encontrado',
+            'message' => $e->getMessage()
+        ], 404);
+    }
+}
+
     public function destroy()
     {
         //

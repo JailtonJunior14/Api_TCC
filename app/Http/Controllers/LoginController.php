@@ -25,27 +25,26 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         try {
-            // dd(get_class(Auth::guard('user')));
-
             $credentials = $request->only('email', 'password');
             $token = Auth::guard('user')->attempt($credentials);
-            $logado = Auth::guard('user')->user();
-            $contato = Contato::where('user_id', $logado->id)->first();
-            // dd($token);
-            // dd($contato);
-
-            if (! $token) {
+    
+            // CORRIGIDO: Verificar o token PRIMEIRO
+            if (!$token) {
                 return response()->json(['error' => 'Credenciais inválidas'], 401);
             }
-
+    
+            // Agora sim buscar os dados (só executa se login for válido)
+            $logado = Auth::guard('user')->user();
+            $contato = Contato::where('user_id', $logado->id)->first();
+    
             switch ($logado->type) {
                 case 'empresa':
                     $empresa = Empresa::where('user_id', $logado->id)->first();
                     $categoria = Categoria::where('id', $empresa->id_categoria)->first();
-                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
-
-                    // dd($categoria->nome);
-                    // dd($empresa);
+                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)
+                        ->selectRaw('AVG(estrelas) as media, COUNT(*) as total')
+                        ->first();
+    
                     return response()->json([
                         'access_token' => $token,
                         'token_type' => 'bearer',
@@ -56,10 +55,10 @@ class LoginController extends Controller
                         'avaliacao' => $avaliacao,
                         'contatos' => $contato,
                     ]);
-                    break;
+    
                 case 'contratante':
                     $contratante = Contratante::where('user_id', $logado->id)->first();
-
+    
                     return response()->json([
                         'access_token' => $token,
                         'token_type' => 'bearer',
@@ -68,12 +67,14 @@ class LoginController extends Controller
                         'foto' => $contratante->foto ? asset(Storage::url($contratante->foto)) : null,
                         'contatos' => $contato,
                     ]);
-                    break;
+    
                 case 'prestador':
                     $prestador = Prestador::where('user_id', $logado->id)->first();
                     $ramo = Ramo::where('id', $prestador->id_ramo)->first();
-                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)->selectRaw('AVG(estrelas) as media, COUNT(*) as total')->first();
-
+                    $avaliacao = Avaliacao::where('alvo_id', $logado->id)
+                        ->selectRaw('AVG(estrelas) as media, COUNT(*) as total')
+                        ->first();
+    
                     return response()->json([
                         'access_token' => $token,
                         'token_type' => 'bearer',
@@ -83,24 +84,22 @@ class LoginController extends Controller
                         'ramo' => $ramo,
                         'avaliacao' => $avaliacao,
                         'contatos' => $contato,
-                        
-                        
                     ]);
-                    break;
+    
                 default:
-                    return response()->json([
-                        'message' => 'erro',
-                    ]);
+                    return response()->json(['message' => 'erro'], 400);
             }
-
+    
         } catch (ValidationException $e) {
             Log::error('ta errado algo', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Erro de validação'], 422);
         } catch (QueryException $e) {
             Log::error('deu errado bd', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Erro no banco de dados'], 500);
         } catch (Exception $e) {
             Log::error('deu errado login', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Erro ao realizar login'], 500);
         }
-
     }
 
     public function Logout(string $id)

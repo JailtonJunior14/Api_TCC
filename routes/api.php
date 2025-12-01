@@ -35,6 +35,11 @@ Route::get('/verificar-codigo', [PasswordController::class, 'verificar_code']);
 Route::get('/atualizar-senha', [PasswordController::class, 'atualizar_senha']);
 
 //rotas usuarios
+Route::middleware(['auth:user'])->group(function(){
+    Route::delete('/usuarios/{id}', [UsersController::class, 'destroy']);
+});
+
+
 Route::prefix('usuario')->group(function(){
     Route::post('/cadastro', [UsersController::class, 'store']);
 

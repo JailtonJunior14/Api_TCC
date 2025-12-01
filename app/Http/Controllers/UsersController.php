@@ -580,8 +580,23 @@ class UsersController extends Controller
             'contato',
         ])->findOrFail($id);
 
+        // 🔥 Formatar URLs das imagens
+        if ($user->prestador) {
+            $user->prestador->foto = $user->prestador->foto ? asset(Storage::url($user->prestador->foto)) : null;
+            $user->prestador->capa = $user->prestador->capa ? asset(Storage::url($user->prestador->capa)) : null;
+        }
+
+        if ($user->empresa) {
+            $user->empresa->foto = $user->empresa->foto ? asset(Storage::url($user->empresa->foto)) : null;
+            $user->empresa->capa = $user->empresa->capa ? asset(Storage::url($user->empresa->capa)) : null;
+        }
+
+        if ($user->contratante) {
+            $user->contratante->foto = $user->contratante->foto ? asset(Storage::url($user->contratante->foto)) : null;
+        }
+
         return response()->json([
-            'user' => $user // IMPORTANTE: retornar com a chave 'user'
+            'user' => $user //  IMPORTANTE: retornar com chave 'user'
         ]);
 
     } catch (Exception $e) {
@@ -596,9 +611,48 @@ class UsersController extends Controller
         ], 404);
     }
 }
-
-    public function destroy()
-    {
-        //
+public function destroy($id) {
+    try {
+        $logado = Auth::guard('user')->user();
+        
+        // Verificar se o usuário está tentando excluir a própria conta
+        if ($logado->id != $id) {
+            return response()->json([
+                'error' => 'Você só pode excluir sua própria conta'
+            ], 403);
+        }
+        
+        $user = User::findOrFail($id);
+        
+        // Excluir registros relacionados
+        $user->contato()->delete();
+        $user->portfolios()->delete();
+        $user->avaliacoes()->delete();
+        
+        if ($user->type === 'empresa') {
+            $user->empresa()->delete();
+        } elseif ($user->type === 'prestador') {
+            $user->prestador()->delete();
+        } elseif ($user->type === 'contratante') {
+            $user->contratante()->delete();
+        }
+        
+        // Excluir usuário
+        $user->delete();
+        
+        return response()->json([
+            'message' => 'Conta excluída com sucesso'
+        ]);
+        
+    } catch (Exception $e) {
+        Log::error('Erro ao excluir conta:', [
+            'message' => $e->getMessage()
+        ]);
+        
+        return response()->json([
+            'error' => 'Erro ao excluir conta',
+            'message' => $e->getMessage()
+        ], 500);
     }
+}
 }

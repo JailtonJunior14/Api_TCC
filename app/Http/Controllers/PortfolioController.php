@@ -7,7 +7,6 @@ use App\Models\Portfolio;
 use App\Models\User;
 use App\Models\Video;
 use Exception;
-use GuzzleHttp\Psr7\Query;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,235 +17,377 @@ use Illuminate\Validation\ValidationException;
 class PortfolioController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Criar nova publicação (CORRIGIDO E DEBUG)
      */
     public function store(Request $request)
     {
         try {
             $logado = Auth::guard('user')->user();
-            // dd($logado->id);
-            // dd($request->file('videos'), $request->file('imagens'));
-            $request->validate([
-                'imagens' => 'nullable|array',
-                'imagens.*' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
-                'videos' => 'nullable|array',
-                'videos.*' => 'nullable|file',
-                'descricao' => 'required|string',
+            
+            if (!$logado) {
+                Log::error('❌ Usuário não autenticado tentando criar publicação');
+                return response()->json([
+                    'message' => 'Usuário não autenticado'
+                ], 401);
+            }
+            
+            Log::info('📤 Dados recebidos:', [
+                'user_id' => $logado->id,
+                'titulo' => $request->input('titulo'),
+                'descricao' => $request->input('descricao'),
+                'tem_imagens' => $request->hasFile('imagens'),
+                'tem_videos' => $request->hasFile('videos'),
+                'imagens_count' => $request->hasFile('imagens') ? count($request->file('imagens')) : 0,
+                'videos_count' => $request->hasFile('videos') ? count($request->file('videos')) : 0,
             ]);
-            // dd($request->file('videos'), $request->file('imagens'));
-
-            $portfolio = new Portfolio;
-
-            $portfolio->user_id = $logado->id;
-            $portfolio->descricao = $request['descricao'];
-            $portfolio->save();
-
-            // dd($request->videos);
-
+            
+            // Validação (CORRIGIDO)
+            $validated = $request->validate([
+                'titulo' => 'required|string|max:255',
+                'descricao' => 'required|string',
+                'imagens' => 'nullable|array',
+                'imagens.*' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
+                'videos' => 'nullable|array',
+                'videos.*' => 'nullable|file|mimes:mp4,webm,ogg,mov|max:10240',
+            ]);
+            
+            Log::info('✅ Validação passou');
+            
+            // Criar portfolio
+            $portfolio = Portfolio::create([
+                'user_id' => $logado->id,
+                'titulo' => $validated['titulo'],
+                'descricao' => $validated['descricao'],
+            ]);
+            
+            Log::info('✅ Portfolio criado:', ['id' => $portfolio->id]);
+            
+            // Salvar imagens
             if ($request->hasFile('imagens')) {
-                foreach ($request->file('imagens') as $imagem) {
-                    $imagem_path = $imagem->store('portfolio/fotos', 'public');
-                    $portfolio->fotos()->create([
-                        'foto' => $imagem_path,
-                        'portfolio_id' => $portfolio->id,
-                    ]);
+                Log::info('🖼️ Processando imagens...');
+                foreach ($request->file('imagens') as $index => $imagem) {
+                    try {
+                        $imagem_path = $imagem->store('portfolio/fotos', 'public');
+                        
+                        Foto::create([
+                            'caminho' => $imagem_path,
+                            'portfolio_id' => $portfolio->id,
+                        ]);
+                        
+                        Log::info("✅ Imagem {$index} salva:", ['caminho' => $imagem_path]);
+                    } catch (Exception $e) {
+                        Log::error("❌ Erro ao salvar imagem {$index}:", ['error' => $e->getMessage()]);
+                    }
                 }
             }
+            
+            // Salvar vídeos
             if ($request->hasFile('videos')) {
-                foreach ($request->file('videos') as $videos) {
-                    $video_path = $videos->store('portfolio/videos', 'public');
-                    $portfolio->videos()->create([
-                        'video' => $video_path,
-                        'portfolio_id' => $portfolio->id,
-                    ]);
+                Log::info('🎥 Processando vídeos...');
+                foreach ($request->file('videos') as $index => $video) {
+                    try {
+                        $video_path = $video->store('portfolio/videos', 'public');
+                        
+                        Video::create([
+                            'caminho' => $video_path,
+                            'portfolio_id' => $portfolio->id,
+                        ]);
+                        
+                        Log::info("✅ Vídeo {$index} salvo:", ['caminho' => $video_path]);
+                    } catch (Exception $e) {
+                        Log::error("❌ Erro ao salvar vídeo {$index}:", ['error' => $e->getMessage()]);
+                    }
                 }
             }
-
+            
+            // Carregar relacionamentos
             $portfolio->load(['fotos', 'videos']);
-
-            // Retorna JSON completo do portfolio
+            
+            Log::info('✅ Publicação criada com sucesso:', [
+                'portfolio_id' => $portfolio->id,
+                'fotos_count' => $portfolio->fotos->count(),
+                'videos_count' => $portfolio->videos->count(),
+            ]);
+            
             return response()->json([
-                'message' => 'Post criado com sucesso',
-                'portfolio' => $portfolio,
+                'message' => 'Publicação criada com sucesso',
+                'data' => $portfolio,
             ], 201);
-
+            
         } catch (ValidationException $e) {
-            Log::error('erro de validação', ['error' => $e->getMessage()]);
+            Log::error('❌ Erro de validação:', ['errors' => $e->errors()]);
+            return response()->json([
+                'message' => 'Erro de validação',
+                'errors' => $e->errors()
+            ], 422);
         } catch (QueryException $e) {
-            Log::error('erro de banco', ['error' => $e->getMessage()]);
+            Log::error('❌ Erro de banco de dados:', [
+                'message' => $e->getMessage(),
+                'sql' => $e->getSql(),
+            ]);
+            return response()->json([
+                'message' => 'Erro ao salvar no banco de dados',
+                'error' => $e->getMessage()
+            ], 500);
         } catch (Exception $e) {
-            Log::error('erro', ['error' => $e->getMessage()]);
+            Log::error('❌ Erro geral:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json([
+                'message' => 'Erro ao criar publicação',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
-     * Display the specified resource.
+     * Listar publicações do usuário logado
      */
-    public function Select()
+    public function select()
     {
-        $logado = Auth::guard('user')->user();
-        $portfolios = Portfolio::with(['fotos', 'videos'])
-            ->where('user_id', $logado->id)->orderBy('created_at', 'desc')
-            ->paginate(3);
+        try {
+            $logado = Auth::guard('user')->user();
+            
+            $portfolios = Portfolio::with(['fotos', 'videos'])
+                ->where('user_id', $logado->id)
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
 
-        return response()->json($portfolios);
+            return response()->json($portfolios);
+        } catch (Exception $e) {
+            Log::error('Erro ao listar publicações', ['error' => $e->getMessage()]);
+            return response()->json(['message' => 'Erro ao carregar publicações'], 500);
+        }
     }
 
-    public function SelectIdUser(int $id)
+    /**
+     * Listar publicações de um usuário específico
+     */
+    public function selectIdUser(int $id)
     {
-        $portfolios = Portfolio::with(['fotos', 'videos'])
-            ->where('user_id', $id)->orderBy('created_at', 'desc')
-            ->paginate(3);
+        try {
+            $portfolios = Portfolio::with(['fotos', 'videos'])
+                ->where('user_id', $id)
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
 
-        // $portfolio = Portfolio::whereIn('user_id', $logado->id)->get();
-        // $portfolioId = $portfolio->pluck('id');
-        // // dd($portfolioId);
-        // $foto = Foto::whereIn('portfolio_id', $portfolioId)->get();
-        // $video = Video::whereIn('portfolio_id', $portfolioId)->get();
-        // dd($portfolios->descricao);
-
-        return response()->json([
-            'portfolios' => $portfolios,
-        ]);
+            return response()->json([
+                'data' => $portfolios,
+            ]);
+        } catch (Exception $e) {
+            Log::error('Erro ao listar publicações do usuário', ['error' => $e->getMessage()]);
+            return response()->json(['message' => 'Erro ao carregar publicações'], 500);
+        }
     }
 
-    public function SelectId(int $id)
+    /**
+     * Buscar publicação específica (CORRIGIDO)
+     */
+    public function selectId(int $id)
     {
-        $portfolio = Portfolio::with(['fotos', 'videos'])->where('id', $id)->first();
+        try {
+            $portfolio = Portfolio::with([
+                    'fotos',
+                    'videos',
+                    'user.prestador.ramo',
+                    'user.empresa.categoria',
+                    'user.avaliacao'
+                ])
+                ->findOrFail($id);
 
-        return response()->json([
-            'portfolio' => $portfolio,
-        ]);
+            return response()->json([
+                'data' => $portfolio,
+            ]);
+        } catch (Exception $e) {
+            Log::error('Erro ao buscar publicação', ['error' => $e->getMessage()]);
+            return response()->json(['message' => 'Publicação não encontrada'], 404);
+        }
     }
 
+    /**
+     * Listar todas as publicações (feed) - CORRIGIDO
+     */
     public function show()
     {
-        // dd(Auth::id());
-        $portfolio = Portfolio::with(['User', 'fotos', 'videos'])->where('user_id', '!=', Auth::id())->paginate(3);
-
-        $portfolio->map(function ($item) {
-            $tipo = $item->User->type ?? null;
-            // dd($tipo);
-
-            if ($tipo === 'contratante') {
-                $item->User->load('contratante');
-                $item->user_nome = $item->User->contratante->nome;
-                $item->user_foto = $item->User->contratante->foto ? asset(Storage::url($item->User->contratante->foto)) : null;
-                $item->user_cidade = $item->User->contratante->localidade ?? null;
-                $item->user_estado = $item->User->contratante->estado ?? null;
-                dd($item->user_foto);
-
-            } elseif ($tipo === 'prestador') {
-                $item->User->load('prestador.ramo');
-                $item->user_nome = $item->User->prestador->nome;
-                $item->user_foto = $item->User->prestador->foto ? asset(Storage::url($item->User->prestador->foto)) : null;
-                $item->user_ramo = $item->User->prestador->ramo->nome ?? null;
-                $item->user_cidade = $item->User->prestador->localidade ?? null;
-                $item->user_estado = $item->User->prestador->estado ?? null;
-                // dd($item->user_foto);
-            } elseif ($tipo === 'empresa') {
-                $item->User->load('empresa.categoria');
-                $item->user_foto = $item->User->empresa->foto ? asset(Storage::url($item->User->empresa->foto)) : null;
-                $item->user_nome = $item->User->empresa->razao_social;
-                $item->user_ramo = $item->User->empresa->categoria->nome ?? null;
-                $item->user_cidade = $item->User->empresa->localidade ?? null;
-                $item->user_estado = $item->User->empresa->estado ?? null;
-                // dd($item->user_foto);
-            }
-
-            return $item;
-        });
-
-        return response()->json($portfolio, 200);
-    }
-
-    public function update(Request $request, int $idPost)
-    {
-        try{
+        try {
             $logado = Auth::guard('user')->user();
-            // dd($logado);
-            // dd($id);
+            
+            Log::info('📡 Carregando feed para usuário:', ['user_id' => $logado->id]);
+            
+            $portfolios = Portfolio::with([
+                    'user.prestador.ramo',
+                    'user.empresa.categoria',
+                    'user.contratante',
+                    'user.avaliacao',
+                    'fotos',
+                    'videos'
+                ])
+                ->where('user_id', '!=', $logado->id)
+                ->orderBy('created_at', 'desc')
+                ->paginate(12);
 
-            if (!$logado) {
-                response()->json([
-                    'message' => 'usuario não autenticado',
-                ]);
-            }
-            $userId = $logado->id;
-            $usuario = User::findOrFail($userId);
-            $post = Portfolio::with(['fotos', 'videos'])->where('id', $idPost)->first();
-
-            $idUserPost = $post->user_id;
-            // dd($idUserPost);
-
-            if($idUserPost !== $userId){
-                return response()->json(['message'=> 'este post não te pertence chefe'], 500);
-            }
+            // Formatar dados do usuário
+            $portfolios->getCollection()->transform(function ($item) {
+                $tipo = $item->user->tipo_conta ?? null;
                 
+                if ($tipo === 'prestador' && $item->user->prestador) {
+                    $item->user_nome = $item->user->prestador->nome;
+                    $item->user_foto = $item->user->prestador->foto;
+                    $item->user_ramo = $item->user->prestador->ramo->nome ?? null;
+                    $item->user_cidade = $item->user->prestador->localidade ?? null;
+                    $item->user_estado = $item->user->prestador->uf ?? null;
+                    
+                } elseif ($tipo === 'empresa' && $item->user->empresa) {
+                    $item->user_nome = $item->user->empresa->razao_social;
+                    $item->user_foto = $item->user->empresa->foto;
+                    $item->user_ramo = $item->user->empresa->categoria->nome ?? null;
+                    $item->user_cidade = $item->user->empresa->localidade ?? null;
+                    $item->user_estado = $item->user->empresa->uf ?? null;
+                }
+                
+                return $item;
+            });
 
-            $request->validate([
-                'imagens' => 'nullable|array',
-                'imagens.*' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
-                'videos' => 'nullable|array',
-                'videos.*' => 'nullable|file',
-                'descricao' => 'nullable|string',
+            Log::info('✅ Feed carregado:', ['total' => $portfolios->total()]);
+
+            return response()->json($portfolios, 200);
+            
+        } catch (Exception $e) {
+            Log::error('❌ Erro ao carregar feed:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
-
-            if($request->has('descricao')){
-                $post->descricao = $request->descricao;
-                $post->save();
-            }
-
-            if ($request->hasFile('imagens')) {
-                $post->fotos()->delete();
-                foreach ($request->file('imagens') as $imagem) {
-                    $imagem_path = $imagem->store('portfolio/fotos', 'public');
-                    $post->fotos()->create([
-                        'foto' => $imagem_path,
-                    ]);
-                }
-            }
-            if ($request->hasFile('videos')) {
-                $post->videos()->delete();
-                foreach ($request->file('videos') as $videos) {
-                    $video_path = $videos->store('portfolio/videos', 'public');
-                    $post->videos()->store([
-                        'video' => $video_path,
-                    ]);
-                }
-            }
-
-            $post->load(['fotos', 'videos']);
-
-            // Retorna JSON completo do portfolio
-            return response()->json([
-                'message' => 'Post editado com sucesso',
-                'portfolio' => $post,
-            ], 201);
-
-
-        }catch(ValidationException $e){
-            Log::error('erro validaçao', ['error: ' => $e->getMessage()]);
-        }catch(QueryException $e){
-            Log::error('erro banco', ['error: ' => $e->getMessage()]);
-        }catch(Exception $e){
-            Log::error('erro exception', ['error: ' => $e->getMessage()]);
+            return response()->json(['message' => 'Erro ao carregar feed'], 500);
         }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Atualizar publicação
      */
-    public function destroy(Portfolio $portfolio)
+    public function update(Request $request, int $idPost)
     {
-        //
+        try {
+            $logado = Auth::guard('user')->user();
+            
+            if (!$logado) {
+                return response()->json(['message' => 'Usuário não autenticado'], 401);
+            }
+            
+            $post = Portfolio::with(['fotos', 'videos'])->findOrFail($idPost);
+            
+            if ($post->user_id !== $logado->id) {
+                return response()->json(['message' => 'Este post não pertence a você'], 403);
+            }
+            
+            $validated = $request->validate([
+                'titulo' => 'nullable|string|max:255',
+                'descricao' => 'nullable|string',
+                'imagens' => 'nullable|array',
+                'imagens.*' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
+                'videos' => 'nullable|array',
+                'videos.*' => 'nullable|file|mimes:mp4,webm,ogg,mov|max:10240',
+            ]);
+            
+            // Atualizar título e descrição
+            if ($request->has('titulo')) {
+                $post->titulo = $validated['titulo'];
+            }
+            
+            if ($request->has('descricao')) {
+                $post->descricao = $validated['descricao'];
+            }
+            
+            $post->save();
+            
+            // Atualizar imagens
+            if ($request->hasFile('imagens')) {
+                // Deletar imagens antigas
+                foreach ($post->fotos as $foto) {
+                    Storage::disk('public')->delete($foto->caminho);
+                    $foto->delete();
+                }
+                
+                // Adicionar novas imagens
+                foreach ($request->file('imagens') as $imagem) {
+                    $imagem_path = $imagem->store('portfolio/fotos', 'public');
+                    
+                    Foto::create([
+                        'caminho' => $imagem_path,
+                        'portfolio_id' => $post->id,
+                    ]);
+                }
+            }
+            
+            // Atualizar vídeos
+            if ($request->hasFile('videos')) {
+                // Deletar vídeos antigos
+                foreach ($post->videos as $video) {
+                    Storage::disk('public')->delete($video->caminho);
+                    $video->delete();
+                }
+                
+                // Adicionar novos vídeos
+                foreach ($request->file('videos') as $video) {
+                    $video_path = $video->store('portfolio/videos', 'public');
+                    
+                    Video::create([
+                        'caminho' => $video_path,
+                        'portfolio_id' => $post->id,
+                    ]);
+                }
+            }
+            
+            $post->load(['fotos', 'videos']);
+            
+            return response()->json([
+                'message' => 'Publicação atualizada com sucesso',
+                'data' => $post,
+            ], 200);
+            
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Erro de validação',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (Exception $e) {
+            Log::error('Erro ao atualizar publicação', ['error' => $e->getMessage()]);
+            return response()->json(['message' => 'Erro ao atualizar publicação'], 500);
+        }
+    }
+
+    /**
+     * Deletar publicação
+     */
+    public function destroy(int $id)
+    {
+        try {
+            $logado = Auth::guard('user')->user();
+            $portfolio = Portfolio::findOrFail($id);
+            
+            if ($portfolio->user_id !== $logado->id) {
+                return response()->json(['message' => 'Você não tem permissão para deletar esta publicação'], 403);
+            }
+            
+            // Deletar arquivos físicos
+            foreach ($portfolio->fotos as $foto) {
+                Storage::disk('public')->delete($foto->caminho);
+            }
+            
+            foreach ($portfolio->videos as $video) {
+                Storage::disk('public')->delete($video->caminho);
+            }
+            
+            // Deletar registros do banco
+            $portfolio->delete();
+            
+            return response()->json([
+                'message' => 'Publicação deletada com sucesso'
+            ], 200);
+            
+        } catch (Exception $e) {
+            Log::error('Erro ao deletar publicação', ['error' => $e->getMessage()]);
+            return response()->json(['message' => 'Erro ao deletar publicação'], 500);
+        }
     }
 }

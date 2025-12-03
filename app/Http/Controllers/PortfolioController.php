@@ -20,75 +20,100 @@ class PortfolioController extends Controller
      * Criar nova publicação
      */
     public function store(Request $request)
-    {
-        try {
-            $logado = Auth::guard('user')->user();
-            
-            if (!$logado) {
-                Log::error('❌ Usuário não autenticado');
-                return response()->json(['message' => 'Usuário não autenticado'], 401);
-            }
-            
-            Log::info('📤 Dados recebidos:', [
-                'user_id' => $logado->id,
-                'titulo' => $request->input('titulo'),
-                'descricao' => $request->input('descricao'),
-            ]);
-            
-            $validated = $request->validate([
-                'titulo' => 'nullable|string|max:255',
-                'descricao' => 'required|string',
-                'imagens' => 'nullable|array',
-                'imagens.*' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
-                'videos' => 'nullable|array',
-                'videos.*' => 'nullable|file|mimes:mp4,webm,ogg,mov|max:10240',
-            ]);
-            
-            $portfolio = Portfolio::create([
-                'user_id' => $logado->id,
-                'titulo' => $validated['titulo'] ?? null,
-                'descricao' => $validated['descricao'],
-            ]);
-            
-            // Salvar imagens
-            if ($request->hasFile('imagens')) {
-                foreach ($request->file('imagens') as $imagem) {
-                    $imagem_path = $imagem->store('fotos/portfolio', 'public');
-                    
-                    Foto::create([
-                        'foto' => $imagem_path,
-                        'portfolio_id' => $portfolio->id,
-                    ]);
-                }
-            }
-            
-            // Salvar vídeos
-            if ($request->hasFile('videos')) {
-                foreach ($request->file('videos') as $video) {
-                    $video_path = $video->store('videos/portfolio', 'public');
-                    
-                    Video::create([
-                        'caminho' => $video_path,
-                        'portfolio_id' => $portfolio->id,
-                    ]);
-                }
-            }
-            
-            $portfolio->load(['fotos', 'videos']);
-            
-            return response()->json([
-                'message' => 'Publicação criada com sucesso',
-                'data' => $portfolio,
-            ], 201);
-            
-        } catch (ValidationException $e) {
-            return response()->json(['message' => 'Erro de validação', 'errors' => $e->errors()], 422);
-        } catch (Exception $e) {
-            Log::error('❌ Erro ao criar publicação:', ['error' => $e->getMessage()]);
-            return response()->json(['message' => 'Erro ao criar publicação', 'error' => $e->getMessage()], 500);
+{
+    try {
+        $logado = Auth::guard('user')->user();
+        
+        if (!$logado) {
+            Log::error('❌ Usuário não autenticado');
+            return response()->json(['message' => 'Usuário não autenticado'], 401);
         }
+        
+        Log::info('📤 Dados recebidos:', [
+            'user_id' => $logado->id,
+            'titulo' => $request->input('titulo'),
+            'descricao' => $request->input('descricao'),
+        ]);
+        
+        $validated = $request->validate([
+            'titulo' => 'nullable|string|max:255',
+            'descricao' => 'required|string',
+            'imagens' => 'nullable|array',
+            'imagens.*' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
+            'videos' => 'nullable|array',
+            'videos.*' => 'nullable|file|mimes:mp4,webm,ogg,mov|max:10240',
+        ]);
+        
+        $portfolio = Portfolio::create([
+            'user_id' => $logado->id,
+            'titulo' => $validated['titulo'] ?? null,
+            'descricao' => $validated['descricao'],
+        ]);
+        
+        // Salvar imagens
+        if ($request->hasFile('imagens')) {
+            foreach ($request->file('imagens') as $imagem) {
+                $imagem_path = $imagem->store('fotos/portfolio', 'public');
+                
+                Foto::create([
+                    'foto' => $imagem_path,
+                    'portfolio_id' => $portfolio->id,
+                ]);
+            }
+        }
+        
+        // Salvar vídeos
+        if ($request->hasFile('videos')) {
+            foreach ($request->file('videos') as $video) {
+                $video_path = $video->store('videos/portfolio', 'public');
+                
+                Video::create([
+                    'caminho' => $video_path,
+                    'portfolio_id' => $portfolio->id,
+                ]);
+            }
+        }
+        
+        // ✅ CARREGAR e MAPEAR as fotos/vídeos antes de retornar
+        $portfolio->load(['fotos', 'videos']);
+        
+        // ✅ MAPEAR fotos com URL completa
+        $portfolio->fotos = $portfolio->fotos->map(function($foto) {
+            return [
+                'id' => $foto->id,
+                'foto' => $foto->foto,
+                'portfolio_id' => $foto->portfolio_id,
+                'caminho' => url('storage/' . $foto->foto), // ✅ URL completa
+                'url' => url('storage/' . $foto->foto), // ✅ URL completa
+                'created_at' => $foto->created_at,
+                'updated_at' => $foto->updated_at
+            ];
+        });
+        
+        // ✅ MAPEAR vídeos com URL completa
+        $portfolio->videos = $portfolio->videos->map(function($video) {
+            return [
+                'id' => $video->id,
+                'portfolio_id' => $video->portfolio_id,
+                'caminho' => url('storage/' . $video->caminho), // ✅ URL completa
+                'url' => url('storage/' . $video->caminho), // ✅ URL completa
+                'created_at' => $video->created_at,
+                'updated_at' => $video->updated_at
+            ];
+        });
+        
+        return response()->json([
+            'message' => 'Publicação criada com sucesso',
+            'data' => $portfolio,
+        ], 201);
+        
+    } catch (ValidationException $e) {
+        return response()->json(['message' => 'Erro de validação', 'errors' => $e->errors()], 422);
+    } catch (Exception $e) {
+        Log::error('❌ Erro ao criar publicação:', ['error' => $e->getMessage()]);
+        return response()->json(['message' => 'Erro ao criar publicação', 'error' => $e->getMessage()], 500);
     }
-
+}
     /**
      * ✅ MÉTODO SHOW CORRIGIDO - Lista feed com fotos
      */
